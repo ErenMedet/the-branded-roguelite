@@ -618,6 +618,7 @@ GameObject:
   - component: {fileID: 61692201}
   - component: {fileID: 61692200}
   - component: {fileID: 61692199}
+  - component: {fileID: 61692204}
   m_Layer: 0
   m_Name: Player_Root
   m_TagString: Player
@@ -873,6 +874,23 @@ MonoBehaviour:
   radius: 1.6
   arcAngle: 170
   heightOffset: 1
+--- !u!114 &61692204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61692191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c3f3bb426275284989de3a6cafc9b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemySlotRing
+  innerSlots: 6
+  innerRadius: 1.6
+  outerSlots: 10
+  outerRadius: 3.8
+  switchMargin: 1
 --- !u!1 &71594450
 GameObject:
   m_ObjectHideFlags: 0
@@ -9045,7 +9063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
+  m_AdditionalLightsShadowResolutionTier: 1
   m_CustomShadowLayers: 0
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}

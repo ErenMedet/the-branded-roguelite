@@ -3,7 +3,8 @@ using UnityEngine.AI;
 
 namespace Branded.Enemies
 {
-    // Follows the player on the NavMesh. Avoidance keeps groups from clumping into one ball.
+    // Follows the player on the NavMesh. Walks to a reserved slot around the player (EnemySlotRing)
+    // so groups surround the player instead of lining up behind each other.
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyChaser : MonoBehaviour
     {
@@ -29,6 +30,7 @@ namespace Branded.Enemies
         }
 
         NavMeshAgent _agent;
+        EnemySlotRing _ring;
         float _repathTimer;
 
         void Awake()
@@ -42,7 +44,16 @@ namespace Branded.Enemies
         void Start()
         {
             var player = GameObject.FindWithTag("Player");
-            if (player) Target = player.transform;
+            if (!player) return;
+            Target = player.transform;
+            _ring = player.GetComponent<EnemySlotRing>();
+            // With a ring the destination is the slot itself, so walk all the way onto it.
+            if (_ring) _agent.stoppingDistance = 0.1f;
+        }
+
+        void OnDisable()
+        {
+            if (_ring) _ring.Release(this);
         }
 
         void Update()
@@ -56,10 +67,11 @@ namespace Branded.Enemies
             if (_repathTimer <= 0f)
             {
                 _repathTimer = repathInterval;
-                _agent.SetDestination(Target.position);
+                _agent.SetDestination(_ring ? _ring.GetDestination(this) : Target.position);
             }
 
-            if (InRange) FaceTarget();
+            bool arrived = !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance + 0.2f;
+            if (InRange || arrived) FaceTarget();
         }
 
         public void FaceTarget()
