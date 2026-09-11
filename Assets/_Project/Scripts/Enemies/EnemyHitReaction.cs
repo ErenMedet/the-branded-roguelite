@@ -5,25 +5,25 @@ using UnityEngine.AI;
 
 namespace Branded.Enemies
 {
-    // Knockback + short stagger when hit. Interrupts a pending attack.
+    // Knockback + short stagger when hit. Cancels a pending attack unless that attack has super armor.
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyHitReaction : MonoBehaviour
     {
         [SerializeField] HealthComponent health;
         [SerializeField] EnemyChaser chaser;
-        [SerializeField] EnemyMeleeAttack attack;
         [SerializeField] float knockbackDistance = 1.2f;
         [SerializeField] float knockbackDuration = 0.12f;
         [SerializeField] float staggerDuration = 0.3f;
 
         NavMeshAgent _agent;
+        EnemyAttack[] _attacks;
 
         void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
             if (!health) health = GetComponent<HealthComponent>();
             if (!chaser) chaser = GetComponent<EnemyChaser>();
-            if (!attack) attack = GetComponent<EnemyMeleeAttack>();
+            _attacks = GetComponents<EnemyAttack>();
         }
 
         void OnEnable() => health.OnDamaged += React;
@@ -32,7 +32,10 @@ namespace Branded.Enemies
         void React(float amount, Vector3 hitDirection)
         {
             if (health.IsDead) return;
-            if (attack) attack.Interrupt();
+            foreach (var attack in _attacks)
+                if (attack.IsAttacking && !attack.CanBeInterrupted) return;
+
+            foreach (var attack in _attacks) attack.Interrupt();
             StopAllCoroutines();
             StartCoroutine(Knockback(hitDirection));
         }
