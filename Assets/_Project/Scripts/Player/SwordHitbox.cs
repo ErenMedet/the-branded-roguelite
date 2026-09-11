@@ -21,6 +21,8 @@ namespace Branded.Player
         [SerializeField, Range(0f, 360f)] float arcAngle = 170f;
         [SerializeField] float heightOffset = 1f;
 
+        // Godo's forge raises the base damage through this; boons stack on top through DamageMultiplier.
+        public float BaseDamageMultiplier { get; set; } = 1f;
         // Boons scale damage through this, never by touching damage.
         public float DamageMultiplier { get; set; } = 1f;
 
@@ -69,7 +71,7 @@ namespace Branded.Player
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisSwing.Add(target)) continue;
 
-                target.TakeDamage(damage * DamageMultiplier, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
+                target.TakeDamage(damage * BaseDamageMultiplier * DamageMultiplier, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
                 TargetHit?.Invoke(target);
                 landed++;
             }

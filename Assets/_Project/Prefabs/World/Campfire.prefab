@@ -869,6 +869,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Loop.Campfire
   interactRadius: 2.5
+  prompt: Dinlen
+  promptHeight: 1.6
   fireLight: {fileID: 7771404486225708673}
   flickerAmount: 0.25
   flickerSpeed: 8

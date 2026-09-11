@@ -96,7 +96,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | 2. Hasar ve İlk Düşman | `IDamageable`, NavMesh düşman, hitstop ve vuruş hissi | ✅ |
 | 3. Gece/Sabah Döngüsü | Düşman dalgaları, şafak söküşü, kamp ateşi | ✅ |
 | 4. Diyalog ve UI | 2D portreli diyalog, can barı, geçici kılıç yağı seçimi | ✅ |
-| 5. Godo'nun Atölyesi | Mağara sahnesi, kalıcı yükseltmeler, ölüm döngüsü | ⏳ |
+| 5. Godo'nun Atölyesi | Mağara sahnesi, kalıcı yükseltmeler, ölüm döngüsü | ✅ |
 
 ## Şu An Oyunda Neler Var
 
@@ -104,7 +104,9 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 - **Düşmanlar:** Oyuncunun etrafını saran NavMesh sürüsü; tank, koşucu, uzaktan ateş eden ve yer altından çıkan tipler. Can barları ilk vuruşa kadar gizli.
 - **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
 - **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
-- **HUD:** Hasarı soluk bir izle gösteren can barı.
+- **HUD:** Hasarı soluk bir izle gösteren can barı ve İblis Külü sayacı.
+- **Godo'nun Mağarası:** Oyun burada başlar. Godo'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; mağara ağzından sefere çıkılır.
+- **Ölüm döngüsü:** Ölünce karanlık ruhlar yazısı, ardından Godo'nun ocağında uyanış. Geçici yağlar sıfırlanır, küller ve yükseltmeler kalır (`save.json`).
 
 ## Kontroller
 
@@ -114,7 +116,8 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | Fare | Nişan / bakış yönü |
 | Sol tık | Kılıç saldırısı |
 | `Space` | Atılma (dash) |
-| `E` | Etkileşim (kamp ateşi) |
+| `E` | Etkileşim (kamp ateşi, Godo, Puck, mağara çıkışı) |
+| `Esc` / `E` | Yükseltme panelini kapat |
 | `E` / `Space` / Sol tık | Diyaloğu ilerlet |
 
 ## Teknik Altyapı
@@ -124,30 +127,33 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 - **Kamera:** Cinemachine (sabit izometrik açı)
 - **Yapay zekâ:** NavMesh
 - **Arayüz:** uGUI + TextMeshPro
-- **Veri:** Geceler, güçlenmeler ve diyaloglar `ScriptableObject` olarak tutulur
+- **Veri:** Geceler, güçlenmeler, yükseltmeler ve diyaloglar `ScriptableObject` olarak tutulur; kalıcı ilerleme JSON kaydında
 
 ## Proje Yapısı
 
 ```
 Assets/_Project/
 ├── Art/           Portreler ve görseller
-├── Data/          ScriptableObject verileri (Boons, Dialogue, Nights)
+├── Data/          ScriptableObject verileri (Boons, Dialogue, Nights, Upgrades)
 ├── Materials/
-├── Prefabs/       Düşmanlar, dünya objeleri, UI
-├── Scenes/        Greybox_Asama1.unity
+├── Prefabs/       Oyuncu, düşmanlar, dünya objeleri, UI
+├── Scenes/        Hub_GodoCave.unity, Greybox_Asama1.unity
 └── Scripts/
-    ├── Player/    Hareket, dash, girdi, kılıç
+    ├── Player/    Hareket, dash, girdi, kılıç, ölüm
     ├── Combat/    IDamageable, HealthComponent, hitbox
     ├── Enemies/   Düşman yapay zekâsı ve tipleri
     ├── Loop/      Gece/sabah döngüsü, dalgalar, kamp ateşi
     ├── Dialogue/  Diyalog verisi ve yöneticisi
     ├── Boons/     Güçlenme verisi ve etkileri
-    ├── UI/        Can barı, güçlenme kartları
+    ├── Meta/      Kalıcı ilerleme, kayıt, yükseltmeler, sahne geçişi
+    ├── Interaction/ Etkileşilebilir objeler ve oyuncu tarafı
+    ├── Hub/       Yükseltme istasyonları, mağara çıkışı
+    ├── UI/        Can barı, güçlenme kartları, yükseltme paneli, ekran geçişleri
     └── DevTools/  Test amaçlı yardımcılar
 ```
 
 ## Çalıştırma
 
 1. Repoyu klonla ve Unity Hub'dan **Unity 6000.6.0f1** ile aç.
-2. `Assets/_Project/Scenes/Greybox_Asama1.unity` sahnesini aç.
+2. `Assets/_Project/Scenes/Hub_GodoCave.unity` sahnesini aç (sefer sahnesi `Greybox_Asama1.unity` doğrudan da açılabilir).
 3. Play'e bas.

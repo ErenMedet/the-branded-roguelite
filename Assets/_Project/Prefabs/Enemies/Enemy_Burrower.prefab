@@ -533,6 +533,7 @@ GameObject:
   - component: {fileID: 3195760728814991104}
   - component: {fileID: 8199141939847464453}
   - component: {fileID: 2548803202224195934}
+  - component: {fileID: 1915089159478206352}
   m_Layer: 8
   m_Name: Enemy_Burrower
   m_TagString: Untagged
@@ -712,6 +713,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyDeath
   health: {fileID: 0}
   shrinkDuration: 0.18
+  evaporateDuration: 0.7
+  evaporateRise: 1.2
 --- !u!114 &2548803202224195934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -730,6 +733,20 @@ MonoBehaviour:
   - {fileID: 8890875852141772871}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   duration: 0.1
+--- !u!114 &1915089159478206352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5961566723288214502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b96d0433fce540899a961b030b83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyAshReward
+  health: {fileID: 0}
+  ashes: 2
 --- !u!1 &6606335048991603727
 GameObject:
   m_ObjectHideFlags: 0

@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 4387287440806147884}
   - component: {fileID: 7011400289783638600}
   - component: {fileID: 5251908563351959588}
+  - component: {fileID: 2678456252773817778}
   m_Layer: 8
   m_Name: Enemy_Charger
   m_TagString: Untagged
@@ -744,6 +745,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyDeath
   health: {fileID: 0}
   shrinkDuration: 0.18
+  evaporateDuration: 0.7
+  evaporateRise: 1.2
 --- !u!114 &5251908563351959588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -763,6 +766,20 @@ MonoBehaviour:
   - {fileID: 2620254312374408375}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   duration: 0.1
+--- !u!114 &2678456252773817778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4550730765900124098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b96d0433fce540899a961b030b83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyAshReward
+  health: {fileID: 0}
+  ashes: 2
 --- !u!1 &5998947151135994179
 GameObject:
   m_ObjectHideFlags: 0

@@ -341,6 +341,7 @@ GameObject:
   - component: {fileID: 1898302626169389331}
   - component: {fileID: 5808692817495556550}
   - component: {fileID: 2859090037982136002}
+  - component: {fileID: 5856611020385200431}
   m_Layer: 8
   m_Name: Enemy_Brute
   m_TagString: Untagged
@@ -493,6 +494,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyDeath
   health: {fileID: 0}
   shrinkDuration: 0.18
+  evaporateDuration: 0.7
+  evaporateRise: 1.2
 --- !u!114 &2859090037982136002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +514,20 @@ MonoBehaviour:
   - {fileID: 3393957488327257926}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   duration: 0.1
+--- !u!114 &5856611020385200431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4434288737276503583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b96d0433fce540899a961b030b83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyAshReward
+  health: {fileID: 0}
+  ashes: 3
 --- !u!1 &4838645840913983369
 GameObject:
   m_ObjectHideFlags: 0

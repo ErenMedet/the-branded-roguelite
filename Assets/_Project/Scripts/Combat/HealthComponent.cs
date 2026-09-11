@@ -50,6 +50,21 @@ namespace Branded.Combat
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
+        // Permanent upgrades change the cap; the bar starts full at the new size.
+        public void SetMaxHealth(float max)
+        {
+            maxHealth = Mathf.Max(1f, max);
+            currentHealth = maxHealth;
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+
+        // Death Defiance: back from zero on the spot.
+        public void Revive(float amount)
+        {
+            currentHealth = Mathf.Clamp(amount, 1f, maxHealth);
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+
         bool CanBeHurt(float amount)
         {
             if (IsDead || amount <= 0f) return false;

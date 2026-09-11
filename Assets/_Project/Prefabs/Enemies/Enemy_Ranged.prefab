@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 8164091162343742934}
   - component: {fileID: 6547483637125799627}
   - component: {fileID: 2244204370428011747}
+  - component: {fileID: 3193644053781886963}
   m_Layer: 8
   m_Name: Enemy_Ranged
   m_TagString: Untagged
@@ -561,6 +562,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyDeath
   health: {fileID: 0}
   shrinkDuration: 0.18
+  evaporateDuration: 0.7
+  evaporateRise: 1.2
 --- !u!114 &2244204370428011747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,6 +583,20 @@ MonoBehaviour:
   - {fileID: 4486447647755651295}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   duration: 0.1
+--- !u!114 &3193644053781886963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7193334020381173516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b96d0433fce540899a961b030b83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemyAshReward
+  health: {fileID: 0}
+  ashes: 2
 --- !u!1 &7196443409743643776
 GameObject:
   m_ObjectHideFlags: 0
