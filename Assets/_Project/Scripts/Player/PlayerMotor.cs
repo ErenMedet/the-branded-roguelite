@@ -1,11 +1,12 @@
 using System;
+using Branded.Combat;
 using UnityEngine;
 
 namespace Branded.Player
 {
     // Moves the player with a CharacterController: camera-relative WASD, gravity and dash (with i-frames).
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerMotor : MonoBehaviour
+    public class PlayerMotor : MonoBehaviour, IInvulnerabilitySource
     {
         [Header("References")]
         [SerializeField] PlayerInputReader input;
