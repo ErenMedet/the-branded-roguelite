@@ -54,8 +54,10 @@ namespace Branded.Player
             _interact.Enable();
         }
 
+        // Disabling the reader locks player control (e.g. during dialogue), so nothing may stay held.
         void OnDisable()
         {
+            Move = Vector2.zero;
             _move.Disable();
             _point.Disable();
             _dash.Disable();

@@ -1,5 +1,9 @@
 using System;
 using System.Collections;
+using Branded.Boons;
+using Branded.Dialogue;
+using Branded.Player;
+using Branded.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,14 +11,17 @@ namespace Branded.Loop
 {
     public enum CyclePhase { Night, Dawn, Morning, Dusk }
 
-    // The GDD rhythm: a night of waves, dawn clears the field, the morning campfire waits, and resting at it
-    // lets the next night fall. Aşama 4 hooks dialogue and the boon choice into the morning.
+    // The GDD rhythm: a night of waves, dawn clears the field, then the morning camp: rest at the campfire,
+    // talk, pick a boon, and the next night falls.
     public class NightCycle : MonoBehaviour
     {
         [SerializeField] NightData[] nights; // past the last entry, the last night repeats
         [SerializeField] WaveSpawner spawner;
         [SerializeField] DayNightLighting lighting;
         [SerializeField] Campfire campfirePrefab;
+        [SerializeField] DialogueManager dialogue;
+        [SerializeField] BoonChoiceUI boonChoice;
+        [SerializeField] GameObject hud; // hidden during the camp so the portrait gets the corner
         [SerializeField] float campfireDistance = 3f;
         [SerializeField] float dawnDuration = 4f;
         [SerializeField] float duskDuration = 2.5f;
@@ -26,12 +33,19 @@ namespace Branded.Loop
         public event Action<CyclePhase> PhaseChanged;
 
         Transform _player;
+        PlayerInputReader _playerInput;
+        PlayerBoons _boons;
         float _dawnAt;
 
         void Start()
         {
             var player = GameObject.FindWithTag("Player");
-            if (player) _player = player.transform;
+            if (player)
+            {
+                _player = player.transform;
+                _playerInput = player.GetComponent<PlayerInputReader>();
+                _boons = player.GetComponent<PlayerBoons>();
+            }
             lighting.Apply(0f);
             StartCoroutine(Run());
         }
@@ -56,11 +70,29 @@ namespace Branded.Loop
                 bool rested = false;
                 campfire.Rested += () => rested = true;
                 yield return new WaitUntil(() => rested);
+                yield return Camp(night);
 
                 SetPhase(CyclePhase.Dusk);
                 yield return lighting.BlendTo(0f, duskDuration);
                 Destroy(campfire.gameObject);
             }
+        }
+
+        // Dialogue, then the boon choice. The player can't move meanwhile.
+        IEnumerator Camp(NightData night)
+        {
+            SetPlayerControl(false);
+            if (hud) hud.SetActive(false);
+            if (dialogue) yield return dialogue.Play(night.morningDialogue);
+            if (boonChoice && _boons)
+                yield return boonChoice.Choose(_boons.PickOffers(night.boonPool, boonChoice.Capacity), _boons.Add);
+            if (hud) hud.SetActive(true);
+            SetPlayerControl(true);
+        }
+
+        void SetPlayerControl(bool enabled)
+        {
+            if (_playerInput) _playerInput.enabled = enabled;
         }
 
         void SetPhase(CyclePhase phase)

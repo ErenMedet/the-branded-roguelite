@@ -32,6 +32,8 @@ namespace Branded.Player
 
         // Other systems (e.g. combat) scale movement through this, never by touching moveSpeed.
         public float SpeedMultiplier { get; set; } = 1f;
+        // Boons shorten the dash cooldown through this.
+        public float DashCooldownMultiplier { get; set; } = 1f;
 
         public event Action DashStarted;
         public event Action DashEnded;
@@ -94,7 +96,7 @@ namespace Branded.Player
 
             _dashDirection = direction.normalized;
             _dashTimer = dashDuration;
-            _cooldownTimer = dashDuration + dashCooldown;
+            _cooldownTimer = dashDuration + dashCooldown * DashCooldownMultiplier;
             _iFrameTimer = invulnerabilityDuration;
             DashStarted?.Invoke();
         }

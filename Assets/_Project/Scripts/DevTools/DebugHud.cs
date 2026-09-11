@@ -1,27 +1,21 @@
-using Branded.Combat;
 using Branded.Loop;
 using UnityEngine;
 
 namespace Branded.DevTools
 {
-    // Temporary on-screen player HP and night clock until the real UI (Aşama 4).
+    // Temporary on-screen night clock for testing the night/morning loop.
     public class DebugHud : MonoBehaviour
     {
-        [SerializeField] HealthComponent playerHealth;
         [SerializeField] NightCycle nightCycle;
 
         GUIStyle _style;
 
         void OnGUI()
         {
-            if (!playerHealth) return;
-            _style ??= new GUIStyle(GUI.skin.label) { fontSize = 22, fontStyle = FontStyle.Bold };
-            _style.normal.textColor = playerHealth.IsDead ? Color.red : Color.white;
-            GUI.Label(new Rect(20, 16, 400, 40), $"HP {playerHealth.currentHealth:0} / {playerHealth.maxHealth:0}", _style);
-
             if (!nightCycle) return;
+            _style ??= new GUIStyle(GUI.skin.label) { fontSize = 22, fontStyle = FontStyle.Bold };
             _style.normal.textColor = Color.white;
-            GUI.Label(new Rect(20, 48, 400, 40), CycleText(), _style);
+            GUI.Label(new Rect(20, 16, 400, 40), CycleText(), _style);
         }
 
         string CycleText()

@@ -21,8 +21,13 @@ namespace Branded.Player
         [SerializeField, Range(0f, 360f)] float arcAngle = 170f;
         [SerializeField] float heightOffset = 1f;
 
+        // Boons scale damage through this, never by touching damage.
+        public float DamageMultiplier { get; set; } = 1f;
+
         // (targets hit, swing direction)
         public event Action<int, Vector3> HitLanded;
+        // Once per target hit, for on-hit effects such as burn.
+        public event Action<IDamageable> TargetHit;
 
         readonly HashSet<IDamageable> _hitThisSwing = new();
 
@@ -64,7 +69,8 @@ namespace Branded.Player
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisSwing.Add(target)) continue;
 
-                target.TakeDamage(damage, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
+                target.TakeDamage(damage * DamageMultiplier, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
+                TargetHit?.Invoke(target);
                 landed++;
             }
 

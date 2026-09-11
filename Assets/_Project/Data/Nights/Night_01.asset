@@ -40,3 +40,8 @@ MonoBehaviour:
       count: 1
     - prefab: {fileID: 4434288737276503583, guid: bdacb98b73e363841860fa2c095674f7, type: 3}
       count: 1
+  morningDialogue: {fileID: 11400000, guid: f8e65a6803785634997b4fb06b757350, type: 2}
+  boonPool:
+  - {fileID: 11400000, guid: a7711f40e0286a443beb2be18bc7d114, type: 2}
+  - {fileID: 11400000, guid: 6d5f2788a7fff524cbd077a0a55fad64, type: 2}
+  - {fileID: 11400000, guid: 68bafbdf758af2744ad620da0bb922fc, type: 2}

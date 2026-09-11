@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf4693b802e9fe4c9e8dadfa6892042, type: 3}
+  m_Name: Boon_FlameOil
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Boons.BoonData
+  boonName: "K\u0131l\u0131ca Alev Ya\u011F\u0131"
+  icon: {fileID: 0}
+  description: "Vuru\u015Flar\u0131n d\xFC\u015Fman\u0131 tutu\u015Fturur: 3 saniye boyunca saniyede 6 hasar."
+  elementType: 1
+  damageMultiplier: 1
+  burnDamagePerSecond: 6
+  burnDuration: 3
+  dashCooldownMultiplier: 1
+  healAmount: 0
+  repeatable: 0
