@@ -12,11 +12,13 @@ namespace Branded.Player
 
         public event Action DashPressed;
         public event Action AttackPressed;
+        public event Action InteractPressed;
 
         InputAction _move;
         InputAction _point;
         InputAction _dash;
         InputAction _attack;
+        InputAction _interact;
 
         void Awake()
         {
@@ -36,9 +38,11 @@ namespace Branded.Player
 
             _dash = new InputAction("Dash", InputActionType.Button, "<Keyboard>/space");
             _attack = new InputAction("Attack", InputActionType.Button, "<Mouse>/leftButton");
+            _interact = new InputAction("Interact", InputActionType.Button, "<Keyboard>/e");
 
             _dash.performed += OnDash;
             _attack.performed += OnAttack;
+            _interact.performed += OnInteract;
         }
 
         void OnEnable()
@@ -47,6 +51,7 @@ namespace Branded.Player
             _point.Enable();
             _dash.Enable();
             _attack.Enable();
+            _interact.Enable();
         }
 
         void OnDisable()
@@ -55,16 +60,19 @@ namespace Branded.Player
             _point.Disable();
             _dash.Disable();
             _attack.Disable();
+            _interact.Disable();
         }
 
         void OnDestroy()
         {
             _dash.performed -= OnDash;
             _attack.performed -= OnAttack;
+            _interact.performed -= OnInteract;
             _move.Dispose();
             _point.Dispose();
             _dash.Dispose();
             _attack.Dispose();
+            _interact.Dispose();
         }
 
         void Update()
@@ -75,5 +83,6 @@ namespace Branded.Player
 
         void OnDash(InputAction.CallbackContext _) => DashPressed?.Invoke();
         void OnAttack(InputAction.CallbackContext _) => AttackPressed?.Invoke();
+        void OnInteract(InputAction.CallbackContext _) => InteractPressed?.Invoke();
     }
 }
