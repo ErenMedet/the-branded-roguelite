@@ -33,6 +33,8 @@ Transform:
   - {fileID: 6279558986332719482}
   - {fileID: 4016990645845853051}
   - {fileID: 4976154844145677371}
+  - {fileID: 5543959985142504595}
+  - {fileID: 2501783719366434121}
   m_Father: {fileID: 8390091763915647374}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5701076532002348969
@@ -47,10 +49,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d0c7dd249e8fa442ae302122a728dab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.SwordSwingVisual
-  combat: {fileID: 484423055892635542}
-  swordPivot: {fileID: 4976154844145677371}
-  restAngle: 110
-  arcAngle: 160
+  _combatComponent: {fileID: 484423055892635542}
+  _swordPivotComponent: {fileID: 4976154844145677371}
+  _restAngle: 110
+  _arcAngle: 160
+--- !u!1 &872162455516465947
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5543959985142504595}
+  m_Layer: 0
+  m_Name: LeftArm_Muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5543959985142504595
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872162455516465947}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.45, y: 1.2, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6519077126902058341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3597426359089603730
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +198,9 @@ GameObject:
   - component: {fileID: 1665405290606753741}
   - component: {fileID: 1827665638896980722}
   - component: {fileID: 7268840114509024604}
+  - component: {fileID: 5400246192804415856}
+  - component: {fileID: 8420446114919464648}
+  - component: {fileID: 3895976731599705308}
   m_Layer: 0
   m_Name: Player_Root
   m_TagString: Player
@@ -238,16 +274,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef433c860819c2243b94de63c4eaa9eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerMotor
-  input: {fileID: 5823029401730866925}
-  aim: {fileID: 7333335479962087968}
-  cameraTransform: {fileID: 0}
-  moveSpeed: 7
-  acceleration: 70
-  gravity: -25
-  dashDistance: 5
-  dashDuration: 0.2
-  dashCooldown: 0.35
-  invulnerabilityDuration: 0.2
+  _inputComponent: {fileID: 5823029401730866925}
+  _aimComponent: {fileID: 7333335479962087968}
+  _cameraTransformComponent: {fileID: 0}
+  _moveSpeed: 7
+  _acceleration: 70
+  _gravity: -25
+  _dashDistance: 5
+  _dashDuration: 0.2
+  _dashCooldown: 0.35
+  _invulnerabilityDuration: 0.2
 --- !u!114 &7333335479962087968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,10 +296,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 136fe6cb6518c97449fce82f4906a891, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerAim
-  input: {fileID: 5823029401730866925}
-  motor: {fileID: 6122619226220207628}
-  visual: {fileID: 6519077126902058341}
-  turnSpeed: 1440
+  _inputComponent: {fileID: 5823029401730866925}
+  _motorComponent: {fileID: 6122619226220207628}
+  _visualComponent: {fileID: 6519077126902058341}
+  _turnSpeed: 1440
 --- !u!114 &484423055892635542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,14 +312,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27a3ce67729dad94e8eb74afe7aa7617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerCombat
-  input: {fileID: 5823029401730866925}
-  motor: {fileID: 6122619226220207628}
-  aim: {fileID: 7333335479962087968}
-  windup: 0.08
-  active: 0.12
-  recovery: 0.22
-  inputBufferTime: 0.2
-  moveSpeedWhileSwinging: 0.25
+  _inputComponent: {fileID: 5823029401730866925}
+  _motorComponent: {fileID: 6122619226220207628}
+  _aimComponent: {fileID: 7333335479962087968}
+  _windup: 0.08
+  _active: 0.12
+  _recovery: 0.22
+  _inputBufferTime: 0.2
+  _moveSpeedWhileSwinging: 0.25
 --- !u!114 &3141909037542245246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,8 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e1414db168356f43a2114c993d2026b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Combat.HealthComponent
-  maxHealth: 100
-  currentHealth: 0
+  <MaxHealth>k__BackingField: 100
 --- !u!114 &5556764332858142818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,16 +345,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cbfb32eabc7eab438f5c0ca4be75e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.SwordHitbox
-  combat: {fileID: 484423055892635542}
-  aim: {fileID: 7333335479962087968}
-  damage: 25
-  targetLayers:
+  _combatComponent: {fileID: 484423055892635542}
+  _aimComponent: {fileID: 7333335479962087968}
+  _damage: 25
+  _targetLayers:
     serializedVersion: 2
     m_Bits: 256
-  reach: 1.3
-  radius: 1.6
-  arcAngle: 170
-  heightOffset: 1
+  _reach: 1.3
+  _radius: 1.6
+  _arcAngle: 170
+  _heightOffset: 1
 --- !u!114 &4151961903416053604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,10 +420,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da042eda81d8e947b7242912d41ae97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerHitFeedback
-  hitbox: {fileID: 5556764332858142818}
-  impulse: {fileID: 4151961903416053604}
-  hitStopDuration: 0.07
-  shakeForce: 0.4
+  _hitboxComponent: {fileID: 5556764332858142818}
+  _impulseComponent: {fileID: 4151961903416053604}
+  _hitStopDuration: 0.07
+  _shakeForce: 0.4
 --- !u!114 &4955560486256344402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,11 +436,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6c641d2bee046c43864ea059afc4772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerDeath
-  health: {fileID: 3141909037542245246}
-  upgrades: {fileID: 7268840114509024604}
-  defianceHealth: 0.5
-  defianceInvulnerability: 1.5
-  collapseDelay: 0.8
+  _healthComponent: {fileID: 3141909037542245246}
+  _upgradesComponent: {fileID: 7268840114509024604}
+  _defianceHealth: 0.5
+  _defianceInvulnerability: 1.5
+  _collapseDelay: 0.8
 --- !u!114 &7688742905420910918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,11 +453,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e75fc13d04dcb8740937fa43d882ef84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Combat.DamageFlash
-  health: {fileID: 3141909037542245246}
-  renderers:
+  _healthComponent: {fileID: 3141909037542245246}
+  _rendererComponents:
   - {fileID: 6790838958669649961}
-  flashColor: {r: 1, g: 0.25, b: 0.2, a: 1}
-  duration: 0.1
+  _flashColor: {r: 1, g: 0.25, b: 0.2, a: 1}
+  _duration: 0.1
 --- !u!114 &7478224030402454373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,11 +470,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c3f3bb426275284989de3a6cafc9b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Enemies.EnemySlotRing
-  innerSlots: 6
-  innerRadius: 1.6
-  outerSlots: 10
-  outerRadius: 3.8
-  switchMargin: 1
+  _innerSlots: 6
+  _innerRadius: 1.6
+  _outerSlots: 10
+  _outerRadius: 3.8
+  _switchMargin: 1
 --- !u!114 &1665405290606753741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,9 +487,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02b42c5a1f4c8e468cd19a902d31979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Boons.PlayerBoons
-  sword: {fileID: 5556764332858142818}
-  motor: {fileID: 6122619226220207628}
-  health: {fileID: 3141909037542245246}
+  _swordComponent: {fileID: 5556764332858142818}
+  _motorComponent: {fileID: 6122619226220207628}
+  _healthComponent: {fileID: 3141909037542245246}
 --- !u!114 &1827665638896980722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2de200b6a231dc346a27b0a7af83550a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Interaction.PlayerInteractor
-  input: {fileID: 0}
+  _inputComponent: {fileID: 0}
 --- !u!114 &7268840114509024604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,12 +515,165 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b6e1ff05e9ea74eb73ae00d5dc87d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Meta.PlayerUpgrades
-  upgrades:
+  _upgrades:
   - {fileID: 11400000, guid: da91f7dc02e6f2b4c858ccf4a2c31927, type: 2}
   - {fileID: 11400000, guid: 8468237c5d0169941b24260cb25ee842, type: 2}
   - {fileID: 11400000, guid: b84734f73cc11a347940488d1bf8e134, type: 2}
-  sword: {fileID: 0}
-  health: {fileID: 0}
+  _swordComponent: {fileID: 0}
+  _healthComponent: {fileID: 0}
+--- !u!114 &5400246192804415856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6287270790778254566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1d710e1498fb44887e711a2452c701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerCrossbow
+  _inputComponent: {fileID: 5823029401730866925}
+  _aimComponent: {fileID: 7333335479962087968}
+  _motorComponent: {fileID: 6122619226220207628}
+  _combatComponent: {fileID: 484423055892635542}
+  _muzzleComponent: {fileID: 5543959985142504595}
+  _crossbowVisual: {fileID: 7205138581014573354}
+  _boltPrefabComponent: {fileID: 3239788519789287968, guid: ee9aec047456eca46bf1a14024c33a23, type: 3}
+  _damage: 8
+  _fireInterval: 0.15
+  _magazineSize: 6
+  _reloadTime: 1.5
+--- !u!114 &8420446114919464648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6287270790778254566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e215f65951cd8f4e9189a257411af97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerCannon
+  _inputComponent: {fileID: 5823029401730866925}
+  _aimComponent: {fileID: 7333335479962087968}
+  _motorComponent: {fileID: 6122619226220207628}
+  _crossbowComponent: {fileID: 5400246192804415856}
+  _impulseComponent: {fileID: 4151961903416053604}
+  _muzzleComponent: {fileID: 5543959985142504595}
+  _shellPrefabComponent: {fileID: 24379494812976431, guid: 9f41f3019fa27b7468736e0027a05730, type: 3}
+  _recoilDistance: 3
+  _recoilDuration: 0.2
+  _shakeForce: 1
+--- !u!114 &3895976731599705308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6287270790778254566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20025013e6f5cf640badbfac6af5f22f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Player.PlayerLatchReceiver
+  _motorComponent: {fileID: 6122619226220207628}
+  _combatComponent: {fileID: 484423055892635542}
+  _maxLatched: 5
+  _slowPerLatch: 0.2
+  _minSlowMultiplier: 0.3
+  _latchRadius: 0.55
+--- !u!1 &7205138581014573354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2501783719366434121}
+  - component: {fileID: 2637855946520818969}
+  - component: {fileID: 550704585700700175}
+  m_Layer: 0
+  m_Name: Crossbow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2501783719366434121
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205138581014573354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.45, y: 1.15, z: 0.25}
+  m_LocalScale: {x: 0.12, y: 0.12, z: 0.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6519077126902058341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &2637855946520818969
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205138581014573354}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &550704585700700175
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205138581014573354}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 34b3b1a2ad0f6f64a9c9bce65340770f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7989750684110112630
 GameObject:
   m_ObjectHideFlags: 0

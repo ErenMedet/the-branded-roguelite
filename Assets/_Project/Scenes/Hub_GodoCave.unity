@@ -241,6 +241,7 @@ GameObject:
   m_Component:
   - component: {fileID: 30665731}
   - component: {fileID: 30665732}
+  - component: {fileID: 30665733}
   m_Layer: 0
   m_Name: Puck_Light
   m_TagString: Untagged
@@ -328,6 +329,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &30665733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 30665730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &68996663
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,11 +546,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f890a3354da9df49a0c13cb2a7fbde9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Hub.UpgradeStation
-  interactRadius: 3
-  prompt: "Godo'nun Oca\u011F\u0131"
-  promptHeight: 2.2
-  stationName: "Godo'nun Oca\u011F\u0131"
-  upgrades:
+  _interactRadius: 3
+  _prompt: "Godo'nun Oca\u011F\u0131"
+  _promptHeight: 2.2
+  _stationName: "Godo'nun Oca\u011F\u0131"
+  _upgrades:
   - {fileID: 11400000, guid: da91f7dc02e6f2b4c858ccf4a2c31927, type: 2}
 --- !u!4 &100246702
 Transform:
@@ -1574,6 +1604,7 @@ GameObject:
   m_Component:
   - component: {fileID: 466942958}
   - component: {fileID: 466942959}
+  - component: {fileID: 466942960}
   m_Layer: 0
   m_Name: Forge_Light
   m_TagString: Untagged
@@ -1661,6 +1692,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &466942960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466942957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &470553104
 GameObject:
   m_ObjectHideFlags: 0
@@ -1802,11 +1862,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f890a3354da9df49a0c13cb2a7fbde9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Hub.UpgradeStation
-  interactRadius: 2.5
-  prompt: "Puck'\u0131n Elf Tozu"
-  promptHeight: 2.4
-  stationName: "Puck'\u0131n Elf Tozu"
-  upgrades:
+  _interactRadius: 2.5
+  _prompt: "Puck'\u0131n Elf Tozu"
+  _promptHeight: 2.4
+  _stationName: "Puck'\u0131n Elf Tozu"
+  _upgrades:
   - {fileID: 11400000, guid: 8468237c5d0169941b24260cb25ee842, type: 2}
   - {fileID: 11400000, guid: b84734f73cc11a347940488d1bf8e134, type: 2}
 --- !u!4 &478839523
@@ -2103,7 +2163,7 @@ Transform:
   m_GameObject: {fileID: 629919465}
   serializedVersion: 2
   m_LocalRotation: {x: 0.3904484, y: 0.34682903, z: -0.16172904, w: 0.8373192}
-  m_LocalPosition: {x: -13.635584, y: 22.981333, z: -13.635584}
+  m_LocalPosition: {x: -18.635584, y: 22.981333, z: -10.635584}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3638,6 +3698,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 587402497871907705, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4281350866
+      objectReference: {fileID: 0}
+    - target: {fileID: 587402497871907705, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 658147618654570376, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 775081123065501878, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 1847007825209928734, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
       propertyPath: m_Name
       value: GameUI
@@ -3721,6 +3797,30 @@ PrefabInstance:
     - target: {fileID: 5038123789052300070, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5733480651535667830, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4288264396
+      objectReference: {fileID: 0}
+    - target: {fileID: 5733480651535667830, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751480489597489580, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4290628825
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751480489597489580, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250251065126163163, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4292472319
+      objectReference: {fileID: 0}
+    - target: {fileID: 7250251065126163163, guid: e9233d01309c8df48a2fa14bfb60c825, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4073,6 +4173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1036585839}
   - component: {fileID: 1036585840}
+  - component: {fileID: 1036585841}
   m_Layer: 0
   m_Name: Outside_Light
   m_TagString: Untagged
@@ -4160,6 +4261,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &1036585841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036585838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &1064731271
 GameObject:
   m_ObjectHideFlags: 0
@@ -4654,6 +4784,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5400246192804415856, guid: d02909ae0cb790044b43429e1f0c3f68, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6287270790778254566, guid: d02909ae0cb790044b43429e1f0c3f68, type: 3}
       propertyPath: m_Name
       value: Player_Root
@@ -4696,6 +4830,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8390091763915647374, guid: d02909ae0cb790044b43429e1f0c3f68, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420446114919464648, guid: d02909ae0cb790044b43429e1f0c3f68, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5313,10 +5451,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b71bbf41a532d4ab159403c120729d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Hub.HubExit
-  interactRadius: 3
-  prompt: "Sefere \xC7\u0131k"
-  promptHeight: 2.2
-  fadeDuration: 0.8
+  _interactRadius: 3
+  _prompt: "Sefere \xC7\u0131k"
+  _promptHeight: 2.2
+  _fadeDuration: 0.8
 --- !u!4 &1460809963
 Transform:
   m_ObjectHideFlags: 0
