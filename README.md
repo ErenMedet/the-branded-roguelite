@@ -96,7 +96,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | 2. Hasar ve İlk Düşman | `IDamageable`, NavMesh düşman, hitstop ve vuruş hissi | ✅ |
 | 3. Gece/Sabah Döngüsü | Düşman dalgaları, şafak söküşü, kamp ateşi | ✅ |
 | 4. Diyalog ve UI | 2D portreli diyalog, can barı, geçici kılıç yağı seçimi | ✅ |
-| 5. Godot'nun Atölyesi | Hub sahnesi (maden + ağaçlık), kalıcı yükseltmeler, ölüm döngüsü | ✅ |
+| 5. Godot'nun Atölyesi | Hub sahnesi (maden + kulübe + ağaçlık), kalıcı yükseltmeler, ölüm döngüsü | ✅ |
 
 ## Şu An Oyunda Neler Var
 
@@ -105,7 +105,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 - **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
 - **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
 - **HUD:** Hasarı soluk bir izle gösteren can barı ve İblis Külü sayacı.
-- **Godot'nun Madeni:** Oyun eski madenin içindeki ocağın başında başlar; etrafta ağaçlık, cephanelik, şelale ve Kılıçlar Tepesi var. Godot'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; güneydeki dağ patikasından sefere çıkılır.
+- **Godot'nun Madeni:** Oyun eski madenin içindeki ocağın başında başlar; yanında Godot'nun su çarklı kulübesi, etrafta ağaçlık, cephanelik, şelale ve Kılıçlar Tepesi var. Godot'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; güneydeki dağ patikasından sefere çıkılır.
 - **Ölüm döngüsü:** Ölünce karanlık ruhlar yazısı, ardından Godot'nun ocağında uyanış. Geçici yağlar sıfırlanır, küller ve yükseltmeler kalır (`save.json`).
 
 ## Kontroller
