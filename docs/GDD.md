@@ -161,6 +161,26 @@ Karakterin modelleri değiştiğinde fizik veya kodların bozulmaması için kes
 5. **Öfke Modu (Berserk Rage):**
    * Hasar aldıkça ve verdikçe dolan bar. Açıldığında hareket ve saldırı hızı %50, hasar %100 artar; fakat can yavaşça tükenir.
 
+### Normal Düşman Çeşitliliği (Boss hariç):
+Mevcut tipler: tank, koşucu (charger), uzaktan ateş eden ve yer altından çıkan. Yeni tipler her biri oyuncuya farklı bir karar yükler:
+
+1. **Gölge Ruhları (Sürü):** Mühürün çektiği küçük hayaletler. Tek vuruşta ölür, 15-20'lik sürülerle gelir.
+   * *Yapışma:* Oyuncuya yapışır; yapışan her ruh oyuncuyu biraz daha yavaşlatır. Dash veya kılıç savuruşu ruhları silker. Kaldırma/fırlatma animasyonu yoktur.
+2. **İblis Tazıları:** 3-4'lük sürü. Oyuncunun etrafında döner, oyuncu başka düşmana vururken arkadan atlar.
+3. **Zırhlı Ölü Şövalye:** Kalkanı önden gelen kılıç vuruşunu engeller. Arkasına dash atmak ya da Top Gülesi ile zırhını kırmak gerekir.
+4. **Troll:** İri ve yavaş. Elinde büyük hitbox'lı bir sopa vardır; önceden belli olan geniş savurma ve yere vurma saldırıları yapar, oyuncu dash ile kaçar. Oyuncuyu yakalamaz.
+5. **Tarikatçı:** Kalabalığın arkasında durur ve sadece kendisiyle birlikte doğan bağlı sınıfı (örn. Zırhlı Ölü Şövalye) diriltebilir.
+   * Bağlı bir düşman ölünce cesedinden bir ruh çıkar ve tarikatçıya doğru süzülür; ulaşırsa o düşman yeniden doğar.
+   * Oyuncu ruhu yolda keser ya da doğrudan tarikatçıyı öldürür.
+   * Tarikatçı ölünce bağlı düşmanlar olduğu gibi kalır, sadece ölenler artık geri gelmez. Ruhlar cesetlere geri dönmez.
+6. **Et Yığını:** Tutulma'nın bozuk eti. Öldüğünde patlar ve zeminde kısa süre hasar veren bir alan bırakır.
+
+### Kaotik Savaş Ortamı (Kalabalık Ölçekleme):
+* **İki katmanlı kalabalık:** Oyuncuya az sayıda gerçek tehdit (tazı, şövalye, troll) vurur; etraf tek vuruşluk ruhlarla dolar.
+* **Saldırı hakkı (Attack Token):** Ekranda 40 düşman olsa bile aynı anda en fazla 3-4'ü saldırır.
+* **İlerleme:** Gece ve bölge ilerledikçe aynı anda yaşayan düşman sınırı 12'den 40'a kadar çıkar, düşmanlar birden fazla yönden gelir (`NightData` üzerinden).
+* **Performans:** Düşmanlar Instantiate/Destroy yerine havuzdan (Object Pool) gelir; ruhlar NavMeshAgent yerine basit takip hareketi kullanır.
+
 ---
 
 ## 5. Yazılım ve Sistem Mimarisi (Unity Best Practices)

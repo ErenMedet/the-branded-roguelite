@@ -12,36 +12,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53fbe0b80aabc384ebbff98f10fdacb3, type: 3}
   m_Name: Night_01
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Loop.NightData
-  duration: 90
-  waves:
-  - delay: 2
-    groups:
-    - prefab: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
-      count: 2
-    - prefab: {fileID: 5961566723288214502, guid: 84ba864dec8aa9847839674b944f720f, type: 3}
-      count: 1
-  - delay: 18
-    groups:
-    - prefab: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
-      count: 2
-    - prefab: {fileID: 7193334020381173516, guid: d8106670da350e3499bfc11a7838cc3a, type: 3}
-      count: 1
-  - delay: 18
-    groups:
-    - prefab: {fileID: 4434288737276503583, guid: bdacb98b73e363841860fa2c095674f7, type: 3}
-      count: 1
-    - prefab: {fileID: 5961566723288214502, guid: 84ba864dec8aa9847839674b944f720f, type: 3}
-      count: 2
-  - delay: 18
-    groups:
-    - prefab: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
-      count: 3
-    - prefab: {fileID: 7193334020381173516, guid: d8106670da350e3499bfc11a7838cc3a, type: 3}
-      count: 1
-    - prefab: {fileID: 4434288737276503583, guid: bdacb98b73e363841860fa2c095674f7, type: 3}
-      count: 1
-  morningDialogue: {fileID: 11400000, guid: f8e65a6803785634997b4fb06b757350, type: 2}
-  boonPool:
+  <Duration>k__BackingField: 90
+  <Waves>k__BackingField:
+  - <Delay>k__BackingField: 2
+    <Groups>k__BackingField:
+    - <Prefab>k__BackingField: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
+      <Count>k__BackingField: 2
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 5961566723288214502, guid: 84ba864dec8aa9847839674b944f720f, type: 3}
+      <Count>k__BackingField: 1
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 3000640402778259546, guid: 69bdf6d5114ac94449306b9d977b7548, type: 3}
+      <Count>k__BackingField: 6
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+  - <Delay>k__BackingField: 18
+    <Groups>k__BackingField:
+    - <Prefab>k__BackingField: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
+      <Count>k__BackingField: 2
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 7193334020381173516, guid: d8106670da350e3499bfc11a7838cc3a, type: 3}
+      <Count>k__BackingField: 1
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+  - <Delay>k__BackingField: 18
+    <Groups>k__BackingField:
+    - <Prefab>k__BackingField: {fileID: 4434288737276503583, guid: bdacb98b73e363841860fa2c095674f7, type: 3}
+      <Count>k__BackingField: 1
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 5961566723288214502, guid: 84ba864dec8aa9847839674b944f720f, type: 3}
+      <Count>k__BackingField: 2
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 3000640402778259546, guid: 69bdf6d5114ac94449306b9d977b7548, type: 3}
+      <Count>k__BackingField: 6
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+  - <Delay>k__BackingField: 18
+    <Groups>k__BackingField:
+    - <Prefab>k__BackingField: {fileID: 4550730765900124098, guid: 5de13e82900100c48825cb379f4f3130, type: 3}
+      <Count>k__BackingField: 3
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 7193334020381173516, guid: d8106670da350e3499bfc11a7838cc3a, type: 3}
+      <Count>k__BackingField: 1
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+    - <Prefab>k__BackingField: {fileID: 4434288737276503583, guid: bdacb98b73e363841860fa2c095674f7, type: 3}
+      <Count>k__BackingField: 1
+      <Escort>k__BackingField: {fileID: 0}
+      <EscortCount>k__BackingField: 0
+  <MorningDialogue>k__BackingField: {fileID: 11400000, guid: f8e65a6803785634997b4fb06b757350, type: 2}
+  <BoonPool>k__BackingField:
   - {fileID: 11400000, guid: a7711f40e0286a443beb2be18bc7d114, type: 2}
   - {fileID: 11400000, guid: 6d5f2788a7fff524cbd077a0a55fad64, type: 2}
   - {fileID: 11400000, guid: 68bafbdf758af2744ad620da0bb922fc, type: 2}

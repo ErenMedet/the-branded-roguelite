@@ -101,7 +101,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 ## Şu An Oyunda Neler Var
 
 - **Dövüş:** Input buffer'lı kılıç savurma (OverlapSphere taraması), i-frame'li dash, hitstop ve kamera sarsıntısı.
-- **Düşmanlar:** Oyuncunun etrafını saran NavMesh sürüsü; tank, koşucu, uzaktan ateş eden ve yer altından çıkan tipler. Can barları ilk vuruşa kadar gizli.
+- **Düşmanlar:** Oyuncunun etrafını saran NavMesh sürüsü; tank, koşucu, uzaktan ateş eden ve yer altından çıkan tipler; yapışıp yavaşlatan gölge ruhları, açık kollayan tazılar, önden kalkanlı şövalyeler, geniş sopalı troll, eskortlarını dirilten tarikatçı ve ölünce hasar alanı bırakan et yığını. Can barları ilk vuruşa kadar gizli.
 - **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
 - **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
 - **HUD:** Hasarı soluk bir izle gösteren can barı ve İblis Külü sayacı.
@@ -115,6 +115,8 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | `W A S D` / Ok tuşları | Hareket |
 | Fare | Nişan / bakış yönü |
 | Sol tık | Kılıç saldırısı |
+| Sağ tık (basılı) | Sol koldan seri tatar yayı (şarjör + reload) |
+| Orta tuş | Kol topu: kamp başına bir atış, yayı kırar, geri savurur |
 | `Space` | Atılma (dash) |
 | `E` | Etkileşim (kamp ateşi, Godo, Puck, mağara çıkışı) |
 | `Esc` / `E` | Yükseltme panelini kapat |
@@ -139,8 +141,9 @@ Assets/_Project/
 ├── Prefabs/       Oyuncu, düşmanlar, dünya objeleri, UI
 ├── Scenes/        Hub_GodoCave.unity, Greybox_Asama1.unity
 └── Scripts/
+    ├── Core/      GameEvents (sistemler arası olay kanalı)
     ├── Player/    Hareket, dash, girdi, kılıç, ölüm
-    ├── Combat/    IDamageable, HealthComponent, hitbox
+    ├── Combat/    IDamageable, HealthComponent, hitbox, Projectile
     ├── Enemies/   Düşman yapay zekâsı ve tipleri
     ├── Loop/      Gece/sabah döngüsü, dalgalar, kamp ateşi
     ├── Dialogue/  Diyalog verisi ve yöneticisi
@@ -151,6 +154,8 @@ Assets/_Project/
     ├── UI/        Can barı, güçlenme kartları, yükseltme paneli, ekran geçişleri
     └── DevTools/  Test amaçlı yardımcılar
 ```
+
+Kod kuralları: **[docs/CodeStyles.md](docs/CodeStyles.md)**
 
 ## Çalıştırma
 
