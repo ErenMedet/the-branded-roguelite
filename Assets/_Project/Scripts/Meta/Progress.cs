@@ -1,16 +1,15 @@
 using System;
 using System.IO;
+using Branded.Core;
 using UnityEngine;
 
 namespace Branded.Meta
 {
     // Permanent progress: demon ash and bought upgrade levels, kept in PlayerData as JSON on disk.
+    // Changes are announced through GameEvents.AshesChanged / UpgradesChanged.
     public static class Progress
     {
         static PlayerData _data;
-
-        public static event Action<int> AshesChanged;
-        public static event Action UpgradesChanged;
 
         static string FilePath => Path.Combine(Application.persistentDataPath, "save.json");
         static PlayerData Data => _data ??= Load();
@@ -21,13 +20,13 @@ namespace Branded.Meta
         {
             if (amount <= 0) return;
             Data.ashes += amount;
-            AshesChanged?.Invoke(Data.ashes);
+            GameEvents.RaiseAshesChanged(Data.ashes);
         }
 
         public static int LevelOf(UpgradeData upgrade)
         {
             foreach (var entry in Data.upgrades)
-                if (entry.id == upgrade.id) return entry.level;
+                if (entry.id == upgrade.Id) return entry.level;
             return 0;
         }
 
@@ -35,7 +34,7 @@ namespace Branded.Meta
         public static int NextCost(UpgradeData upgrade)
         {
             int level = LevelOf(upgrade);
-            return level < upgrade.MaxLevel ? upgrade.costs[level] : -1;
+            return level < upgrade.MaxLevel ? upgrade.Costs[level] : -1;
         }
 
         public static bool TryBuy(UpgradeData upgrade)
@@ -44,10 +43,10 @@ namespace Branded.Meta
             if (cost < 0 || Data.ashes < cost) return false;
 
             Data.ashes -= cost;
-            SetLevel(upgrade.id, LevelOf(upgrade) + 1);
+            SetLevel(upgrade.Id, LevelOf(upgrade) + 1);
             Save();
-            AshesChanged?.Invoke(Data.ashes);
-            UpgradesChanged?.Invoke();
+            GameEvents.RaiseAshesChanged(Data.ashes);
+            GameEvents.RaiseUpgradesChanged();
             return true;
         }
 
@@ -71,11 +70,11 @@ namespace Branded.Meta
         static void SetLevel(string id, int level)
         {
             foreach (var entry in Data.upgrades)
-                if (entry.id == id)
-                {
-                    entry.level = level;
-                    return;
-                }
+            {
+                if (entry.id != id) continue;
+                entry.level = level;
+                return;
+            }
             Data.upgrades.Add(new UpgradeLevel { id = id, level = level });
         }
 
@@ -84,8 +83,6 @@ namespace Branded.Meta
         static void ResetStatics()
         {
             _data = null;
-            AshesChanged = null;
-            UpgradesChanged = null;
             Application.quitting -= Save;
             Application.quitting += Save;
         }

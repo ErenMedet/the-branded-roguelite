@@ -5,7 +5,7 @@ namespace Branded.Combat
     // Freezes the game for a few frames on impact. Overlapping calls extend the freeze instead of stacking.
     public class HitStop : MonoBehaviour
     {
-        static HitStop _instance;
+        static HitStop _instanceComponent;
 
         float _resumeAt;
         bool _frozen;
@@ -13,13 +13,13 @@ namespace Branded.Combat
         public static void Trigger(float duration)
         {
             if (duration <= 0f) return;
-            if (!_instance)
+            if (!_instanceComponent)
             {
                 var go = new GameObject("[HitStop]");
                 DontDestroyOnLoad(go);
-                _instance = go.AddComponent<HitStop>();
+                _instanceComponent = go.AddComponent<HitStop>();
             }
-            _instance.Freeze(duration);
+            _instanceComponent.Freeze(duration);
         }
 
         void Freeze(float duration)
@@ -32,7 +32,8 @@ namespace Branded.Combat
 
         void Update()
         {
-            if (_frozen && Time.unscaledTime >= _resumeAt) Resume();
+            if (!_frozen || Time.unscaledTime < _resumeAt) return;
+            Resume();
         }
 
         void Resume()

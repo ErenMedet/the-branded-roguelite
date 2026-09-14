@@ -1,54 +1,57 @@
 using System.Collections;
+using Branded.Combat;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
     // Stops, charges a shot for a moment (glow at the hand), then fires a projectile at where the player stands.
     public class EnemyRangedAttack : EnemyAttack
     {
-        [SerializeField] EnemyChaser chaser;
-        [SerializeField] EnemyProjectile projectilePrefab;
-        [SerializeField] Transform muzzle;
-        [SerializeField] GameObject telegraph;
-        [SerializeField] float range = 12f;
-        [SerializeField] float windup = 0.6f;
-        [SerializeField] float cooldown = 2.2f;
-        [SerializeField] float damage = 10f;
+        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
+        [SerializeField, FormerlySerializedAs("projectilePrefab")] Projectile _projectilePrefabComponent;
+        [SerializeField, FormerlySerializedAs("muzzle")] Transform _muzzleComponent;
+        [SerializeField, FormerlySerializedAs("telegraph")] GameObject _telegraph;
+        [SerializeField, FormerlySerializedAs("range")] float _range = 12f;
+        [SerializeField, FormerlySerializedAs("windup")] float _windup = 0.6f;
+        [SerializeField, FormerlySerializedAs("cooldown")] float _cooldown = 2.2f;
+        [SerializeField, FormerlySerializedAs("damage")] float _damage = 10f;
 
         float _cooldownTimer;
 
         void Awake()
         {
-            if (!chaser) chaser = GetComponent<EnemyChaser>();
-            if (telegraph) telegraph.SetActive(false);
-            _cooldownTimer = cooldown * Random.Range(0.3f, 1f);
+            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
+            if (_telegraph) _telegraph.SetActive(false);
+            _cooldownTimer = _cooldown * Random.Range(0.3f, 1f);
         }
 
         void Update()
         {
             _cooldownTimer -= Time.deltaTime;
-            if (IsAttacking || _cooldownTimer > 0f || chaser.Halted || !chaser.Target) return;
-            if (chaser.DistanceToTarget <= range && chaser.HasLineOfSight()) StartCoroutine(Shoot());
+            if (IsAttacking || _cooldownTimer > 0f || _chaserComponent.Halted || !_chaserComponent.TargetComponent) return;
+            if (_chaserComponent.DistanceToTarget > _range || !_chaserComponent.HasLineOfSight()) return;
+            StartCoroutine(Shoot());
         }
 
         IEnumerator Shoot()
         {
             IsAttacking = true;
-            chaser.Halted = true;
-            if (telegraph) telegraph.SetActive(true);
-            for (float t = 0f; t < windup; t += Time.deltaTime)
+            _chaserComponent.Halted = true;
+            if (_telegraph) _telegraph.SetActive(true);
+            for (float t = 0f; t < _windup; t += Time.deltaTime)
             {
-                chaser.FaceTarget();
+                _chaserComponent.FaceTarget();
                 yield return null;
             }
-            if (telegraph) telegraph.SetActive(false);
+            if (_telegraph) _telegraph.SetActive(false);
 
-            Vector3 aim = chaser.Target.position - muzzle.position;
+            Vector3 aim = _chaserComponent.TargetComponent.position - _muzzleComponent.position;
             aim.y = 0f;
             if (aim.sqrMagnitude > 0.01f)
             {
-                var projectile = Instantiate(projectilePrefab, muzzle.position, Quaternion.LookRotation(aim));
-                projectile.Launch(damage);
+                var projectile = Instantiate(_projectilePrefabComponent, _muzzleComponent.position, Quaternion.LookRotation(aim));
+                projectile.Launch(_damage);
             }
             Finish();
         }
@@ -57,15 +60,15 @@ namespace Branded.Enemies
         {
             if (!IsAttacking) return;
             StopAllCoroutines();
-            if (telegraph) telegraph.SetActive(false);
+            if (_telegraph) _telegraph.SetActive(false);
             Finish();
         }
 
         void Finish()
         {
             IsAttacking = false;
-            chaser.Halted = false;
-            _cooldownTimer = cooldown;
+            _chaserComponent.Halted = false;
+            _cooldownTimer = _cooldown;
         }
 
         void OnDisable() => Interrupt();

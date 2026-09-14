@@ -1,68 +1,71 @@
-using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.Combat
 {
     // Event-driven health. UI, effects and death logic listen to the events; nothing polls this.
     public class HealthComponent : MonoBehaviour, IDamageable
     {
-        public float maxHealth = 100f;
-        public float currentHealth;
+        [field: SerializeField, FormerlySerializedAs("maxHealth")] public float MaxHealth { get; private set; } = 100f;
+        public float CurrentHealth { get; private set; }
 
-        public bool IsDead => currentHealth <= 0f;
+        public bool IsDead => CurrentHealth <= 0f;
 
-        public event Action<float, float> OnHealthChanged; // (current, max)
-        public event Action<float, Vector3> OnDamaged;     // (amount, hitDirection)
-        public event Action OnDeath;
+        public event UnityAction<float, float> HealthChanged; // (current, max)
+        public event UnityAction<float, Vector3> Damaged;     // (amount, hitDirection)
+        public event UnityAction Died;
 
         IInvulnerabilitySource[] _invulnerabilitySources;
+        IDamageBlocker[] _damageBlockers;
 
         void Awake()
         {
-            currentHealth = maxHealth;
+            CurrentHealth = MaxHealth;
             _invulnerabilitySources = GetComponents<IInvulnerabilitySource>();
+            _damageBlockers = GetComponents<IDamageBlocker>();
         }
 
         public void TakeDamage(float amount, Vector3 hitDirection)
         {
-            if (!CanBeHurt(amount)) return;
+            if (!CanBeHurt(amount) || IsBlocked(amount, hitDirection)) return;
 
-            currentHealth = Mathf.Max(0f, currentHealth - amount);
-            OnDamaged?.Invoke(amount, hitDirection);
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            if (currentHealth <= 0f) OnDeath?.Invoke();
+            CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
+            Damaged?.Invoke(amount, hitDirection);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            if (IsDead) Died?.Invoke();
         }
 
-        // Damage over time (e.g. burn): lowers health without OnDamaged, so it doesn't flash or stagger.
+        // Damage over time (e.g. burn): lowers health without Damaged, so it doesn't flash or stagger.
         public void TakeTickDamage(float amount)
         {
             if (!CanBeHurt(amount)) return;
 
-            currentHealth = Mathf.Max(0f, currentHealth - amount);
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            if (currentHealth <= 0f) OnDeath?.Invoke();
+            CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            if (IsDead) Died?.Invoke();
         }
 
         public void Heal(float amount)
         {
             if (IsDead || amount <= 0f) return;
-            currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
         // Permanent upgrades change the cap; the bar starts full at the new size.
         public void SetMaxHealth(float max)
         {
-            maxHealth = Mathf.Max(1f, max);
-            currentHealth = maxHealth;
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            MaxHealth = Mathf.Max(1f, max);
+            CurrentHealth = MaxHealth;
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
         // Death Defiance: back from zero on the spot.
         public void Revive(float amount)
         {
-            currentHealth = Mathf.Clamp(amount, 1f, maxHealth);
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            CurrentHealth = Mathf.Clamp(amount, 1f, MaxHealth);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
         bool CanBeHurt(float amount)
@@ -71,6 +74,14 @@ namespace Branded.Combat
             foreach (var source in _invulnerabilitySources)
                 if (source.IsInvulnerable) return false;
             return true;
+        }
+
+        // Only direct hits are checked: damage over time has no direction to block.
+        bool IsBlocked(float amount, Vector3 hitDirection)
+        {
+            foreach (var blocker in _damageBlockers)
+                if (blocker.Blocks(amount, hitDirection)) return true;
+            return false;
         }
     }
 }

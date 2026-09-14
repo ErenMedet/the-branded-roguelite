@@ -1,23 +1,32 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
     // Follows the player on the NavMesh. Melee enemies walk to a reserved slot around the player
     // (EnemySlotRing) so groups surround the player instead of lining up behind each other.
-    // Ranged enemies set keepDistance and hold that range instead.
+    // Ranged enemies set _keepDistance and hold that range instead.
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyChaser : MonoBehaviour
     {
-        [SerializeField] float repathInterval = 0.2f;
-        [SerializeField] float stopDistance = 1.6f;
-        [SerializeField] float turnSpeed = 540f;
+        [SerializeField, FormerlySerializedAs("repathInterval")] float _repathInterval = 0.2f;
+        [SerializeField, FormerlySerializedAs("stopDistance")] float _stopDistance = 1.6f;
+        [SerializeField, FormerlySerializedAs("turnSpeed")] float _turnSpeed = 540f;
         [Tooltip("> 0: hold this distance from the player instead of taking a ring slot.")]
-        [SerializeField] float keepDistance = 0f;
-        [SerializeField] LayerMask sightBlockers = 1; // Default: level geometry (and the player, who counts as visible)
+        [SerializeField, FormerlySerializedAs("keepDistance")] float _keepDistance = 0f;
+        [SerializeField, FormerlySerializedAs("sightBlockers")] LayerMask _sightBlockers = 1; // Default: level geometry (and the player, who counts as visible)
+        [Tooltip("Off: run straight at the player without taking a ring slot (latching spirits).")]
+        [SerializeField] bool _useSlotRing = true;
 
-        public Transform Target { get; private set; }
-        public float StopDistance => stopDistance;
+        [Header("Orbit")]
+        [Tooltip("> 0: circle the player at this radius instead of closing in (hounds waiting for an opening).")]
+        [SerializeField] float _orbitRadius = 0f;
+        [Tooltip("Degrees per second around the player.")]
+        [SerializeField] float _orbitSpeed = 60f;
+
+        public Transform TargetComponent { get; private set; }
+        public float StopDistance => _stopDistance;
 
         // Attack windups and knockback pause the chase through this.
         public bool Halted { get; set; }
@@ -26,40 +35,43 @@ namespace Branded.Enemies
         {
             get
             {
-                if (!Target) return float.MaxValue;
-                Vector3 offset = Target.position - transform.position;
+                if (!TargetComponent) return float.MaxValue;
+                Vector3 offset = TargetComponent.position - transform.position;
                 offset.y = 0f;
                 return offset.magnitude;
             }
         }
 
-        public bool InRange => DistanceToTarget <= stopDistance + 0.15f;
+        public bool InRange => DistanceToTarget <= _stopDistance + 0.15f;
 
-        NavMeshAgent _agent;
-        EnemySlotRing _ring;
+        NavMeshAgent _navMeshAgentComponent;
+        EnemySlotRing _slotRingComponent;
         float _repathTimer;
+        float _orbitSign;
 
         void Awake()
         {
-            _agent = GetComponent<NavMeshAgent>();
-            _agent.stoppingDistance = stopDistance;
-            _agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
-            _agent.avoidancePriority = Random.Range(30, 70);
+            _navMeshAgentComponent = GetComponent<NavMeshAgent>();
+            _navMeshAgentComponent.stoppingDistance = _stopDistance;
+            _navMeshAgentComponent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            _navMeshAgentComponent.avoidancePriority = Random.Range(30, 70);
+            _orbitSign = Random.value < 0.5f ? -1f : 1f;
         }
 
         void Start()
         {
             var player = GameObject.FindWithTag("Player");
             if (!player) return;
-            Target = player.transform;
-            if (keepDistance > 0f)
+            TargetComponent = player.transform;
+            if (_keepDistance > 0f || _orbitRadius > 0f)
             {
-                _agent.stoppingDistance = 0.3f;
+                _navMeshAgentComponent.stoppingDistance = 0.3f;
                 return;
             }
-            _ring = player.GetComponent<EnemySlotRing>();
+            if (!_useSlotRing) return;
+            _slotRingComponent = player.GetComponent<EnemySlotRing>();
             // With a ring the destination is the slot itself, so walk all the way onto it.
-            if (_ring) _agent.stoppingDistance = 0.1f;
+            if (_slotRingComponent) _navMeshAgentComponent.stoppingDistance = 0.1f;
         }
 
         void OnDisable() => ReleaseSlot();
@@ -67,58 +79,76 @@ namespace Branded.Enemies
         // Lets a teleporting enemy pick the slot nearest to where it reappears.
         public void ReleaseSlot()
         {
-            if (_ring) _ring.Release(this);
+            if (!_slotRingComponent) return;
+            _slotRingComponent.Release(this);
         }
 
         void Update()
         {
-            if (!Target || !_agent.enabled || !_agent.isOnNavMesh) return;
+            if (!TargetComponent || !_navMeshAgentComponent.enabled || !_navMeshAgentComponent.isOnNavMesh) return;
 
-            _agent.isStopped = Halted;
+            _navMeshAgentComponent.isStopped = Halted;
             if (Halted) return;
 
             _repathTimer -= Time.deltaTime;
             if (_repathTimer <= 0f)
             {
-                _repathTimer = repathInterval;
-                _agent.SetDestination(PickDestination());
+                _repathTimer = _repathInterval;
+                _navMeshAgentComponent.SetDestination(PickDestination());
             }
 
-            bool arrived = !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance + 0.2f;
+            bool arrived = !_navMeshAgentComponent.pathPending && _navMeshAgentComponent.remainingDistance <= _navMeshAgentComponent.stoppingDistance + 0.2f;
             if (InRange || arrived) FaceTarget();
         }
 
         Vector3 PickDestination()
         {
-            if (keepDistance <= 0f) return _ring ? _ring.GetDestination(this) : Target.position;
+            if (_orbitRadius > 0f) return OrbitPoint();
+            if (_keepDistance <= 0f) return _slotRingComponent ? _slotRingComponent.GetDestination(this) : TargetComponent.position;
 
             // No clear shot: close in until there is one.
-            if (!HasLineOfSight()) return Target.position;
+            if (!HasLineOfSight()) return TargetComponent.position;
 
-            Vector3 away = transform.position - Target.position;
+            Vector3 away = transform.position - TargetComponent.position;
             away.y = 0f;
             if (away.sqrMagnitude < 0.01f) away = Vector3.forward;
-            Vector3 spot = Target.position + away.normalized * keepDistance;
-            return NavMesh.SamplePosition(spot, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : Target.position;
+            Vector3 spot = TargetComponent.position + away.normalized * _keepDistance;
+            return NavMesh.SamplePosition(spot, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : TargetComponent.position;
+        }
+
+        // A point a little ahead along the circle, so the agent keeps moving around the player.
+        Vector3 OrbitPoint()
+        {
+            Vector3 away = transform.position - TargetComponent.position;
+            away.y = 0f;
+            if (away.sqrMagnitude < 0.01f) away = Vector3.forward;
+
+            float step = _orbitSpeed * _repathInterval * 3f * _orbitSign;
+            Vector3 spot = TargetComponent.position + Quaternion.Euler(0f, step, 0f) * away.normalized * _orbitRadius;
+            if (NavMesh.SamplePosition(spot, out NavMeshHit hit, 1.5f, NavMesh.AllAreas)) return hit.position;
+
+            // Blocked by a wall: go around the other way.
+            _orbitSign = -_orbitSign;
+            return transform.position;
         }
 
         public bool HasLineOfSight()
         {
-            if (!Target) return false;
+            if (!TargetComponent) return false;
             Vector3 from = transform.position + Vector3.up;
-            Vector3 to = Target.position + Vector3.up;
-            if (!Physics.Linecast(from, to, out RaycastHit hit, sightBlockers, QueryTriggerInteraction.Ignore)) return true;
-            return hit.transform == Target || hit.transform.IsChildOf(Target);
+            Vector3 to = TargetComponent.position + Vector3.up;
+            if (!Physics.Linecast(from, to, out RaycastHit hit, _sightBlockers, QueryTriggerInteraction.Ignore)) return true;
+            return hit.transform == TargetComponent || hit.transform.IsChildOf(TargetComponent);
         }
 
         public void FaceTarget()
         {
-            if (!Target) return;
-            Vector3 direction = Target.position - transform.position;
+            if (!TargetComponent) return;
+            Vector3 direction = TargetComponent.position - transform.position;
             direction.y = 0f;
             if (direction.sqrMagnitude < 0.001f) return;
             Quaternion look = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, look, turnSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, look, _turnSpeed * Time.deltaTime);
         }
     }
 }

@@ -1,33 +1,34 @@
-using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
     // Sword swing timing with an input buffer: a press shortly before the player is free again still fires.
     public class PlayerCombat : MonoBehaviour
     {
-        public enum SwingPhase { None, Windup, Active, Recovery }
+        public enum ESwingPhase { None, Windup, Active, Recovery }
 
         [Header("References")]
-        [SerializeField] PlayerInputReader input;
-        [SerializeField] PlayerMotor motor;
-        [SerializeField] PlayerAim aim;
+        [SerializeField, FormerlySerializedAs("input")] PlayerInputReader _inputComponent;
+        [SerializeField, FormerlySerializedAs("motor")] PlayerMotor _motorComponent;
+        [SerializeField, FormerlySerializedAs("aim")] PlayerAim _aimComponent;
 
         [Header("Swing timing (seconds)")]
-        [SerializeField] float windup = 0.08f;
-        [SerializeField] float active = 0.12f;
-        [SerializeField] float recovery = 0.22f;
-        [SerializeField] float inputBufferTime = 0.2f;
+        [SerializeField, FormerlySerializedAs("windup")] float _windup = 0.08f;
+        [SerializeField, FormerlySerializedAs("active")] float _active = 0.12f;
+        [SerializeField, FormerlySerializedAs("recovery")] float _recovery = 0.22f;
+        [SerializeField, FormerlySerializedAs("inputBufferTime")] float _inputBufferTime = 0.2f;
 
         [Header("Movement")]
-        [SerializeField, Range(0f, 1f)] float moveSpeedWhileSwinging = 0.25f;
+        [SerializeField, Range(0f, 1f), FormerlySerializedAs("moveSpeedWhileSwinging")] float _moveSpeedWhileSwinging = 0.25f;
 
-        public SwingPhase Phase { get; private set; }
+        public ESwingPhase Phase { get; private set; }
         public float PhaseProgress => _phaseDuration > 0f ? Mathf.Clamp01(_phaseTimer / _phaseDuration) : 0f;
 
-        public event Action SwingStarted;
-        public event Action SwingActive;   // hit frame: Aşama 2 hitbox scan hooks in here
-        public event Action SwingEnded;
+        public event UnityAction SwingStarted;
+        public event UnityAction SwingActive; // hit frame: SwordHitbox scans here
+        public event UnityAction SwingEnded;
 
         float _bufferTimer;
         float _phaseTimer;
@@ -35,42 +36,42 @@ namespace Branded.Player
 
         void Awake()
         {
-            if (!input) input = GetComponent<PlayerInputReader>();
-            if (!motor) motor = GetComponent<PlayerMotor>();
-            if (!aim) aim = GetComponent<PlayerAim>();
+            if (!_inputComponent) _inputComponent = GetComponent<PlayerInputReader>();
+            if (!_motorComponent) _motorComponent = GetComponent<PlayerMotor>();
+            if (!_aimComponent) _aimComponent = GetComponent<PlayerAim>();
         }
 
         void OnEnable()
         {
-            input.AttackPressed += BufferAttack;
-            motor.DashStarted += CancelSwing;
+            _inputComponent.AttackPressed += OnAttackPressed;
+            _motorComponent.DashStarted += OnDashStarted;
         }
 
         void OnDisable()
         {
-            input.AttackPressed -= BufferAttack;
-            motor.DashStarted -= CancelSwing;
+            _inputComponent.AttackPressed -= OnAttackPressed;
+            _motorComponent.DashStarted -= OnDashStarted;
         }
 
         void Update()
         {
             _bufferTimer -= Time.deltaTime;
 
-            if (Phase != SwingPhase.None) TickPhase(Time.deltaTime);
+            if (Phase != ESwingPhase.None) TickPhase(Time.deltaTime);
 
-            if (Phase == SwingPhase.None && !motor.IsDashing && _bufferTimer > 0f)
-                StartSwing();
+            if (Phase != ESwingPhase.None || _motorComponent.IsDashing || _bufferTimer <= 0f) return;
+            StartSwing();
         }
 
-        void BufferAttack() => _bufferTimer = inputBufferTime;
+        void OnAttackPressed() => _bufferTimer = _inputBufferTime;
 
         void StartSwing()
         {
             _bufferTimer = 0f;
-            aim.SnapToAim();
-            aim.RotationLocked = true;
-            motor.SpeedMultiplier = moveSpeedWhileSwinging;
-            EnterPhase(SwingPhase.Windup, windup);
+            _aimComponent.SnapToAim();
+            _aimComponent.RotationLocked = true;
+            _motorComponent.SpeedMultiplier = _moveSpeedWhileSwinging;
+            EnterPhase(ESwingPhase.Windup, _windup);
             SwingStarted?.Invoke();
         }
 
@@ -81,20 +82,20 @@ namespace Branded.Player
 
             switch (Phase)
             {
-                case SwingPhase.Windup:
-                    EnterPhase(SwingPhase.Active, active);
+                case ESwingPhase.Windup:
+                    EnterPhase(ESwingPhase.Active, _active);
                     SwingActive?.Invoke();
                     break;
-                case SwingPhase.Active:
-                    EnterPhase(SwingPhase.Recovery, recovery);
+                case ESwingPhase.Active:
+                    EnterPhase(ESwingPhase.Recovery, _recovery);
                     break;
-                case SwingPhase.Recovery:
+                case ESwingPhase.Recovery:
                     EndSwing();
                     break;
             }
         }
 
-        void EnterPhase(SwingPhase phase, float duration)
+        void EnterPhase(ESwingPhase phase, float duration)
         {
             Phase = phase;
             _phaseTimer = 0f;
@@ -102,18 +103,19 @@ namespace Branded.Player
         }
 
         // Dash cancels the swing; an attack pressed during the dash stays buffered.
-        void CancelSwing()
+        void OnDashStarted()
         {
-            if (Phase != SwingPhase.None) EndSwing();
+            if (Phase == ESwingPhase.None) return;
+            EndSwing();
         }
 
         void EndSwing()
         {
-            Phase = SwingPhase.None;
+            Phase = ESwingPhase.None;
             _phaseTimer = 0f;
             _phaseDuration = 0f;
-            aim.RotationLocked = false;
-            motor.SpeedMultiplier = 1f;
+            _aimComponent.RotationLocked = false;
+            _motorComponent.SpeedMultiplier = 1f;
             SwingEnded?.Invoke();
         }
     }

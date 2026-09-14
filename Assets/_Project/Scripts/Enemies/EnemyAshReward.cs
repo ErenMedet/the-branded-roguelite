@@ -1,6 +1,7 @@
 using Branded.Combat;
 using Branded.Meta;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
@@ -8,17 +9,17 @@ namespace Branded.Enemies
     // Evaporating at dawn isn't a kill and gives nothing.
     public class EnemyAshReward : MonoBehaviour
     {
-        [SerializeField] HealthComponent health;
-        [SerializeField] int ashes = 1;
+        [SerializeField, FormerlySerializedAs("health")] HealthComponent _healthComponent;
+        [SerializeField, FormerlySerializedAs("ashes")] int _ashes = 1;
 
         void Awake()
         {
-            if (!health) health = GetComponent<HealthComponent>();
+            if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
         }
 
-        void OnEnable() => health.OnDeath += Reward;
-        void OnDisable() => health.OnDeath -= Reward;
+        void OnEnable() => _healthComponent.Died += OnDied;
+        void OnDisable() => _healthComponent.Died -= OnDied;
 
-        void Reward() => Progress.AddAshes(ashes);
+        void OnDied() => Progress.AddAshes(_ashes);
     }
 }

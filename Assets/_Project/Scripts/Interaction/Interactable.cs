@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Interaction
 {
@@ -9,12 +10,12 @@ namespace Branded.Interaction
         static readonly List<Interactable> _all = new();
         public static IReadOnlyList<Interactable> All => _all;
 
-        [SerializeField] float interactRadius = 2.5f;
-        [SerializeField] string prompt = "Kullan";
-        [SerializeField] float promptHeight = 1.6f;
+        [SerializeField, FormerlySerializedAs("interactRadius")] float _interactRadius = 2.5f;
+        [SerializeField, FormerlySerializedAs("prompt")] string _prompt = "Kullan";
+        [SerializeField, FormerlySerializedAs("promptHeight")] float _promptHeight = 1.6f;
 
-        public string Prompt => prompt;
-        public Vector3 PromptPosition => transform.position + Vector3.up * promptHeight;
+        public string Prompt => _prompt;
+        public Vector3 PromptPosition => transform.position + Vector3.up * _promptHeight;
         public virtual bool IsAvailable => true;
 
         protected virtual void OnEnable() => _all.Add(this);
@@ -26,7 +27,7 @@ namespace Branded.Interaction
             Vector3 offset = position - transform.position;
             offset.y = 0f;
             float sqr = offset.sqrMagnitude;
-            return sqr <= interactRadius * interactRadius ? sqr : -1f;
+            return sqr <= _interactRadius * _interactRadius ? sqr : -1f;
         }
 
         public abstract void Interact(PlayerInteractor user);

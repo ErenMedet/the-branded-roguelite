@@ -1,6 +1,7 @@
-using System;
 using Branded.Combat;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
@@ -9,52 +10,54 @@ namespace Branded.Player
     public class PlayerMotor : MonoBehaviour, IInvulnerabilitySource
     {
         [Header("References")]
-        [SerializeField] PlayerInputReader input;
-        [SerializeField] PlayerAim aim;
+        [SerializeField, FormerlySerializedAs("input")] PlayerInputReader _inputComponent;
+        [SerializeField, FormerlySerializedAs("aim")] PlayerAim _aimComponent;
         [Tooltip("Movement is relative to this camera. Empty = Camera.main.")]
-        [SerializeField] Transform cameraTransform;
+        [SerializeField, FormerlySerializedAs("cameraTransform")] Transform _cameraTransformComponent;
 
         [Header("Movement")]
-        [SerializeField] float moveSpeed = 7f;
-        [SerializeField] float acceleration = 70f;
-        [SerializeField] float gravity = -25f;
+        [SerializeField, FormerlySerializedAs("moveSpeed")] float _moveSpeed = 7f;
+        [SerializeField, FormerlySerializedAs("acceleration")] float _acceleration = 70f;
+        [SerializeField, FormerlySerializedAs("gravity")] float _gravity = -25f;
 
         [Header("Dash")]
-        [SerializeField] float dashDistance = 5f;
-        [SerializeField] float dashDuration = 0.2f;
-        [SerializeField] float dashCooldown = 0.35f;
-        [SerializeField] float invulnerabilityDuration = 0.2f;
+        [SerializeField, FormerlySerializedAs("dashDistance")] float _dashDistance = 5f;
+        [SerializeField, FormerlySerializedAs("dashDuration")] float _dashDuration = 0.2f;
+        [SerializeField, FormerlySerializedAs("dashCooldown")] float _dashCooldown = 0.35f;
+        [SerializeField, FormerlySerializedAs("invulnerabilityDuration")] float _invulnerabilityDuration = 0.2f;
 
         public bool IsDashing => _dashTimer > 0f;
         public bool IsInvulnerable => _iFrameTimer > 0f;
-        public Vector3 DashDirection => _dashDirection;
-        public Vector3 PlanarVelocity => _planarVelocity;
+        public Vector3 DashDirection { get; private set; } = Vector3.forward;
+        public Vector3 PlanarVelocity { get; private set; }
 
-        // Other systems (e.g. combat) scale movement through this, never by touching moveSpeed.
+        // Other systems (e.g. combat) scale movement through this, never by touching _moveSpeed.
         public float SpeedMultiplier { get; set; } = 1f;
+        // Latched spirits slow walking through this; kept apart from SpeedMultiplier so combat can't overwrite it.
+        public float SlowMultiplier { get; set; } = 1f;
         // Boons shorten the dash cooldown through this.
         public float DashCooldownMultiplier { get; set; } = 1f;
 
-        public event Action DashStarted;
-        public event Action DashEnded;
+        public event UnityAction DashStarted;
+        public event UnityAction DashEnded;
 
-        CharacterController _controller;
-        Vector3 _planarVelocity;
+        CharacterController _characterControllerComponent;
         float _verticalVelocity;
-        Vector3 _dashDirection = Vector3.forward;
         float _dashTimer;
         float _cooldownTimer;
         float _iFrameTimer;
+        Vector3 _pushVelocity;
+        float _pushTimer;
 
         void Awake()
         {
-            _controller = GetComponent<CharacterController>();
-            if (!input) input = GetComponent<PlayerInputReader>();
-            if (!aim) aim = GetComponent<PlayerAim>();
+            _characterControllerComponent = GetComponent<CharacterController>();
+            if (!_inputComponent) _inputComponent = GetComponent<PlayerInputReader>();
+            if (!_aimComponent) _aimComponent = GetComponent<PlayerAim>();
         }
 
-        void OnEnable() => input.DashPressed += TryDash;
-        void OnDisable() => input.DashPressed -= TryDash;
+        void OnEnable() => _inputComponent.DashPressed += OnDashPressed;
+        void OnDisable() => _inputComponent.DashPressed -= OnDashPressed;
 
         void Update()
         {
@@ -62,52 +65,71 @@ namespace Branded.Player
             _cooldownTimer -= dt;
             _iFrameTimer -= dt;
 
-            Vector3 motion;
-            if (IsDashing)
-            {
-                _dashTimer -= dt;
-                motion = _dashDirection * (dashDistance / dashDuration);
-                if (_dashTimer <= 0f)
-                {
-                    _planarVelocity = _dashDirection * moveSpeed * SpeedMultiplier;
-                    DashEnded?.Invoke();
-                }
-            }
-            else
-            {
-                Vector3 target = CameraRelative(input.Move) * (moveSpeed * SpeedMultiplier);
-                _planarVelocity = Vector3.MoveTowards(_planarVelocity, target, acceleration * dt);
-                motion = _planarVelocity;
-            }
+            Vector3 motion = IsDashing ? DashMotion(dt) : _pushTimer > 0f ? PushMotion(dt) : WalkMotion(dt);
 
-            if (_controller.isGrounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
-            _verticalVelocity += gravity * dt;
+            if (_characterControllerComponent.isGrounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
+            _verticalVelocity += _gravity * dt;
             motion.y = _verticalVelocity;
 
-            _controller.Move(motion * dt);
+            _characterControllerComponent.Move(motion * dt);
         }
 
-        void TryDash()
+        Vector3 DashMotion(float dt)
+        {
+            _dashTimer -= dt;
+            Vector3 motion = DashDirection * (_dashDistance / _dashDuration);
+            if (_dashTimer > 0f) return motion;
+
+            PlanarVelocity = DashDirection * _moveSpeed * SpeedMultiplier;
+            DashEnded?.Invoke();
+            return motion;
+        }
+
+        Vector3 PushMotion(float dt)
+        {
+            _pushTimer -= dt;
+            PlanarVelocity = Vector3.zero;
+            return _pushVelocity;
+        }
+
+        // Forced motion from outside (cannon recoil): overrides walking like a dash, but grants no i-frames.
+        public void Push(Vector3 direction, float distance, float duration)
+        {
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f || duration <= 0f) return;
+            _pushVelocity = direction.normalized * (distance / duration);
+            _pushTimer = duration;
+        }
+
+        Vector3 WalkMotion(float dt)
+        {
+            Vector3 target = CameraRelative(_inputComponent.Move) * (_moveSpeed * SpeedMultiplier * SlowMultiplier);
+            PlanarVelocity = Vector3.MoveTowards(PlanarVelocity, target, _acceleration * dt);
+            return PlanarVelocity;
+        }
+
+        void OnDashPressed()
         {
             if (IsDashing || _cooldownTimer > 0f) return;
 
-            Vector3 direction = CameraRelative(input.Move);
-            if (direction.sqrMagnitude < 0.01f) direction = aim ? aim.AimDirection : transform.forward;
+            Vector3 direction = CameraRelative(_inputComponent.Move);
+            if (direction.sqrMagnitude < 0.01f) direction = _aimComponent ? _aimComponent.AimDirection : transform.forward;
 
-            _dashDirection = direction.normalized;
-            _dashTimer = dashDuration;
-            _cooldownTimer = dashDuration + dashCooldown * DashCooldownMultiplier;
-            _iFrameTimer = invulnerabilityDuration;
+            DashDirection = direction.normalized;
+            _dashTimer = _dashDuration;
+            _pushTimer = 0f;
+            _cooldownTimer = _dashDuration + _dashCooldown * DashCooldownMultiplier;
+            _iFrameTimer = _invulnerabilityDuration;
             DashStarted?.Invoke();
         }
 
         Vector3 CameraRelative(Vector2 move)
         {
-            if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
-            if (!cameraTransform) return new Vector3(move.x, 0f, move.y);
+            if (!_cameraTransformComponent && Camera.main) _cameraTransformComponent = Camera.main.transform;
+            if (!_cameraTransformComponent) return new Vector3(move.x, 0f, move.y);
 
-            Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-            Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+            Vector3 forward = Vector3.ProjectOnPlane(_cameraTransformComponent.forward, Vector3.up).normalized;
+            Vector3 right = Vector3.ProjectOnPlane(_cameraTransformComponent.right, Vector3.up).normalized;
             return forward * move.y + right * move.x;
         }
     }

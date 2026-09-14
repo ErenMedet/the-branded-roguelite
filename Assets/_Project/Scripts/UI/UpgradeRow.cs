@@ -1,39 +1,42 @@
-using System;
 using Branded.Meta;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.UI
 {
     // One upgrade in the hub panel: name, effect, level, price and the buy button.
     public class UpgradeRow : MonoBehaviour
     {
-        [SerializeField] TMP_Text title;
-        [SerializeField] TMP_Text description;
-        [SerializeField] TMP_Text level;
-        [SerializeField] TMP_Text cost;
-        [SerializeField] UnityEngine.UI.Button buyButton;
+        [SerializeField, FormerlySerializedAs("title")] TMP_Text _titleComponent;
+        [SerializeField, FormerlySerializedAs("description")] TMP_Text _descriptionComponent;
+        [SerializeField, FormerlySerializedAs("level")] TMP_Text _levelComponent;
+        [SerializeField, FormerlySerializedAs("cost")] TMP_Text _costComponent;
+        [SerializeField, FormerlySerializedAs("buyButton")] UnityEngine.UI.Button _buyButtonComponent;
 
         UpgradeData _upgrade;
-        Action<UpgradeData> _onBuy;
+        UnityAction<UpgradeData> _buyClicked;
 
-        void Awake() => buyButton.onClick.AddListener(() => _onBuy?.Invoke(_upgrade));
+        void Awake() => _buyButtonComponent.onClick.AddListener(OnBuyButtonClicked);
 
-        public void Show(UpgradeData upgrade, Action<UpgradeData> onBuy)
+        void OnBuyButtonClicked() => _buyClicked?.Invoke(_upgrade);
+
+        public void Show(UpgradeData upgrade, UnityAction<UpgradeData> buyClicked)
         {
             _upgrade = upgrade;
-            _onBuy = onBuy;
-            title.text = upgrade.upgradeName;
-            description.text = upgrade.description;
+            _buyClicked = buyClicked;
+            _titleComponent.text = upgrade.UpgradeName;
+            _descriptionComponent.text = upgrade.Description;
             Refresh();
         }
 
         public void Refresh()
         {
             int price = Progress.NextCost(_upgrade);
-            level.text = $"Seviye {Progress.LevelOf(_upgrade)} / {_upgrade.MaxLevel}";
-            cost.text = price < 0 ? "Tamamlandı" : $"{price} Kül";
-            buyButton.interactable = price >= 0 && Progress.Ashes >= price;
+            _levelComponent.text = $"Seviye {Progress.LevelOf(_upgrade)} / {_upgrade.MaxLevel}";
+            _costComponent.text = price < 0 ? "Tamamlandı" : $"{price} Kül";
+            _buyButtonComponent.interactable = price >= 0 && Progress.Ashes >= price;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Branded.Combat
     {
         const float TickInterval = 0.5f;
 
-        HealthComponent _health;
+        HealthComponent _healthComponent;
         float _damagePerSecond;
         float _remaining;
         float _tickTimer;
@@ -18,7 +18,7 @@ namespace Branded.Combat
             if (!target.TryGetComponent(out BurnStatus burn))
             {
                 burn = target.gameObject.AddComponent<BurnStatus>();
-                burn._health = target;
+                burn._healthComponent = target;
             }
             if (!burn.enabled || burn._remaining <= 0f) burn._tickTimer = TickInterval;
             burn._damagePerSecond = Mathf.Max(burn._damagePerSecond, damagePerSecond);
@@ -33,9 +33,9 @@ namespace Branded.Combat
             if (_tickTimer <= 0f)
             {
                 _tickTimer = TickInterval;
-                _health.TakeTickDamage(_damagePerSecond * TickInterval);
+                _healthComponent.TakeTickDamage(_damagePerSecond * TickInterval);
             }
-            if (_remaining > 0f && !_health.IsDead) return;
+            if (_remaining > 0f && !_healthComponent.IsDead) return;
             _damagePerSecond = 0f;
             enabled = false;
         }

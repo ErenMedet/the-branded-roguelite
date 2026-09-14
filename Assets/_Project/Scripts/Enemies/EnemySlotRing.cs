@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
@@ -9,23 +10,23 @@ namespace Branded.Enemies
     // Enemies that don't fit on the inner ring wait on the outer ring until an inner slot frees up.
     public class EnemySlotRing : MonoBehaviour
     {
-        [SerializeField] int innerSlots = 6;
-        [SerializeField] float innerRadius = 1.6f;
-        [SerializeField] int outerSlots = 10;
-        [SerializeField] float outerRadius = 3.8f;
+        [SerializeField, FormerlySerializedAs("innerSlots")] int _innerSlots = 6;
+        [SerializeField, FormerlySerializedAs("innerRadius")] float _innerRadius = 1.6f;
+        [SerializeField, FormerlySerializedAs("outerSlots")] int _outerSlots = 10;
+        [SerializeField, FormerlySerializedAs("outerRadius")] float _outerRadius = 3.8f;
         [Tooltip("A free inner slot must be this much closer before a chaser switches to it.")]
-        [SerializeField] float switchMargin = 1f;
+        [SerializeField, FormerlySerializedAs("switchMargin")] float _switchMargin = 1f;
 
         Vector3[] _offsets;
-        EnemyChaser[] _owners;
+        EnemyChaser[] _ownerComponents;
 
         void Awake()
         {
-            int total = innerSlots + outerSlots;
+            int total = _innerSlots + _outerSlots;
             _offsets = new Vector3[total];
-            _owners = new EnemyChaser[total];
-            for (int i = 0; i < innerSlots; i++) _offsets[i] = RingOffset(i, innerSlots, innerRadius, 0f);
-            for (int i = 0; i < outerSlots; i++) _offsets[innerSlots + i] = RingOffset(i, outerSlots, outerRadius, 0.5f);
+            _ownerComponents = new EnemyChaser[total];
+            for (int i = 0; i < _innerSlots; i++) _offsets[i] = RingOffset(i, _innerSlots, _innerRadius, 0f);
+            for (int i = 0; i < _outerSlots; i++) _offsets[_innerSlots + i] = RingOffset(i, _outerSlots, _outerRadius, 0.5f);
         }
 
         static Vector3 RingOffset(int index, int count, float radius, float phase)
@@ -38,39 +39,38 @@ namespace Branded.Enemies
         public Vector3 GetDestination(EnemyChaser chaser)
         {
             Vector3 from = chaser.transform.position;
-            int current = Array.IndexOf(_owners, chaser);
+            int current = Array.IndexOf(_ownerComponents, chaser);
             Vector3 currentPos = default;
             bool hasCurrent = current >= 0 && TryGetSlotPosition(current, out currentPos);
             if (current >= 0 && !hasCurrent)
             {
-                _owners[current] = null; // slot ended up inside a wall
+                _ownerComponents[current] = null; // slot ended up inside a wall
                 current = -1;
             }
 
-            bool onInner = hasCurrent && current < innerSlots;
+            bool onInner = hasCurrent && current < _innerSlots;
             float currentDist = hasCurrent ? Vector3.Distance(from, currentPos) : float.MaxValue;
 
-            int best = FindNearestFree(0, innerSlots, from, out Vector3 bestPos, out float bestDist);
-            bool take = best >= 0 && (!onInner || bestDist < currentDist - switchMargin);
+            int best = FindNearestFree(0, _innerSlots, from, out Vector3 bestPos, out float bestDist);
+            bool take = best >= 0 && (!onInner || bestDist < currentDist - _switchMargin);
             if (!take && !hasCurrent)
             {
-                best = FindNearestFree(innerSlots, _owners.Length, from, out bestPos, out _);
+                best = FindNearestFree(_innerSlots, _ownerComponents.Length, from, out bestPos, out _);
                 take = best >= 0;
             }
 
-            if (take)
-            {
-                if (current >= 0) _owners[current] = null;
-                _owners[best] = chaser;
-                return bestPos;
-            }
-            return hasCurrent ? currentPos : transform.position;
+            if (!take) return hasCurrent ? currentPos : transform.position;
+
+            if (current >= 0) _ownerComponents[current] = null;
+            _ownerComponents[best] = chaser;
+            return bestPos;
         }
 
         public void Release(EnemyChaser chaser)
         {
-            int index = Array.IndexOf(_owners, chaser);
-            if (index >= 0) _owners[index] = null;
+            int index = Array.IndexOf(_ownerComponents, chaser);
+            if (index < 0) return;
+            _ownerComponents[index] = null;
         }
 
         int FindNearestFree(int start, int end, Vector3 from, out Vector3 position, out float distance)
@@ -80,15 +80,13 @@ namespace Branded.Enemies
             distance = float.MaxValue;
             for (int i = start; i < end; i++)
             {
-                if (_owners[i] != null) continue; // destroyed owners compare equal to null, so they count as free
+                if (_ownerComponents[i] != null) continue; // destroyed owners compare equal to null, so they count as free
                 if (!TryGetSlotPosition(i, out Vector3 p)) continue;
                 float d = Vector3.Distance(from, p);
-                if (d < distance)
-                {
-                    best = i;
-                    position = p;
-                    distance = d;
-                }
+                if (d >= distance) continue;
+                best = i;
+                position = p;
+                distance = d;
             }
             return best;
         }
@@ -104,11 +102,11 @@ namespace Branded.Enemies
         void OnDrawGizmosSelected()
         {
             Gizmos.color = new Color(1f, 0.3f, 0.2f, 0.8f);
-            for (int i = 0; i < innerSlots; i++)
-                Gizmos.DrawWireSphere(transform.position + RingOffset(i, innerSlots, innerRadius, 0f), 0.2f);
+            for (int i = 0; i < _innerSlots; i++)
+                Gizmos.DrawWireSphere(transform.position + RingOffset(i, _innerSlots, _innerRadius, 0f), 0.2f);
             Gizmos.color = new Color(1f, 0.7f, 0.2f, 0.5f);
-            for (int i = 0; i < outerSlots; i++)
-                Gizmos.DrawWireSphere(transform.position + RingOffset(i, outerSlots, outerRadius, 0.5f), 0.2f);
+            for (int i = 0; i < _outerSlots; i++)
+                Gizmos.DrawWireSphere(transform.position + RingOffset(i, _outerSlots, _outerRadius, 0.5f), 0.2f);
         }
     }
 }

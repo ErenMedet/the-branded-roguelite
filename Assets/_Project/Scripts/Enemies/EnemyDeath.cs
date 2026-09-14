@@ -2,6 +2,7 @@ using System.Collections;
 using Branded.Combat;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
@@ -9,40 +10,40 @@ namespace Branded.Enemies
     // At dawn it evaporates instead: rises and fades without counting as a death.
     public class EnemyDeath : MonoBehaviour
     {
-        [SerializeField] HealthComponent health;
-        [SerializeField] float shrinkDuration = 0.18f;
-        [SerializeField] float evaporateDuration = 0.7f;
-        [SerializeField] float evaporateRise = 1.2f;
+        [SerializeField, FormerlySerializedAs("health")] HealthComponent _healthComponent;
+        [SerializeField, FormerlySerializedAs("shrinkDuration")] float _shrinkDuration = 0.18f;
+        [SerializeField, FormerlySerializedAs("evaporateDuration")] float _evaporateDuration = 0.7f;
+        [SerializeField, FormerlySerializedAs("evaporateRise")] float _evaporateRise = 1.2f;
 
         bool _gone;
 
         void Awake()
         {
-            if (!health) health = GetComponent<HealthComponent>();
+            if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
         }
 
-        void OnEnable() => health.OnDeath += Die;
-        void OnDisable() => health.OnDeath -= Die;
+        void OnEnable() => _healthComponent.Died += OnDied;
+        void OnDisable() => _healthComponent.Died -= OnDied;
 
-        void Die()
+        void OnDied()
         {
             if (_gone) return;
             Shutdown();
-            StartCoroutine(Vanish(0f, shrinkDuration, 0f));
+            StartCoroutine(Vanish(0f, _shrinkDuration, 0f));
         }
 
         public void Evaporate(float delay)
         {
-            if (_gone || health.IsDead) return;
+            if (_gone || _healthComponent.IsDead) return;
             Shutdown();
-            StartCoroutine(Vanish(delay, evaporateDuration, evaporateRise));
+            StartCoroutine(Vanish(delay, _evaporateDuration, _evaporateRise));
         }
 
         void Shutdown()
         {
             _gone = true;
             foreach (var behaviour in GetComponents<MonoBehaviour>())
-                if (behaviour != this && behaviour != health) behaviour.enabled = false;
+                if (behaviour != this && behaviour != _healthComponent) behaviour.enabled = false;
             foreach (var col in GetComponentsInChildren<Collider>()) col.enabled = false;
             if (TryGetComponent(out NavMeshAgent agent)) agent.enabled = false;
         }

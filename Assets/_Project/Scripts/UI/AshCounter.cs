@@ -1,22 +1,24 @@
+using Branded.Core;
 using Branded.Meta;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.UI
 {
     // HUD demon ash total.
     public class AshCounter : MonoBehaviour
     {
-        [SerializeField] TMP_Text label;
+        [SerializeField, FormerlySerializedAs("label")] TMP_Text _labelComponent;
 
         void OnEnable()
         {
-            Progress.AshesChanged += Show;
-            Show(Progress.Ashes);
+            GameEvents.AshesChanged += OnAshesChanged;
+            OnAshesChanged(Progress.Ashes);
         }
 
-        void OnDisable() => Progress.AshesChanged -= Show;
+        void OnDisable() => GameEvents.AshesChanged -= OnAshesChanged;
 
-        void Show(int ashes) => label.text = $"İblis Külü  {ashes}";
+        void OnAshesChanged(int ashes) => _labelComponent.text = $"İblis Külü  {ashes}";
     }
 }

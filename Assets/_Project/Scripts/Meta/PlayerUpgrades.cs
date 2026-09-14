@@ -1,15 +1,17 @@
 using Branded.Combat;
+using Branded.Core;
 using Branded.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Meta
 {
     // Applies the permanent upgrades to the player on spawn, and again right after a purchase in the hub.
     public class PlayerUpgrades : MonoBehaviour
     {
-        [SerializeField] UpgradeData[] upgrades;
-        [SerializeField] SwordHitbox sword;
-        [SerializeField] HealthComponent health;
+        [SerializeField, FormerlySerializedAs("upgrades")] UpgradeData[] _upgrades;
+        [SerializeField, FormerlySerializedAs("sword")] SwordHitbox _swordComponent;
+        [SerializeField, FormerlySerializedAs("health")] HealthComponent _healthComponent;
 
         float _baseMaxHealth;
 
@@ -17,13 +19,13 @@ namespace Branded.Meta
 
         void Awake()
         {
-            if (!sword) sword = GetComponent<SwordHitbox>();
-            if (!health) health = GetComponent<HealthComponent>();
-            _baseMaxHealth = health.maxHealth;
+            if (!_swordComponent) _swordComponent = GetComponent<SwordHitbox>();
+            if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
+            _baseMaxHealth = _healthComponent.MaxHealth;
         }
 
-        void OnEnable() => Progress.UpgradesChanged += Apply;
-        void OnDisable() => Progress.UpgradesChanged -= Apply;
+        void OnEnable() => GameEvents.UpgradesChanged += OnUpgradesChanged;
+        void OnDisable() => GameEvents.UpgradesChanged -= OnUpgradesChanged;
         void Start() => Apply();
 
         public bool TryUseDefiance()
@@ -33,22 +35,24 @@ namespace Branded.Meta
             return true;
         }
 
+        void OnUpgradesChanged() => Apply();
+
         void Apply()
         {
             float damage = 0f, maxHealth = 0f, defiance = 0f;
-            foreach (var upgrade in upgrades)
+            foreach (var upgrade in _upgrades)
             {
                 if (!upgrade) continue;
-                float bonus = upgrade.valuePerLevel * Progress.LevelOf(upgrade);
-                switch (upgrade.stat)
+                float bonus = upgrade.ValuePerLevel * Progress.LevelOf(upgrade);
+                switch (upgrade.Stat)
                 {
-                    case UpgradeStat.SwordDamage: damage += bonus; break;
-                    case UpgradeStat.MaxHealth: maxHealth += bonus; break;
-                    case UpgradeStat.DeathDefiance: defiance += bonus; break;
+                    case EUpgradeStat.SwordDamage: damage += bonus; break;
+                    case EUpgradeStat.MaxHealth: maxHealth += bonus; break;
+                    case EUpgradeStat.DeathDefiance: defiance += bonus; break;
                 }
             }
-            sword.BaseDamageMultiplier = 1f + damage;
-            health.SetMaxHealth(_baseMaxHealth + maxHealth);
+            _swordComponent.BaseDamageMultiplier = 1f + damage;
+            _healthComponent.SetMaxHealth(_baseMaxHealth + maxHealth);
             DefianceCharges = Mathf.RoundToInt(defiance);
         }
     }

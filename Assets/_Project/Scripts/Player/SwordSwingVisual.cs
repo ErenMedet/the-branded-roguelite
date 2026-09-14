@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
@@ -6,33 +7,33 @@ namespace Branded.Player
     // Replaced by real animation once the character model arrives.
     public class SwordSwingVisual : MonoBehaviour
     {
-        [SerializeField] PlayerCombat combat;
-        [SerializeField] Transform swordPivot;
-        [SerializeField] float restAngle = 110f;
-        [SerializeField] float arcAngle = 160f;
+        [SerializeField, FormerlySerializedAs("combat")] PlayerCombat _combatComponent;
+        [SerializeField, FormerlySerializedAs("swordPivot")] Transform _swordPivotComponent;
+        [SerializeField, FormerlySerializedAs("restAngle")] float _restAngle = 110f;
+        [SerializeField, FormerlySerializedAs("arcAngle")] float _arcAngle = 160f;
 
         void Awake()
         {
-            if (!combat) combat = GetComponentInParent<PlayerCombat>();
+            if (!_combatComponent) _combatComponent = GetComponentInParent<PlayerCombat>();
         }
 
         void LateUpdate()
         {
-            if (!combat || !swordPivot) return;
+            if (!_combatComponent || !_swordPivotComponent) return;
 
-            float start = -arcAngle * 0.5f;
-            float end = arcAngle * 0.5f;
-            float t = combat.PhaseProgress;
+            float start = -_arcAngle * 0.5f;
+            float end = _arcAngle * 0.5f;
+            float t = _combatComponent.PhaseProgress;
 
-            float yaw = combat.Phase switch
+            float yaw = _combatComponent.Phase switch
             {
-                PlayerCombat.SwingPhase.Windup => Mathf.Lerp(restAngle, start, t),
-                PlayerCombat.SwingPhase.Active => Mathf.Lerp(start, end, t),
-                PlayerCombat.SwingPhase.Recovery => Mathf.Lerp(end, restAngle, t * t),
-                _ => restAngle,
+                PlayerCombat.ESwingPhase.Windup => Mathf.Lerp(_restAngle, start, t),
+                PlayerCombat.ESwingPhase.Active => Mathf.Lerp(start, end, t),
+                PlayerCombat.ESwingPhase.Recovery => Mathf.Lerp(end, _restAngle, t * t),
+                _ => _restAngle,
             };
 
-            swordPivot.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            _swordPivotComponent.localRotation = Quaternion.Euler(0f, yaw, 0f);
         }
     }
 }

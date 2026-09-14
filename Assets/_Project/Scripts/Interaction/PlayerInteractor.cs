@@ -1,35 +1,36 @@
 using Branded.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Interaction
 {
     // Tracks the nearest usable Interactable in range and uses it on the interact key.
     public class PlayerInteractor : MonoBehaviour
     {
-        [SerializeField] PlayerInputReader input;
+        [SerializeField, FormerlySerializedAs("input")] PlayerInputReader _inputComponent;
 
         public Interactable Current { get; private set; }
-        public PlayerInputReader Input => input;
 
         void Awake()
         {
-            if (!input) input = GetComponent<PlayerInputReader>();
+            if (!_inputComponent) _inputComponent = GetComponent<PlayerInputReader>();
         }
 
-        void OnEnable() => input.InteractPressed += Use;
+        void OnEnable() => _inputComponent.InteractPressed += OnInteractPressed;
 
         void OnDisable()
         {
-            input.InteractPressed -= Use;
+            _inputComponent.InteractPressed -= OnInteractPressed;
             Current = null;
         }
 
-        // No target while control is locked (dialogue, menus), so the prompt hides too.
-        void Update() => Current = input.enabled ? Nearest() : null;
+        // No target while input is locked (camp, menus, leaving), so the prompt hides too.
+        void Update() => Current = _inputComponent.isActiveAndEnabled && !_inputComponent.IsLocked ? Nearest() : null;
 
-        void Use()
+        void OnInteractPressed()
         {
-            if (Current && Current.IsAvailable) Current.Interact(this);
+            if (!Current || !Current.IsAvailable) return;
+            Current.Interact(this);
         }
 
         Interactable Nearest()

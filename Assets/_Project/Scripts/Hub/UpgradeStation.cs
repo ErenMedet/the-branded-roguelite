@@ -1,34 +1,41 @@
-using System.Collections;
+using Branded.Core;
 using Branded.Interaction;
 using Branded.Meta;
-using Branded.UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Hub
 {
-    // Godo's forge or Puck: opens the upgrade panel with this station's upgrades. The player can't move meanwhile.
+    // Godo's forge or Puck: opens the upgrade panel with this station's upgrades.
+    // UpgradePanelOpened shows the panel and locks the player's input until UpgradePanelClosed.
     public class UpgradeStation : Interactable
     {
-        [SerializeField] string stationName;
-        [SerializeField] UpgradeData[] upgrades;
+        [SerializeField, FormerlySerializedAs("stationName")] string _stationName;
+        [SerializeField, FormerlySerializedAs("upgrades")] UpgradeData[] _upgrades;
 
         bool _open;
 
         public override bool IsAvailable => !_open;
 
-        public override void Interact(PlayerInteractor user)
+        protected override void OnEnable()
         {
-            var panel = FindAnyObjectByType<UpgradePanelUI>();
-            if (panel && !_open) StartCoroutine(Open(panel, user));
+            base.OnEnable();
+            GameEvents.UpgradePanelClosed += OnUpgradePanelClosed;
         }
 
-        IEnumerator Open(UpgradePanelUI panel, PlayerInteractor user)
+        protected override void OnDisable()
         {
-            _open = true;
-            user.Input.enabled = false;
-            yield return panel.Show(stationName, upgrades);
-            user.Input.enabled = true;
-            _open = false;
+            base.OnDisable();
+            GameEvents.UpgradePanelClosed -= OnUpgradePanelClosed;
         }
+
+        public override void Interact(PlayerInteractor user)
+        {
+            if (_open) return;
+            _open = true;
+            GameEvents.RaiseUpgradePanelOpened(_stationName, _upgrades);
+        }
+
+        void OnUpgradePanelClosed() => _open = false;
     }
 }

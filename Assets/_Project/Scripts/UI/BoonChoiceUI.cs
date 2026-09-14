@@ -1,39 +1,42 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Branded.Boons;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.UI
 {
     // Morning boon choice: one card per offer, waits for a click.
     public class BoonChoiceUI : MonoBehaviour
     {
-        [SerializeField] GameObject panel;
-        [SerializeField] BoonCard[] cards;
+        [SerializeField, FormerlySerializedAs("panel")] GameObject _panel;
+        [SerializeField, FormerlySerializedAs("cards")] BoonCard[] _cardComponents;
 
-        public int Capacity => cards.Length;
+        public int Capacity => _cardComponents.Length;
 
         BoonData _picked;
 
-        void Awake() => panel.SetActive(false);
+        void Awake() => _panel.SetActive(false);
 
-        public IEnumerator Choose(IReadOnlyList<BoonData> offers, Action<BoonData> onPicked)
+        public IEnumerator Choose(IReadOnlyList<BoonData> offers, UnityAction<BoonData> onPicked)
         {
             if (offers == null || offers.Count == 0) yield break;
 
             _picked = null;
-            panel.SetActive(true);
-            for (int i = 0; i < cards.Length; i++)
+            _panel.SetActive(true);
+            for (int i = 0; i < _cardComponents.Length; i++)
             {
                 bool used = i < offers.Count;
-                cards[i].gameObject.SetActive(used);
-                if (used) cards[i].Show(offers[i], boon => _picked = boon);
+                _cardComponents[i].gameObject.SetActive(used);
+                if (used) _cardComponents[i].Show(offers[i], OnCardPicked);
             }
 
             while (!_picked) yield return null;
-            panel.SetActive(false);
+            _panel.SetActive(false);
             onPicked?.Invoke(_picked);
         }
+
+        void OnCardPicked(BoonData boon) => _picked = boon;
     }
 }

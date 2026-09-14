@@ -1,52 +1,55 @@
-using System;
 using System.Collections;
 using Branded.Boons;
+using Branded.Core;
 using Branded.Dialogue;
-using Branded.Player;
 using Branded.UI;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Branded.Loop
 {
-    public enum CyclePhase { Night, Dawn, Morning, Dusk }
+    public enum ECyclePhase { Night, Dawn, Morning, Dusk }
 
     // The GDD rhythm: a night of waves, dawn clears the field, then the morning camp: rest at the campfire,
     // talk, pick a boon, and the next night falls.
     public class NightCycle : MonoBehaviour
     {
-        [SerializeField] NightData[] nights; // past the last entry, the last night repeats
-        [SerializeField] WaveSpawner spawner;
-        [SerializeField] DayNightLighting lighting;
-        [SerializeField] Campfire campfirePrefab;
-        [SerializeField] DialogueManager dialogue;
-        [SerializeField] BoonChoiceUI boonChoice;
-        [SerializeField] GameObject hud; // hidden during the camp so the portrait gets the corner
-        [SerializeField] float campfireDistance = 3f;
-        [SerializeField] float dawnDuration = 4f;
-        [SerializeField] float duskDuration = 2.5f;
+        [SerializeField, FormerlySerializedAs("nights")] NightData[] _nights; // past the last entry, the last night repeats
+        [SerializeField, FormerlySerializedAs("spawner")] WaveSpawner _spawnerComponent;
+        [SerializeField, FormerlySerializedAs("lighting")] DayNightLighting _lightingComponent;
+        [SerializeField, FormerlySerializedAs("campfirePrefab")] Campfire _campfirePrefabComponent;
+        [SerializeField, FormerlySerializedAs("dialogue")] DialogueManager _dialogueComponent;
+        [SerializeField, FormerlySerializedAs("boonChoice")] BoonChoiceUI _boonChoiceComponent;
+        [SerializeField, FormerlySerializedAs("hud")] GameObject _hud; // hidden during the camp so the portrait gets the corner
+        [SerializeField, FormerlySerializedAs("campfireDistance")] float _campfireDistance = 3f;
+        [SerializeField, FormerlySerializedAs("dawnDuration")] float _dawnDuration = 4f;
+        [SerializeField, FormerlySerializedAs("duskDuration")] float _duskDuration = 2.5f;
 
-        public CyclePhase Phase { get; private set; }
+        public ECyclePhase Phase { get; private set; }
         public int NightNumber { get; private set; }
-        public float TimeUntilDawn => Phase == CyclePhase.Night ? Mathf.Max(0f, _dawnAt - Time.time) : 0f;
+        public float TimeUntilDawn => Phase == ECyclePhase.Night ? Mathf.Max(0f, _dawnAt - Time.time) : 0f;
 
-        public event Action<CyclePhase> PhaseChanged;
+        public event UnityAction<ECyclePhase> PhaseChanged;
 
-        Transform _player;
-        PlayerInputReader _playerInput;
-        PlayerBoons _boons;
+        Transform _playerTransformComponent;
+        PlayerBoons _boonsComponent;
         float _dawnAt;
+        bool _rested;
+
+        void OnEnable() => GameEvents.CampfireRested += OnCampfireRested;
+        void OnDisable() => GameEvents.CampfireRested -= OnCampfireRested;
 
         void Start()
         {
             var player = GameObject.FindWithTag("Player");
             if (player)
             {
-                _player = player.transform;
-                _playerInput = player.GetComponent<PlayerInputReader>();
-                _boons = player.GetComponent<PlayerBoons>();
+                _playerTransformComponent = player.transform;
+                _boonsComponent = player.GetComponent<PlayerBoons>();
             }
-            lighting.Apply(0f);
+            _lightingComponent.Apply(0f);
             StartCoroutine(Run());
         }
 
@@ -54,48 +57,44 @@ namespace Branded.Loop
         {
             for (NightNumber = 1; ; NightNumber++)
             {
-                NightData night = nights[Mathf.Min(NightNumber, nights.Length) - 1];
-                _dawnAt = Time.time + night.duration;
-                SetPhase(CyclePhase.Night);
-                spawner.Begin(night);
+                NightData night = _nights[Mathf.Min(NightNumber, _nights.Length) - 1];
+                _dawnAt = Time.time + night.Duration;
+                SetPhase(ECyclePhase.Night);
+                _spawnerComponent.Begin(night);
                 yield return new WaitUntil(() => Time.time >= _dawnAt);
 
-                SetPhase(CyclePhase.Dawn);
-                spawner.Stop();
-                spawner.EvaporateAll();
-                yield return lighting.BlendTo(1f, dawnDuration);
+                SetPhase(ECyclePhase.Dawn);
+                _spawnerComponent.Stop();
+                _spawnerComponent.EvaporateAll();
+                yield return _lightingComponent.BlendTo(1f, _dawnDuration);
 
-                SetPhase(CyclePhase.Morning);
-                var campfire = Instantiate(campfirePrefab, CampfirePosition(), Quaternion.identity);
-                bool rested = false;
-                campfire.Rested += () => rested = true;
-                yield return new WaitUntil(() => rested);
+                SetPhase(ECyclePhase.Morning);
+                var campfire = Instantiate(_campfirePrefabComponent, CampfirePosition(), Quaternion.identity);
+                _rested = false;
+                yield return new WaitUntil(() => _rested);
                 yield return Camp(night);
 
-                SetPhase(CyclePhase.Dusk);
-                yield return lighting.BlendTo(0f, duskDuration);
+                SetPhase(ECyclePhase.Dusk);
+                yield return _lightingComponent.BlendTo(0f, _duskDuration);
                 Destroy(campfire.gameObject);
             }
         }
 
-        // Dialogue, then the boon choice. The player can't move meanwhile.
+        void OnCampfireRested() => _rested = true;
+
+        // Dialogue, then the boon choice. CampStarted locks the player's input meanwhile.
         IEnumerator Camp(NightData night)
         {
-            SetPlayerControl(false);
-            if (hud) hud.SetActive(false);
-            if (dialogue) yield return dialogue.Play(night.morningDialogue);
-            if (boonChoice && _boons)
-                yield return boonChoice.Choose(_boons.PickOffers(night.boonPool, boonChoice.Capacity), _boons.Add);
-            if (hud) hud.SetActive(true);
-            SetPlayerControl(true);
+            GameEvents.RaiseCampStarted();
+            if (_hud) _hud.SetActive(false);
+            if (_dialogueComponent) yield return _dialogueComponent.Play(night.MorningDialogue);
+            if (_boonChoiceComponent && _boonsComponent)
+                yield return _boonChoiceComponent.Choose(_boonsComponent.PickOffers(night.BoonPool, _boonChoiceComponent.Capacity), _boonsComponent.Add);
+            if (_hud) _hud.SetActive(true);
+            GameEvents.RaiseCampEnded();
         }
 
-        void SetPlayerControl(bool enabled)
-        {
-            if (_playerInput) _playerInput.enabled = enabled;
-        }
-
-        void SetPhase(CyclePhase phase)
+        void SetPhase(ECyclePhase phase)
         {
             Phase = phase;
             PhaseChanged?.Invoke(phase);
@@ -104,11 +103,11 @@ namespace Branded.Loop
         // A few steps from the player, toward the middle of the map so it never lands against a wall.
         Vector3 CampfirePosition()
         {
-            Vector3 origin = _player ? _player.position : transform.position;
+            Vector3 origin = _playerTransformComponent ? _playerTransformComponent.position : transform.position;
             Vector3 toCenter = transform.position - origin;
             toCenter.y = 0f;
             Vector3 direction = toCenter.sqrMagnitude > 1f ? toCenter.normalized : Vector3.forward;
-            Vector3 spot = origin + direction * campfireDistance;
+            Vector3 spot = origin + direction * _campfireDistance;
             return NavMesh.SamplePosition(spot, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : spot;
         }
     }

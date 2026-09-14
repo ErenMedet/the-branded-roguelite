@@ -2,6 +2,7 @@ using System.Collections;
 using Branded.Combat;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 namespace Branded.Enemies
 {
@@ -9,54 +10,54 @@ namespace Branded.Enemies
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyHitReaction : MonoBehaviour
     {
-        [SerializeField] HealthComponent health;
-        [SerializeField] EnemyChaser chaser;
-        [SerializeField] float knockbackDistance = 1.2f;
-        [SerializeField] float knockbackDuration = 0.12f;
-        [SerializeField] float staggerDuration = 0.3f;
+        [SerializeField, FormerlySerializedAs("health")] HealthComponent _healthComponent;
+        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
+        [SerializeField, FormerlySerializedAs("knockbackDistance")] float _knockbackDistance = 1.2f;
+        [SerializeField, FormerlySerializedAs("knockbackDuration")] float _knockbackDuration = 0.12f;
+        [SerializeField, FormerlySerializedAs("staggerDuration")] float _staggerDuration = 0.3f;
 
-        NavMeshAgent _agent;
-        EnemyAttack[] _attacks;
+        NavMeshAgent _navMeshAgentComponent;
+        EnemyAttack[] _attackComponents;
 
         void Awake()
         {
-            _agent = GetComponent<NavMeshAgent>();
-            if (!health) health = GetComponent<HealthComponent>();
-            if (!chaser) chaser = GetComponent<EnemyChaser>();
-            _attacks = GetComponents<EnemyAttack>();
+            _navMeshAgentComponent = GetComponent<NavMeshAgent>();
+            if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
+            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
+            _attackComponents = GetComponents<EnemyAttack>();
         }
 
-        void OnEnable() => health.OnDamaged += React;
-        void OnDisable() => health.OnDamaged -= React;
+        void OnEnable() => _healthComponent.Damaged += OnDamaged;
+        void OnDisable() => _healthComponent.Damaged -= OnDamaged;
 
-        void React(float amount, Vector3 hitDirection)
+        void OnDamaged(float amount, Vector3 hitDirection)
         {
-            if (health.IsDead) return;
-            foreach (var attack in _attacks)
+            if (_healthComponent.IsDead) return;
+            foreach (var attack in _attackComponents)
                 if (attack.IsAttacking && !attack.CanBeInterrupted) return;
 
-            foreach (var attack in _attacks) attack.Interrupt();
+            foreach (var attack in _attackComponents) attack.Interrupt();
             StopAllCoroutines();
             StartCoroutine(Knockback(hitDirection));
         }
 
         IEnumerator Knockback(Vector3 direction)
         {
-            chaser.Halted = true;
+            _chaserComponent.Halted = true;
             direction.y = 0f;
             direction.Normalize();
 
-            float speed = knockbackDistance / knockbackDuration;
+            float speed = _knockbackDistance / _knockbackDuration;
             float t = 0f;
-            while (t < knockbackDuration)
+            while (t < _knockbackDuration)
             {
-                if (_agent.enabled && _agent.isOnNavMesh) _agent.Move(direction * (speed * Time.deltaTime));
+                if (_navMeshAgentComponent.enabled && _navMeshAgentComponent.isOnNavMesh) _navMeshAgentComponent.Move(direction * (speed * Time.deltaTime));
                 t += Time.deltaTime;
                 yield return null;
             }
 
-            yield return new WaitForSeconds(Mathf.Max(0f, staggerDuration - knockbackDuration));
-            chaser.Halted = false;
+            yield return new WaitForSeconds(Mathf.Max(0f, _staggerDuration - _knockbackDuration));
+            _chaserComponent.Halted = false;
         }
     }
 }

@@ -1,41 +1,41 @@
 using Branded.Interaction;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.UI
 {
     // "[E] ..." floating over whatever the player can use right now.
     public class InteractPromptUI : MonoBehaviour
     {
-        [SerializeField] PlayerInteractor interactor; // empty = the Player-tagged object
-        [SerializeField] RectTransform prompt;
-        [SerializeField] TMP_Text label;
+        [SerializeField, FormerlySerializedAs("interactor")] PlayerInteractor _interactorComponent; // empty = the Player-tagged object
+        [SerializeField, FormerlySerializedAs("prompt")] RectTransform _promptComponent;
+        [SerializeField, FormerlySerializedAs("label")] TMP_Text _labelComponent;
 
-        Camera _camera;
-        Interactable _shown;
+        Camera _cameraComponent;
+        Interactable _shownComponent;
 
         void Awake()
         {
-            if (!interactor)
-            {
-                var player = GameObject.FindWithTag("Player");
-                if (player) interactor = player.GetComponent<PlayerInteractor>();
-            }
-            prompt.gameObject.SetActive(false);
+            _promptComponent.gameObject.SetActive(false);
+            if (_interactorComponent) return;
+            var player = GameObject.FindWithTag("Player");
+            if (player) _interactorComponent = player.GetComponent<PlayerInteractor>();
         }
 
         void LateUpdate()
         {
-            if (!_camera) _camera = Camera.main;
-            Interactable target = interactor && _camera ? interactor.Current : null;
+            if (!_cameraComponent) _cameraComponent = Camera.main;
+            Interactable target = _interactorComponent && _cameraComponent ? _interactorComponent.Current : null;
 
-            if (target != _shown)
+            if (target != _shownComponent)
             {
-                _shown = target;
-                prompt.gameObject.SetActive(target);
-                if (target) label.text = $"[E] {target.Prompt}";
+                _shownComponent = target;
+                _promptComponent.gameObject.SetActive(target);
+                if (target) _labelComponent.text = $"[E] {target.Prompt}";
             }
-            if (target) prompt.position = _camera.WorldToScreenPoint(target.PromptPosition);
+            if (!target) return;
+            _promptComponent.position = _cameraComponent.WorldToScreenPoint(target.PromptPosition);
         }
     }
 }

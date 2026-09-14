@@ -1,8 +1,9 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using Branded.Meta;
-using Branded.UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
@@ -10,11 +11,11 @@ namespace Branded.Player
     // A Death Defiance charge from Puck revives on the spot instead.
     public class PlayerDeath : MonoBehaviour, IInvulnerabilitySource
     {
-        [SerializeField] HealthComponent health;
-        [SerializeField] PlayerUpgrades upgrades;
-        [SerializeField, Range(0.1f, 1f)] float defianceHealth = 0.5f;
-        [SerializeField] float defianceInvulnerability = 1.5f;
-        [SerializeField] float collapseDelay = 0.8f; // the body stays on screen before the fade
+        [SerializeField, FormerlySerializedAs("health")] HealthComponent _healthComponent;
+        [SerializeField, FormerlySerializedAs("upgrades")] PlayerUpgrades _upgradesComponent;
+        [SerializeField, Range(0.1f, 1f), FormerlySerializedAs("defianceHealth")] float _defianceHealth = 0.5f;
+        [SerializeField, FormerlySerializedAs("defianceInvulnerability")] float _defianceInvulnerability = 1.5f;
+        [SerializeField, FormerlySerializedAs("collapseDelay")] float _collapseDelay = 0.8f; // the body stays on screen before the fade
 
         float _invulnerableUntil;
 
@@ -22,33 +23,43 @@ namespace Branded.Player
 
         void Awake()
         {
-            if (!health) health = GetComponent<HealthComponent>();
-            if (!upgrades) upgrades = GetComponent<PlayerUpgrades>();
+            if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
+            if (!_upgradesComponent) _upgradesComponent = GetComponent<PlayerUpgrades>();
         }
 
-        void OnEnable() => health.OnDeath += Die;
-        void OnDisable() => health.OnDeath -= Die;
-
-        void Die()
+        void OnEnable()
         {
-            if (upgrades && upgrades.TryUseDefiance())
+            _healthComponent.Died += OnDied;
+            GameEvents.DeathScreenFinished += OnDeathScreenFinished;
+        }
+
+        void OnDisable()
+        {
+            _healthComponent.Died -= OnDied;
+            GameEvents.DeathScreenFinished -= OnDeathScreenFinished;
+        }
+
+        void OnDied()
+        {
+            if (_upgradesComponent && _upgradesComponent.TryUseDefiance())
             {
-                health.Revive(health.maxHealth * defianceHealth);
-                _invulnerableUntil = Time.time + defianceInvulnerability;
+                _healthComponent.Revive(_healthComponent.MaxHealth * _defianceHealth);
+                _invulnerableUntil = Time.time + _defianceInvulnerability;
                 return;
             }
 
             foreach (var behaviour in GetComponents<MonoBehaviour>())
-                if (behaviour != this && behaviour != health) behaviour.enabled = false;
-            StartCoroutine(ReturnToForge());
+                if (behaviour != this && behaviour != _healthComponent) behaviour.enabled = false;
+            StartCoroutine(Collapse());
         }
 
-        IEnumerator ReturnToForge()
+        // ScreenTransition answers PlayerDied with the death lines, then raises DeathScreenFinished.
+        IEnumerator Collapse()
         {
-            yield return new WaitForSecondsRealtime(collapseDelay);
-            var screen = FindAnyObjectByType<ScreenTransition>();
-            if (screen) yield return screen.PlayDeath();
-            SceneFlow.Load(SceneFlow.Hub);
+            yield return new WaitForSecondsRealtime(_collapseDelay);
+            GameEvents.RaisePlayerDied();
         }
+
+        void OnDeathScreenFinished() => SceneFlow.Load(SceneFlow.Hub);
     }
 }
