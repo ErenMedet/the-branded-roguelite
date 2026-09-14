@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
-    // Death drags the player back to Godo's forge: the run's boons go with the scene, demon ash is already banked.
+    // Death drags the player back to Godot's forge: the run's boons go with the scene, demon ash is already banked.
     // A Death Defiance charge from Puck revives on the spot instead.
     public class PlayerDeath : MonoBehaviour, IInvulnerabilitySource
     {

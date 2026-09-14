@@ -5,7 +5,7 @@
 
 ## Project context
 - Code lives in `Assets/_Project/Scripts/<Folder>`, data (ScriptableObjects) in `Assets/_Project/Data`, prefabs in `Assets/_Project/Prefabs`.
-- Scenes: `Hub_GodoCave` (first build scene, the hub) and `Greybox_Asama1` (the run: night/morning loop).
+- Scenes: `Hub_GodotForge` (first build scene, the hub: Godot's old mine with the forge, a grove, armory shed, waterfall and Hill of Swords) and `Greybox_Asama1` (the run: night/morning loop).
 - Stack: Input System (actions built in code), Cinemachine 6, NavMesh, uGUI + TextMeshPro, CharacterController for the player (no Rigidbody).
 - Components on different GameObjects talk through `Branded.Core.GameEvents` (observer pattern).
 - Permanent progress: `Branded.Meta.Progress` writes `save.json` to `Application.persistentDataPath`.

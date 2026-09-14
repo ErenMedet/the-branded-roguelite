@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Hub
 {
-    // The cave mouth: fade out and start a new run.
+    // The mountain path down from Godot's mine: fade out and start a new run.
     // HubExited locks the player's input and makes ScreenTransition fade out; ScreenFadedOut loads the run.
     public class HubExit : Interactable
     {

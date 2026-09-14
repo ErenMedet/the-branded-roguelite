@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Hub
 {
-    // Godo's forge or Puck: opens the upgrade panel with this station's upgrades.
+    // Godot's forge or Puck: opens the upgrade panel with this station's upgrades.
     // UpgradePanelOpened shows the panel and locks the player's input until UpgradePanelClosed.
     public class UpgradeStation : Interactable
     {

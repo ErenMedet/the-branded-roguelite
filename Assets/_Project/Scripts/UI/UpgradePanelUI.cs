@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.UI
 {
-    // Hub upgrade screen for Godo's forge or Puck: one row per upgrade. Esc / E / the close button leaves.
+    // Hub upgrade screen for Godot's forge or Puck: one row per upgrade. Esc / E / the close button leaves.
     // Opens on UpgradePanelOpened and raises UpgradePanelClosed when it closes.
     public class UpgradePanelUI : MonoBehaviour
     {

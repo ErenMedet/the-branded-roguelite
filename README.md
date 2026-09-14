@@ -14,14 +14,14 @@ Oyun, **Gece Vahşeti** ile **Sabah Huzuru** arasındaki zıtlık üzerine kurul
 
 ```mermaid
 flowchart TD
-    subgraph HUB ["🏠 GODO'NUN MAĞARASI (Kalıcı Güvenli Alan / Hub)"]
+    subgraph HUB ["🏠 GODOT'NUN MADENİ (Kalıcı Güvenli Alan / Hub)"]
         WakeUp["✨ Uyanış: Tutulma Sonrası Başlangıç<br/>• Tek Kol & Tek Göz Kayıp<br/>• Boyunda Kanayan Kurban Mührü"]
-        Godo["🔨 Godo'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
+        Godot["🔨 Godot'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
         Puck["🧚 Puck & Şifalı Elf Tozu<br/>• Kalıcı Can Kapasitesi & Ölümden Dönme (Death Defiance)"]
-        Depart["🚪 Mağaradan Çıkış: Seferi Başlat"]
-        WakeUp --> Godo
+        Depart["🚪 Dağ Patikasından İniş: Seferi Başlat"]
+        WakeUp --> Godot
         WakeUp --> Puck
-        Godo --> Depart
+        Godot --> Depart
         Puck --> Depart
     end
 
@@ -71,17 +71,17 @@ flowchart TD
     subgraph DEATH_SYSTEM ["💀 ÖLÜM VE GERİ DÖNÜŞ SİSTEMİ"]
         DeathEvent["⚰️ Karakter Yenildi (Can Sıfırlandı)"]
         DragBack["Karanlık Ruhlar Seni Çeker...<br/>Fakat Kurban Mührünün İntikam Ateşi Ölümüne İzin Vermez!"]
-        Respawn["🩸 Kan Revan İçinde Godo'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
+        Respawn["🩸 Kan Revan İçinde Godot'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
         DeathEvent --> DragBack --> Respawn
-        Respawn --> Godo
+        Respawn --> Godot
     end
 
     N1_Combat -.->|Ölüm| DeathEvent
     N2_Combat -.->|Ölüm| DeathEvent
     Boss_Fight -.->|Ölüm| DeathEvent
 
-    Boss_Victory --> NextBiome["🌟 BÜYÜK ŞAFAK: 2. BÖLGEYE GEÇİŞ<br/>(Veya Mağaraya Ganimetle Muzaffer Dönüş)"]
-    NextBiome -.-> Godo
+    Boss_Victory --> NextBiome["🌟 BÜYÜK ŞAFAK: 2. BÖLGEYE GEÇİŞ<br/>(Veya Madene Ganimetle Muzaffer Dönüş)"]
+    NextBiome -.-> Godot
 ```
 
 Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Dokümanı (GDD)](docs/GDD.md)**
@@ -96,7 +96,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | 2. Hasar ve İlk Düşman | `IDamageable`, NavMesh düşman, hitstop ve vuruş hissi | ✅ |
 | 3. Gece/Sabah Döngüsü | Düşman dalgaları, şafak söküşü, kamp ateşi | ✅ |
 | 4. Diyalog ve UI | 2D portreli diyalog, can barı, geçici kılıç yağı seçimi | ✅ |
-| 5. Godo'nun Atölyesi | Mağara sahnesi, kalıcı yükseltmeler, ölüm döngüsü | ✅ |
+| 5. Godot'nun Atölyesi | Hub sahnesi (maden + ağaçlık), kalıcı yükseltmeler, ölüm döngüsü | ✅ |
 
 ## Şu An Oyunda Neler Var
 
@@ -105,8 +105,8 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 - **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
 - **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
 - **HUD:** Hasarı soluk bir izle gösteren can barı ve İblis Külü sayacı.
-- **Godo'nun Mağarası:** Oyun burada başlar. Godo'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; mağara ağzından sefere çıkılır.
-- **Ölüm döngüsü:** Ölünce karanlık ruhlar yazısı, ardından Godo'nun ocağında uyanış. Geçici yağlar sıfırlanır, küller ve yükseltmeler kalır (`save.json`).
+- **Godot'nun Madeni:** Oyun eski madenin içindeki ocağın başında başlar; etrafta ağaçlık, cephanelik, şelale ve Kılıçlar Tepesi var. Godot'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; güneydeki dağ patikasından sefere çıkılır.
+- **Ölüm döngüsü:** Ölünce karanlık ruhlar yazısı, ardından Godot'nun ocağında uyanış. Geçici yağlar sıfırlanır, küller ve yükseltmeler kalır (`save.json`).
 
 ## Kontroller
 
@@ -118,7 +118,7 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | Sağ tık (basılı) | Sol koldan seri tatar yayı (şarjör + reload) |
 | Orta tuş | Kol topu: kamp başına bir atış, yayı kırar, geri savurur |
 | `Space` | Atılma (dash) |
-| `E` | Etkileşim (kamp ateşi, Godo, Puck, mağara çıkışı) |
+| `E` | Etkileşim (kamp ateşi, Godot, Puck, dağ patikası) |
 | `Esc` / `E` | Yükseltme panelini kapat |
 | `E` / `Space` / Sol tık | Diyaloğu ilerlet |
 
@@ -139,7 +139,7 @@ Assets/_Project/
 ├── Data/          ScriptableObject verileri (Boons, Dialogue, Nights, Upgrades)
 ├── Materials/
 ├── Prefabs/       Oyuncu, düşmanlar, dünya objeleri, UI
-├── Scenes/        Hub_GodoCave.unity, Greybox_Asama1.unity
+├── Scenes/        Hub_GodotForge.unity, Greybox_Asama1.unity
 └── Scripts/
     ├── Core/      GameEvents (sistemler arası olay kanalı)
     ├── Player/    Hareket, dash, girdi, kılıç, ölüm
@@ -150,7 +150,7 @@ Assets/_Project/
     ├── Boons/     Güçlenme verisi ve etkileri
     ├── Meta/      Kalıcı ilerleme, kayıt, yükseltmeler, sahne geçişi
     ├── Interaction/ Etkileşilebilir objeler ve oyuncu tarafı
-    ├── Hub/       Yükseltme istasyonları, mağara çıkışı
+    ├── Hub/       Yükseltme istasyonları, hub çıkışı
     ├── UI/        Can barı, güçlenme kartları, yükseltme paneli, ekran geçişleri
     └── DevTools/  Test amaçlı yardımcılar
 ```
@@ -160,5 +160,5 @@ Kod kuralları: **[docs/CodeStyles.md](docs/CodeStyles.md)**
 ## Çalıştırma
 
 1. Repoyu klonla ve Unity Hub'dan **Unity 6000.6.0f1** ile aç.
-2. `Assets/_Project/Scenes/Hub_GodoCave.unity` sahnesini aç (sefer sahnesi `Greybox_Asama1.unity` doğrudan da açılabilir).
+2. `Assets/_Project/Scenes/Hub_GodotForge.unity` sahnesini aç (sefer sahnesi `Greybox_Asama1.unity` doğrudan da açılabilir).
 3. Play'e bas.

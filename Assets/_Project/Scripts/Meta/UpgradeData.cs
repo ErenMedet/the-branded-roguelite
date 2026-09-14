@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Meta
 {
-    // A permanent upgrade bought with demon ash at Godo's forge or from Puck. One cost per level.
+    // A permanent upgrade bought with demon ash at Godot's forge or from Puck. One cost per level.
     [CreateAssetMenu(fileName = "NewUpgrade", menuName = "Roguelite/Upgrade")]
     public class UpgradeData : ScriptableObject
     {

@@ -22,7 +22,7 @@ namespace Branded.Player
         [SerializeField, Range(0f, 360f), FormerlySerializedAs("arcAngle")] float _arcAngle = 170f;
         [SerializeField, FormerlySerializedAs("heightOffset")] float _heightOffset = 1f;
 
-        // Godo's forge raises the base damage through this; boons stack on top through DamageMultiplier.
+        // Godot's forge raises the base damage through this; boons stack on top through DamageMultiplier.
         public float BaseDamageMultiplier { get; set; } = 1f;
         // Boons scale damage through this, never by touching _damage.
         public float DamageMultiplier { get; set; } = 1f;

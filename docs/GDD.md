@@ -11,9 +11,9 @@
 * **Hikaye Başlangıcı (Lore):** 
   * Karakter, "Tutulma" (The Eclipse) katliamından sağ kurtulmuş; tek kolunu ve tek gözünü kaybetmiştir.
   * Boynundaki **Kurban Mührü (Brand of Sacrifice)** laneti nedeniyle ölüler ve iblisler sürekli kanının kokusuna çekilmektedir.
-* **Ana Merkez (Hub):** Dağlardaki **Godo'nun Demirci Mağarası**. 
+* **Ana Merkez (Hub):** Dağlardaki **Godot'nun Madeni**: eski bir madenin içindeki demirci ocağı. Maden ağzının önünde ağaçlık, cephanelik, şelale ve Şahinler için dikilmiş Kılıçlar Tepesi bulunur.
   * Perilerin (Puck) şifalı tozu ve antik mabet koruması sayesinde iblislerin giremediği yegane güvenli sığınaktır.
-  * Karakter seferlerde yenildiğinde kan revan içinde bu mağaranın ocağında uyanır.
+  * Karakter seferlerde yenildiğinde kan revan içinde madendeki ocağın başında uyanır.
 
 ---
 
@@ -24,15 +24,15 @@ Oyun, sürekli savaşmak yerine **"Gece Vahşeti"** ile **"Sabah Huzuru"** aras�
 ```mermaid
 flowchart TD
     %% HUB ALANI
-    subgraph HUB ["🏠 GODO'NUN MAĞARASI (Kalıcı Güvenli Alan / Hub)"]
+    subgraph HUB ["🏠 GODOT'NUN MADENİ (Kalıcı Güvenli Alan / Hub)"]
         WakeUp["✨ Uyanış: Tutulma Sonrası Başlangıç<br/>• Tek Kol & Tek Göz Kayıp<br/>• Boyunda Kanayan Kurban Mührü"]
-        Godo["🔨 Godo'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
+        Godot["🔨 Godot'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
         Puck["🧚 Puck & Şifalı Elf Tozu<br/>• Kalıcı Can Kapasitesi & Ölümden Dönme (Death Defiance)"]
-        Depart["🚪 Mağaradan Çıkış: Seferi Başlat"]
+        Depart["🚪 Dağ Patikasından İniş: Seferi Başlat"]
         
-        WakeUp --> Godo
+        WakeUp --> Godot
         WakeUp --> Puck
-        Godo --> Depart
+        Godot --> Depart
         Puck --> Depart
     end
 
@@ -90,10 +90,10 @@ flowchart TD
     subgraph DEATH_SYSTEM ["💀 ÖLÜM VE GERİ DÖNÜŞ SİSTEMİ"]
         DeathEvent["⚰️ Karakter Yenildi (Can Sıfırlandı)"]
         DragBack["Karanlık Ruhlar Seni Çeker...<br/>Fakat Kurban Mührünün İntikam Ateşi Ölümüne İzin Vermez!"]
-        Respawn["🩸 Kan Revan İçinde Godo'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
+        Respawn["🩸 Kan Revan İçinde Godot'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
         
         DeathEvent --> DragBack --> Respawn
-        Respawn --> Godo
+        Respawn --> Godot
     end
 
     %% BAĞLANTILAR
@@ -101,8 +101,8 @@ flowchart TD
     N2_Combat -.->|Ölüm| DeathEvent
     Boss_Fight -.->|Ölüm| DeathEvent
 
-    Boss_Victory --> NextBiome["🌟 BÜYÜK ŞAFAK: 2. BÖLGEYE GEÇİŞ<br/>(Veya Mağaraya Ganimetle Muzaffer Dönüş)"]
-    NextBiome -.-> Godo
+    Boss_Victory --> NextBiome["🌟 BÜYÜK ŞAFAK: 2. BÖLGEYE GEÇİŞ<br/>(Veya Madene Ganimetle Muzaffer Dönüş)"]
+    NextBiome -.-> Godot
 ```
 
 ---
@@ -248,7 +248,7 @@ flowchart LR
 [CreateAssetMenu(fileName = "NewDialogue", menuName = "Roguelite/Dialogue")]
 public class DialogueData : ScriptableObject
 {
-    public string speakerName;         // Örn: "Godo", "Kafatası Şövalyesi"
+    public string speakerName;         // Örn: "Godot", "Kafatası Şövalyesi"
     public Sprite speakerPortrait;     // 2D Portre Görseli
     public AudioClip voiceMumble;      // Konuşma mırıltısı
     [TextArea(3, 5)]
@@ -275,4 +275,4 @@ public class DialogueData : ScriptableObject
 * **Aşama 2: Hasar ve İlk Düşman:** `IDamageable` entegrasyonu, basit takip eden NavMesh düşmanı, Hitstop ve vuruş hissi.
 * **Aşama 3: Gece/Sabah Döngüsü:** 4x4 zeminlerden oluşan tek bir oda, düşman dalgası, şafak söküşü ve kamp ateşi geçişi.
 * **Aşama 4: Diyalog ve UI:** 2D portreli diyalog kutusu, can barı ve geçici kılıç yağı seçimi.
-* **Aşama 5: Godo'nun Atölyesi:** Mağara sahnesi, kalıcı yükseltmeler ve ölüm döngüsü.
+* **Aşama 5: Godot'nun Atölyesi:** Hub sahnesi (maden + ağaçlık), kalıcı yükseltmeler ve ölüm döngüsü.
