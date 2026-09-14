@@ -10,11 +10,4 @@ namespace Branded.Meta
         public int ashes;
         public List<UpgradeLevel> upgrades = new();
     }
-
-    [Serializable]
-    public class UpgradeLevel
-    {
-        public string id;
-        public int level;
-    }
 }

@@ -27,9 +27,9 @@ namespace Branded.Player
 
             float yaw = _combatComponent.Phase switch
             {
-                PlayerCombat.ESwingPhase.Windup => Mathf.Lerp(_restAngle, start, t),
-                PlayerCombat.ESwingPhase.Active => Mathf.Lerp(start, end, t),
-                PlayerCombat.ESwingPhase.Recovery => Mathf.Lerp(end, _restAngle, t * t),
+                ESwingPhase.Windup => Mathf.Lerp(_restAngle, start, t),
+                ESwingPhase.Active => Mathf.Lerp(start, end, t),
+                ESwingPhase.Recovery => Mathf.Lerp(end, _restAngle, t * t),
                 _ => _restAngle,
             };
 

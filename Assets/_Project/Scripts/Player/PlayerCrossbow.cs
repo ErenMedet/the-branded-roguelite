@@ -53,7 +53,7 @@ namespace Branded.Player
             }
 
             if (IsBroken || !_inputComponent.IsFireHeld || _fireTimer > 0f) return;
-            if (_motorComponent.IsDashing || _combatComponent.Phase != PlayerCombat.ESwingPhase.None) return;
+            if (_motorComponent.IsDashing || _combatComponent.Phase != ESwingPhase.None) return;
             Fire();
         }
 

@@ -1,4 +1,3 @@
-using System;
 using Branded.Boons;
 using Branded.Dialogue;
 using UnityEngine;
@@ -17,22 +16,5 @@ namespace Branded.Loop
         [field: Header("Morning")]
         [field: SerializeField, FormerlySerializedAs("morningDialogue")] public DialogueData MorningDialogue { get; private set; }
         [field: SerializeField, FormerlySerializedAs("boonPool")] public BoonData[] BoonPool { get; private set; }
-    }
-
-    [Serializable]
-    public class Wave
-    {
-        [field: SerializeField, FormerlySerializedAs("delay")] public float Delay { get; private set; } = 15f;
-        [field: SerializeField, FormerlySerializedAs("groups")] public SpawnGroup[] Groups { get; private set; }
-    }
-
-    [Serializable]
-    public class SpawnGroup
-    {
-        [field: SerializeField, FormerlySerializedAs("prefab")] public GameObject Prefab { get; private set; }
-        [field: SerializeField, FormerlySerializedAs("count")] public int Count { get; private set; } = 1;
-        // Spawned right beside each enemy of this group; a cultist leader can bring these back.
-        [field: SerializeField] public GameObject Escort { get; private set; }
-        [field: SerializeField] public int EscortCount { get; private set; }
     }
 }

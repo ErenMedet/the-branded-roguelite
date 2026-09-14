@@ -3,8 +3,6 @@ using UnityEngine.Serialization;
 
 namespace Branded.Meta
 {
-    public enum EUpgradeStat { SwordDamage, MaxHealth, DeathDefiance }
-
     // A permanent upgrade bought with demon ash at Godo's forge or from Puck. One cost per level.
     [CreateAssetMenu(fileName = "NewUpgrade", menuName = "Roguelite/Upgrade")]
     public class UpgradeData : ScriptableObject

@@ -10,8 +10,6 @@ using UnityEngine.Serialization;
 
 namespace Branded.Loop
 {
-    public enum ECyclePhase { Night, Dawn, Morning, Dusk }
-
     // The GDD rhythm: a night of waves, dawn clears the field, then the morning camp: rest at the campfire,
     // talk, pick a boon, and the next night falls.
     public class NightCycle : MonoBehaviour

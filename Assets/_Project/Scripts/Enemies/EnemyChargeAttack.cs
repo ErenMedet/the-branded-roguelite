@@ -62,7 +62,7 @@ namespace Branded.Enemies
             if (!_targetCombatComponent) _targetCombatComponent = target.GetComponent<PlayerCombat>();
             if (!_targetAimComponent) _targetAimComponent = target.GetComponent<PlayerAim>();
 
-            if (_targetCombatComponent && _targetCombatComponent.Phase != PlayerCombat.ESwingPhase.None) return true;
+            if (_targetCombatComponent && _targetCombatComponent.Phase != ESwingPhase.None) return true;
             if (!_targetAimComponent) return true;
 
             Vector3 fromTarget = transform.position - target.position;

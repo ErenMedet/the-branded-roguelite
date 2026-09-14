@@ -7,8 +7,6 @@ namespace Branded.Player
     // Sword swing timing with an input buffer: a press shortly before the player is free again still fires.
     public class PlayerCombat : MonoBehaviour
     {
-        public enum ESwingPhase { None, Windup, Active, Recovery }
-
         [Header("References")]
         [SerializeField, FormerlySerializedAs("input")] PlayerInputReader _inputComponent;
         [SerializeField, FormerlySerializedAs("motor")] PlayerMotor _motorComponent;

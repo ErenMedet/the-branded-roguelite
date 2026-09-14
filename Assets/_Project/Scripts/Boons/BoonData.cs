@@ -3,8 +3,6 @@ using UnityEngine.Serialization;
 
 namespace Branded.Boons
 {
-    public enum EElementType { Physical, Fire, Holy, Bleed }
-
     // A temporary run boon (sword oil, charm, bandage...). The effect values are what PlayerBoons applies.
     [CreateAssetMenu(fileName = "NewBoon", menuName = "Roguelite/Boon")]
     public class BoonData : ScriptableObject
