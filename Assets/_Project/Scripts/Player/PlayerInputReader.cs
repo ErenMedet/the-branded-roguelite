@@ -17,6 +17,7 @@ namespace Branded.Player
 
         public event UnityAction DashPressed;
         public event UnityAction AttackPressed;
+        public event UnityAction SpinPressed;
         public event UnityAction CannonPressed;
         public event UnityAction InteractPressed;
 
@@ -24,6 +25,7 @@ namespace Branded.Player
         InputAction _point;
         InputAction _dash;
         InputAction _attack;
+        InputAction _spin;
         InputAction _fire;
         InputAction _cannon;
         InputAction _interact;
@@ -47,6 +49,7 @@ namespace Branded.Player
 
             _dash = new InputAction("Dash", InputActionType.Button, "<Keyboard>/space");
             _attack = new InputAction("Attack", InputActionType.Button, "<Mouse>/leftButton");
+            _spin = new InputAction("Spin", InputActionType.Button, "<Keyboard>/q");
             _fire = new InputAction("Fire", InputActionType.Button, "<Mouse>/rightButton");
             _cannon = new InputAction("Cannon", InputActionType.Button, "<Mouse>/middleButton");
             _interact = new InputAction("Interact", InputActionType.Button, "<Keyboard>/e");
@@ -58,6 +61,7 @@ namespace Branded.Player
             _point.Enable();
             _dash.Enable();
             _attack.Enable();
+            _spin.Enable();
             _fire.Enable();
             _cannon.Enable();
             _interact.Enable();
@@ -88,6 +92,7 @@ namespace Branded.Player
             _point.Disable();
             _dash.Disable();
             _attack.Disable();
+            _spin.Disable();
             _fire.Disable();
             _cannon.Disable();
             _interact.Disable();
@@ -99,6 +104,7 @@ namespace Branded.Player
             _point.Dispose();
             _dash.Dispose();
             _attack.Dispose();
+            _spin.Dispose();
             _fire.Dispose();
             _cannon.Dispose();
             _interact.Dispose();
@@ -131,6 +137,7 @@ namespace Branded.Player
             _move.canceled += OnMove;
             _dash.performed += OnDash;
             _attack.performed += OnAttack;
+            _spin.performed += OnSpin;
             _fire.performed += OnFire;
             _fire.canceled += OnFire;
             _cannon.performed += OnCannon;
@@ -152,6 +159,7 @@ namespace Branded.Player
             _move.canceled -= OnMove;
             _dash.performed -= OnDash;
             _attack.performed -= OnAttack;
+            _spin.performed -= OnSpin;
             _fire.performed -= OnFire;
             _fire.canceled -= OnFire;
             _cannon.performed -= OnCannon;
@@ -162,6 +170,7 @@ namespace Branded.Player
         void OnPoint(InputAction.CallbackContext context) => PointerScreenPosition = context.ReadValue<Vector2>();
         void OnDash(InputAction.CallbackContext _) => DashPressed?.Invoke();
         void OnAttack(InputAction.CallbackContext _) => AttackPressed?.Invoke();
+        void OnSpin(InputAction.CallbackContext _) => SpinPressed?.Invoke();
         void OnFire(InputAction.CallbackContext context) => IsFireHeld = context.performed;
         void OnCannon(InputAction.CallbackContext _) => CannonPressed?.Invoke();
         void OnInteract(InputAction.CallbackContext _) => InteractPressed?.Invoke();

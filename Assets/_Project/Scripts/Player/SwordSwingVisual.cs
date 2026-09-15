@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
-    // Greybox only: sweeps the sword pivot through an arc following PlayerCombat's phases.
+    // Greybox only: sweeps the sword pivot through an arc (or a full circle for the spin) following PlayerCombat's phases.
     // Replaced by real animation once the character model arrives.
     public class SwordSwingVisual : MonoBehaviour
     {
@@ -21,19 +21,30 @@ namespace Branded.Player
         {
             if (!_combatComponent || !_swordPivotComponent) return;
 
+            float yaw = _combatComponent.IsSpin ? SpinYaw() : SwingYaw();
+            _swordPivotComponent.localRotation = Quaternion.Euler(0f, yaw, 0f);
+        }
+
+        float SwingYaw()
+        {
             float start = -_arcAngle * 0.5f;
             float end = _arcAngle * 0.5f;
             float t = _combatComponent.PhaseProgress;
 
-            float yaw = _combatComponent.Phase switch
+            return _combatComponent.Phase switch
             {
                 ESwingPhase.Windup => Mathf.Lerp(_restAngle, start, t),
                 ESwingPhase.Active => Mathf.Lerp(start, end, t),
                 ESwingPhase.Recovery => Mathf.Lerp(end, _restAngle, t * t),
                 _ => _restAngle,
             };
+        }
 
-            _swordPivotComponent.localRotation = Quaternion.Euler(0f, yaw, 0f);
+        // A full turn ends back at rest, so windup and recovery just hold the rest angle.
+        float SpinYaw()
+        {
+            if (_combatComponent.Phase != ESwingPhase.Active) return _restAngle;
+            return _restAngle + 360f * _combatComponent.PhaseProgress;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Branded.Loop
     // talk, pick a boon, and the next night falls.
     public class NightCycle : MonoBehaviour
     {
-        [SerializeField, FormerlySerializedAs("nights")] NightData[] _nights; // past the last entry, the last night repeats
+        [SerializeField, FormerlySerializedAs("nights")] NightData[] _nights; // past the last entry its pool repeats, while the spawner's difficulty keeps ramping
         [SerializeField, FormerlySerializedAs("spawner")] WaveSpawner _spawnerComponent;
         [SerializeField, FormerlySerializedAs("lighting")] DayNightLighting _lightingComponent;
         [SerializeField, FormerlySerializedAs("campfirePrefab")] Campfire _campfirePrefabComponent;
@@ -58,7 +58,7 @@ namespace Branded.Loop
                 NightData night = _nights[Mathf.Min(NightNumber, _nights.Length) - 1];
                 _dawnAt = Time.time + night.Duration;
                 SetPhase(ECyclePhase.Night);
-                _spawnerComponent.Begin(night);
+                _spawnerComponent.Begin(night, NightNumber);
                 yield return new WaitUntil(() => Time.time >= _dawnAt);
 
                 SetPhase(ECyclePhase.Dawn);

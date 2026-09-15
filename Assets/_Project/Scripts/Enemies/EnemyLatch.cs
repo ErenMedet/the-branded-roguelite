@@ -1,10 +1,11 @@
+using Branded.Combat;
 using Branded.Player;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Branded.Enemies
 {
-    // Shadow spirit: instead of hitting, it clings to the player and slows them until a dash or a swing shakes it off.
+    // Shadow spirit: instead of hitting, it clings to the player, slowing and slowly hurting them until a dash or a swing shakes it off.
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyLatch : EnemyAttack
     {
@@ -13,11 +14,15 @@ namespace Branded.Enemies
         [SerializeField] float _relatchCooldown = 1.5f;
         [Tooltip("How far from the player a shaken-off spirit lands.")]
         [SerializeField] float _shakeOffDistance = 1.8f;
+        [SerializeField] float _latchedDamage = 1f;
+        [SerializeField] float _latchedDamageInterval = 0.5f;
 
         NavMeshAgent _navMeshAgentComponent;
         Collider[] _colliderComponents;
         PlayerLatchReceiver _receiverComponent;
+        HealthComponent _targetHealthComponent;
         Vector3 _offset;
+        float _damageTimer;
 
         protected override void Awake()
         {
@@ -28,20 +33,42 @@ namespace Branded.Enemies
 
         void Update()
         {
+            if (IsAttacking)
+            {
+                TickLatchedDamage();
+                return;
+            }
+
             TickCooldown();
             if (!IsReady || !_chaserComponent.InRange) return;
             TryLatch();
         }
 
+        // Tick damage, so a clinging swarm wears the player down without flashing or staggering them every beat.
+        void TickLatchedDamage()
+        {
+            if (!_targetHealthComponent) return;
+            _damageTimer -= Time.deltaTime;
+            if (_damageTimer > 0f) return;
+            _damageTimer += _latchedDamageInterval;
+            _targetHealthComponent.TakeTickDamage(_latchedDamage);
+        }
+
         void TryLatch()
         {
-            if (!_receiverComponent) _receiverComponent = _chaserComponent.TargetComponent.GetComponent<PlayerLatchReceiver>();
+            if (!_receiverComponent)
+            {
+                _receiverComponent = _chaserComponent.TargetComponent.GetComponent<PlayerLatchReceiver>();
+                if (_receiverComponent) _targetHealthComponent = _receiverComponent.GetComponent<HealthComponent>();
+            }
             if (!_receiverComponent || !_receiverComponent.TryAttach(this, out _offset))
             {
                 CooldownTimer = RetryDelay;
                 return;
             }
 
+            // The first tick waits one interval, so a quick dash shakes it off for free.
+            _damageTimer = _latchedDamageInterval;
             StartAttack();
             _chaserComponent.ReleaseSlot();
             _navMeshAgentComponent.enabled = false;

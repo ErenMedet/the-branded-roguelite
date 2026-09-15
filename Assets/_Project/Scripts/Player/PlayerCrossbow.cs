@@ -1,6 +1,7 @@
 using Branded.Combat;
 using Branded.Core;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Branded.Player
 {
@@ -23,9 +24,15 @@ namespace Branded.Player
         [SerializeField] int _magazineSize = 6;
         [SerializeField] float _reloadTime = 1.5f;
 
+        public event UnityAction<int, int> BoltsChanged; // (left, magazine size)
+        public event UnityAction ReloadStarted;
+        public event UnityAction Broke;
+
         public bool IsBroken { get; private set; }
         public int BoltsLeft { get; private set; }
+        public int MagazineSize => _magazineSize;
         public bool IsReloading => _reloadTimer > 0f;
+        public float ReloadProgress => IsReloading ? 1f - _reloadTimer / _reloadTime : 1f;
 
         float _fireTimer;
         float _reloadTimer;
@@ -48,7 +55,7 @@ namespace Branded.Player
             if (IsReloading)
             {
                 _reloadTimer -= Time.deltaTime;
-                if (_reloadTimer <= 0f) BoltsLeft = _magazineSize;
+                if (_reloadTimer <= 0f) Refill();
                 return;
             }
 
@@ -66,22 +73,33 @@ namespace Branded.Player
             bolt.Launch(_damage, transform);
 
             BoltsLeft--;
+            BoltsChanged?.Invoke(BoltsLeft, _magazineSize);
             if (BoltsLeft > 0) return;
             _reloadTimer = _reloadTime;
+            ReloadStarted?.Invoke();
+        }
+
+        void Refill()
+        {
+            BoltsLeft = _magazineSize;
+            BoltsChanged?.Invoke(BoltsLeft, _magazineSize);
         }
 
         public void Break()
         {
             IsBroken = true;
+            // A reload finishing while broken would overwrite the HUD's broken state; the repair refills anyway.
+            _reloadTimer = 0f;
             if (_crossbowVisual) _crossbowVisual.SetActive(false);
+            Broke?.Invoke();
         }
 
         void OnArmRepaired()
         {
             IsBroken = false;
-            BoltsLeft = _magazineSize;
             _reloadTimer = 0f;
             if (_crossbowVisual) _crossbowVisual.SetActive(true);
+            Refill();
         }
     }
 }

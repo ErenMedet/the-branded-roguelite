@@ -151,9 +151,11 @@ Karakterin modelleri değiştiğinde fizik veya kodların bozulmaması için kes
 1. **Ejderha Katili (Dragonslayer - Büyük Kılıç):**
    * *Hitstop:* Kılıç düşmana çarptığı anda oyun `0.07` saniye dondurulur.
    * *Cinemachine Screen Shake:* Tok darbelerde kamera anlık sarsılır.
+   * *360° Dönüş (Q):* Kılıç oyuncunun etrafında tam tur savrulur, her yöndeki düşmanlara normal savuruş hasarı verir. `2` saniye bekleme süresi vardır.
 2. **Dash (Atılma):**
    * `0.2` saniyelik dokunulmazlık penceresi (i-frame) ve hızlı yer değiştirme.
-3. **Sol Kol Protez Silahları (Sağ Tık / Q Tuşu):**
+   * Atılırken Q'ya basılırsa atılma sürerken dönüş yapılır; yol boyunca çarpılan düşmanlar vurulur.
+3. **Sol Kol Protez Silahları (Sağ Tık / Orta Tık):**
    * *Seri Tatar Yayı:* Uzaktaki uçan hayaletleri avlamak için hızlı menzilli atış.
    * *Gizli Top Gülesi (Cannon Arm):* Sıkışıldığında etraftaki sürüyü havaya uçuran yakın mesafe patlaması.
 4. **Mühür Zonklaması (The Brand Warning):**
@@ -178,7 +180,7 @@ Mevcut tipler: tank, koşucu (charger), uzaktan ateş eden ve yer altından çı
 ### Kaotik Savaş Ortamı (Kalabalık Ölçekleme):
 * **İki katmanlı kalabalık:** Oyuncuya az sayıda gerçek tehdit (tazı, şövalye, troll) vurur; etraf tek vuruşluk ruhlarla dolar.
 * **Saldırı hakkı (Attack Token):** Ekranda 40 düşman olsa bile aynı anda en fazla 3-4'ü saldırır.
-* **İlerleme:** Gece ve bölge ilerledikçe aynı anda yaşayan düşman sınırı 12'den 40'a kadar çıkar, düşmanlar birden fazla yönden gelir (`NightData` üzerinden).
+* **İlerleme:** Sabit dalgalar yok; sahadaki toplam tehdit bir hedefin etrafında tutulur (Hades'in derinlikle artan karşılaşma bütçesi gibi). Hedef her gece artar, gece içinde yükselir ve dalgalanır: saha ne boşalır ne yığılır. Aynı anda yaşayan düşman sınırı geceyle 12'den 40'a çıkar. `NightData` o gecenin düşman havuzunu (paket, tehdit, ağırlık) tutar; paketler farklı yönlerden gelir. Son gece asset'inden sonra havuz tekrar eder, zorluk artmaya devam eder.
 * **Performans:** Düşmanlar Instantiate/Destroy yerine havuzdan (Object Pool) gelir; ruhlar NavMeshAgent yerine basit takip hareketi kullanır.
 
 ---
