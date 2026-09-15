@@ -1,3 +1,4 @@
+using Branded.Dialogue;
 using Branded.Meta;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,6 +23,10 @@ namespace Branded.Core
         public static event UnityAction<float> HubExited; // (fade duration)
         public static event UnityAction ScreenFadedOut;
 
+        public static event UnityAction<DialogueData> DialogueRequested;
+        public static event UnityAction DialogueStarted;
+        public static event UnityAction DialogueEnded;
+
         public static event UnityAction PlayerDied;
         public static event UnityAction DeathScreenFinished;
 
@@ -38,6 +43,10 @@ namespace Branded.Core
 
         public static void RaiseHubExited(float fadeDuration) => HubExited?.Invoke(fadeDuration);
         public static void RaiseScreenFadedOut() => ScreenFadedOut?.Invoke();
+
+        public static void RaiseDialogueRequested(DialogueData dialogue) => DialogueRequested?.Invoke(dialogue);
+        public static void RaiseDialogueStarted() => DialogueStarted?.Invoke();
+        public static void RaiseDialogueEnded() => DialogueEnded?.Invoke();
 
         public static void RaisePlayerDied() => PlayerDied?.Invoke();
         public static void RaiseDeathScreenFinished() => DeathScreenFinished?.Invoke();
@@ -56,6 +65,9 @@ namespace Branded.Core
             UpgradePanelClosed = null;
             HubExited = null;
             ScreenFadedOut = null;
+            DialogueRequested = null;
+            DialogueStarted = null;
+            DialogueEnded = null;
             PlayerDied = null;
             DeathScreenFinished = null;
         }

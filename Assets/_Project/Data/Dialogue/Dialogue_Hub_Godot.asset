@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a3351ee852c3d4ebfaaff5c9d84cca, type: 3}
+  m_Name: Dialogue_Hub_Godot
+  m_EditorClassIdentifier: Assembly-CSharp::Branded.Dialogue.DialogueData
+  <SpeakerName>k__BackingField: Godot
+  <SpeakerPortrait>k__BackingField: {fileID: 0}
+  <VoiceMumble>k__BackingField: {fileID: 0}
+  <Lines>k__BackingField:
+  - "Yine mi sen? O k\u0131l\u0131c\u0131 bu hale getirmek i\xE7in bir ordu mu bi\xE7tin?"
+  - "Ocak s\u0131cak. \u0130blis k\xFCl\xFC getirdiysen i\u015Fe koyuluruz."
+  - "Madenin ta\u015Flar\u0131 sa\u011Flam evlat, ama sen kendine dikkat et."

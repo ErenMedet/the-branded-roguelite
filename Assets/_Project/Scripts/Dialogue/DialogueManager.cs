@@ -1,4 +1,5 @@
 using System.Collections;
+using Branded.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,7 +40,24 @@ namespace Branded.Dialogue
             _advance.Dispose();
         }
 
+        void OnEnable() => GameEvents.DialogueRequested += OnDialogueRequested;
+        void OnDisable() => GameEvents.DialogueRequested -= OnDialogueRequested;
+
         void OnAdvance(InputAction.CallbackContext _) => _advancePressed = true;
+
+        // NPC talk: the camp locks input itself, so only requested dialogues raise Started / Ended.
+        void OnDialogueRequested(DialogueData data)
+        {
+            if (IsOpen) return;
+            StartCoroutine(PlayRequested(data));
+        }
+
+        IEnumerator PlayRequested(DialogueData data)
+        {
+            GameEvents.RaiseDialogueStarted();
+            yield return Play(data);
+            GameEvents.RaiseDialogueEnded();
+        }
 
         public IEnumerator Play(DialogueData data)
         {
@@ -50,6 +68,8 @@ namespace Branded.Dialogue
             _speakerNameComponent.text = data.SpeakerName;
             _portraitComponent.sprite = data.SpeakerPortrait;
             _portraitComponent.enabled = data.SpeakerPortrait;
+            _bodyComponent.text = string.Empty;
+            yield return null; // the interact press that opened the dialogue must not also skip its first line
             _advance.Enable();
 
             foreach (string line in data.Lines)

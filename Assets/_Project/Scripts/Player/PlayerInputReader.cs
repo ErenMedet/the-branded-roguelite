@@ -74,6 +74,8 @@ namespace Branded.Player
             GameEvents.UpgradePanelOpened += OnUpgradePanelOpened;
             GameEvents.UpgradePanelClosed += OnUpgradePanelClosed;
             GameEvents.HubExited += OnHubExited;
+            GameEvents.DialogueStarted += OnDialogueStarted;
+            GameEvents.DialogueEnded += OnDialogueEnded;
         }
 
         // Death disables the reader, so nothing may stay held.
@@ -84,6 +86,8 @@ namespace Branded.Player
             GameEvents.UpgradePanelOpened -= OnUpgradePanelOpened;
             GameEvents.UpgradePanelClosed -= OnUpgradePanelClosed;
             GameEvents.HubExited -= OnHubExited;
+            GameEvents.DialogueStarted -= OnDialogueStarted;
+            GameEvents.DialogueEnded -= OnDialogueEnded;
 
             _point.performed -= OnPoint;
             UnregisterGameplay();
@@ -115,6 +119,8 @@ namespace Branded.Player
         void OnUpgradePanelOpened(string stationName, UpgradeData[] upgrades) => Lock();
         void OnUpgradePanelClosed() => Unlock();
         void OnHubExited(float fadeDuration) => Lock();
+        void OnDialogueStarted() => Lock();
+        void OnDialogueEnded() => Unlock();
 
         void Lock()
         {

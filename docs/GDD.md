@@ -11,7 +11,7 @@
 * **Hikaye Başlangıcı (Lore):** 
   * Karakter, "Tutulma" (The Eclipse) katliamından sağ kurtulmuş; tek kolunu ve tek gözünü kaybetmiştir.
   * Boynundaki **Kurban Mührü (Brand of Sacrifice)** laneti nedeniyle ölüler ve iblisler sürekli kanının kokusuna çekilmektedir.
-* **Ana Merkez (Hub):** Dağlardaki **Godot'nun Madeni**: eski bir madenin içindeki demirci ocağı. Maden ağzının yanında su çarklı küçük bir kulübe (dekoratif, içine girilmez), önünde ağaçlık, cephanelik, şelale ve Şahinler için dikilmiş Kılıçlar Tepesi bulunur.
+* **Ana Merkez (Hub):** Dağlardaki **Godot'nun Madeni**: eski bir madenin içindeki demirci ocağı. Maden ağzının yanında su çarklı küçük bir kulübe (dekoratif, içine girilmez), önünde ağaçlık, cephanelik, şelale ve Şahinler için dikilmiş Kılıçlar Tepesi bulunur. Şelalenin arkasından yürünerek girilen mağarada (tavandaki delikten ışık iner) iç şelalenin altında Casca durur; ocağın başında Godot ve kızı Erica, dere kenarında Rickert bekler. Hepsiyle E ile konuşulur (Hades tarzı portreli diyalog).
   * Perilerin (Puck) şifalı tozu ve antik mabet koruması sayesinde iblislerin giremediği yegane güvenli sığınaktır.
   * Karakter seferlerde yenildiğinde kan revan içinde madendeki ocağın başında uyanır.
 

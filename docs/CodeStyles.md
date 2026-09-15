@@ -29,6 +29,7 @@ Applies to every C# file under `Assets/_Project/Scripts/`. Ignore `Assets/Tutori
 - Every `GameEvents` event gets a static `Raise<EventName>()` invoker method.
 - Subscribe in `OnEnable` and unsubscribe in `OnDisable`. UI managers that hide their own GameObject subscribe in `Awake` and unsubscribe in `OnDestroy`.
 - Prefer Input System events (`performed` / `canceled`) over polling `ReadValue` every frame.
+- A UI opened by the interact key waits one frame before enabling its own key action (`UpgradePanelUI`, `DialogueManager`), so the press that opened it doesn't also advance it.
 - Domain reload is off: reset static events and caches in a `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` method.
 
 ## Logic
