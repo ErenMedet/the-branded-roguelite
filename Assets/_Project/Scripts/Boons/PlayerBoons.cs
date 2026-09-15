@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Branded.Combat;
 using Branded.Player;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 namespace Branded.Boons
@@ -20,7 +19,6 @@ namespace Branded.Boons
         float _burnDuration;
 
         public IReadOnlyList<BoonData> Active => _active;
-        public event UnityAction<BoonData> BoonAdded;
 
         void Awake()
         {
@@ -37,7 +35,6 @@ namespace Branded.Boons
             _active.Add(boon);
             Recalculate();
             if (boon.HealAmount > 0f) _healthComponent.Heal(boon.HealAmount);
-            BoonAdded?.Invoke(boon);
         }
 
         // Up to `count` random boons from the pool, skipping ones already taken unless they are repeatable.

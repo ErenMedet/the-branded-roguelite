@@ -1,3 +1,4 @@
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -43,10 +44,10 @@ namespace Branded.Player
         }
 
         // Flat direction from an off-centre point (the arm muzzle) to the aim point, so shots land on the cursor.
+        // A cursor right on the muzzle (within half a unit) gives no usable direction, so the body's aim is used.
         public Vector3 DirectionFrom(Vector3 origin)
         {
-            Vector3 direction = AimPoint - origin;
-            direction.y = 0f;
+            Vector3 direction = FlatMath.Flat(AimPoint - origin);
             return direction.sqrMagnitude > 0.25f ? direction.normalized : AimDirection;
         }
 
@@ -60,9 +61,7 @@ namespace Branded.Player
             if (!ground.Raycast(ray, out float enter)) return;
 
             AimPoint = ray.GetPoint(enter);
-            Vector3 direction = AimPoint - transform.position;
-            direction.y = 0f;
-            if (direction.sqrMagnitude > 0.0001f) AimDirection = direction.normalized;
+            AimDirection = FlatMath.FlatDirection(transform.position, AimPoint, AimDirection);
         }
     }
 }

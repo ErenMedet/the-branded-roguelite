@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -65,14 +66,12 @@ namespace Branded.Player
             {
                 if (hit.transform.IsChildOf(transform)) continue;
 
-                Vector3 toTarget = hit.transform.position - transform.position;
-                toTarget.y = 0f;
-                if (toTarget.sqrMagnitude > 0.01f && Vector3.Angle(direction, toTarget) > _arcAngle * 0.5f) continue;
+                if (!FlatMath.WithinArc(direction, hit.transform.position - transform.position, _arcAngle)) continue;
 
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisSwing.Add(target)) continue;
 
-                target.TakeDamage(_damage * BaseDamageMultiplier * DamageMultiplier, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
+                target.TakeDamage(_damage * BaseDamageMultiplier * DamageMultiplier, FlatMath.FlatDirection(transform.position, hit.transform.position, direction));
                 TargetHit?.Invoke(target);
                 landed++;
             }

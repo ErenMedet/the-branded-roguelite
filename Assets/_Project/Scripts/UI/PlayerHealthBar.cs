@@ -15,12 +15,11 @@ namespace Branded.UI
         [SerializeField, FormerlySerializedAs("trailDelay")] float _trailDelay = 0.35f;
         [SerializeField, FormerlySerializedAs("trailSpeed")] float _trailSpeed = 1f; // bar fraction per second
 
-        float _value = 1f;
-        float _trailValue = 1f;
-        float _trailTimer;
+        BarTrail _trail;
 
         void Awake()
         {
+            _trail = new BarTrail(_trailDelay, _trailSpeed);
             if (_healthComponent) return;
             var player = GameObject.FindWithTag("Player");
             if (player) _healthComponent = player.GetComponent<HealthComponent>();
@@ -43,26 +42,21 @@ namespace Branded.UI
         {
             if (!_healthComponent) return;
             OnHealthChanged(_healthComponent.CurrentHealth, _healthComponent.MaxHealth);
-            _trailValue = _value;
-            SetBar(_trailComponent, _trailValue);
+            _trail.Snap();
+            SetBar(_trailComponent, _trail.Value);
         }
 
         void OnHealthChanged(float current, float max)
         {
-            _value = max > 0f ? current / max : 0f;
-            _trailTimer = _trailDelay;
-            SetBar(_fillComponent, _value);
+            float value = max > 0f ? current / max : 0f;
+            _trail.SetTarget(value);
+            SetBar(_fillComponent, value);
             if (!_labelComponent) return;
             _labelComponent.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
         }
 
-        void Update()
-        {
-            if (_trailValue <= _value) _trailValue = _value;
-            else if (_trailTimer > 0f) _trailTimer -= Time.unscaledDeltaTime;
-            else _trailValue = Mathf.MoveTowards(_trailValue, _value, _trailSpeed * Time.unscaledDeltaTime);
-            SetBar(_trailComponent, _trailValue);
-        }
+        // Unscaled, so the trail keeps moving during hitstop.
+        void Update() => SetBar(_trailComponent, _trail.Tick(Time.unscaledDeltaTime));
 
         static void SetBar(RectTransform bar, float value) => bar.anchorMax = new Vector2(Mathf.Clamp01(value), 1f);
     }

@@ -8,7 +8,8 @@ namespace Branded.Enemies
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyLatch : EnemyAttack
     {
-        [SerializeField] EnemyChaser _chaserComponent;
+        const float RetryDelay = 0.5f; // every latch slot was taken
+
         [SerializeField] float _relatchCooldown = 1.5f;
         [Tooltip("How far from the player a shaken-off spirit lands.")]
         [SerializeField] float _shakeOffDistance = 1.8f;
@@ -17,20 +18,18 @@ namespace Branded.Enemies
         Collider[] _colliderComponents;
         PlayerLatchReceiver _receiverComponent;
         Vector3 _offset;
-        float _cooldownTimer;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _navMeshAgentComponent = GetComponent<NavMeshAgent>();
-            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
             _colliderComponents = GetComponents<Collider>();
         }
 
         void Update()
         {
-            if (IsAttacking) return;
-            _cooldownTimer -= Time.deltaTime;
-            if (_cooldownTimer > 0f || _chaserComponent.Halted || !_chaserComponent.InRange) return;
+            TickCooldown();
+            if (!IsReady || !_chaserComponent.InRange) return;
             TryLatch();
         }
 
@@ -39,12 +38,11 @@ namespace Branded.Enemies
             if (!_receiverComponent) _receiverComponent = _chaserComponent.TargetComponent.GetComponent<PlayerLatchReceiver>();
             if (!_receiverComponent || !_receiverComponent.TryAttach(this, out _offset))
             {
-                _cooldownTimer = 0.5f;
+                CooldownTimer = RetryDelay;
                 return;
             }
 
-            IsAttacking = true;
-            _chaserComponent.Halted = true;
+            StartAttack();
             _chaserComponent.ReleaseSlot();
             _navMeshAgentComponent.enabled = false;
             // A solid collider stuck to the player would shove the CharacterController; the sword still finds triggers.
@@ -70,7 +68,6 @@ namespace Branded.Enemies
 
             _navMeshAgentComponent.enabled = true;
             if (_navMeshAgentComponent.isOnNavMesh) _navMeshAgentComponent.Warp(transform.position);
-            _cooldownTimer = _relatchCooldown;
         }
 
         // Staying on is the whole point: hits never pry it loose, only the receiver's shake-off does.
@@ -78,8 +75,7 @@ namespace Branded.Enemies
 
         void Release()
         {
-            IsAttacking = false;
-            _chaserComponent.Halted = false;
+            FinishAttack(_relatchCooldown);
             SetTrigger(false);
         }
 

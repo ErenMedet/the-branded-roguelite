@@ -1,5 +1,6 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using Branded.Player;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,7 +15,6 @@ namespace Branded.Enemies
     {
         static readonly float[] ExitAngles = { 0f, 40f, -40f, 80f, -80f };
 
-        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
         [SerializeField, FormerlySerializedAs("visual")] Transform _visualComponent; // sunk below the floor while burrowed
         [SerializeField, FormerlySerializedAs("exitMarker")] GameObject _exitMarker;  // ground disc at the exit point, sized to the hit radius
         [SerializeField, FormerlySerializedAs("healthBar")] GameObject _healthBar;
@@ -38,30 +38,27 @@ namespace Branded.Enemies
         Collider[] _colliderComponents;
         PlayerAim _targetAimComponent;
         Vector3 _visualRest;
-        float _surfaceTimer;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _navMeshAgentComponent = GetComponent<NavMeshAgent>();
-            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
             _colliderComponents = GetComponents<Collider>();
             _visualRest = _visualComponent.localPosition;
             if (_exitMarker) _exitMarker.SetActive(false);
-            _surfaceTimer = Random.Range(1.5f, 3f);
+            CooldownTimer = Random.Range(1.5f, 3f);
         }
 
         void Update()
         {
-            if (IsAttacking || !_chaserComponent.TargetComponent) return;
-            _surfaceTimer -= Time.deltaTime;
-            if (_surfaceTimer > 0f || _chaserComponent.Halted) return;
+            TickCooldown();
+            if (!IsReady) return;
             StartCoroutine(Ambush());
         }
 
         IEnumerator Ambush()
         {
-            IsAttacking = true;
-            _chaserComponent.Halted = true;
+            StartAttack();
 
             SetExposed(false);
             yield return MoveVisual(0f, -_sinkDepth, _sinkDuration);
@@ -82,16 +79,18 @@ namespace Branded.Enemies
             TryHit();
 
             yield return new WaitForSeconds(_recovery);
-            Finish();
+            FinishAttack(NextSurfaceTime());
         }
+
+        float NextSurfaceTime() => Random.Range(_surfaceTime.x, _surfaceTime.y);
 
         Vector3 FindExitPoint()
         {
             Transform target = _chaserComponent.TargetComponent;
             if (!_targetAimComponent) _targetAimComponent = target.GetComponent<PlayerAim>();
-            Vector3 back = _targetAimComponent ? -_targetAimComponent.AimDirection : transform.position - target.position;
-            back.y = 0f;
-            back = back.sqrMagnitude > 0.001f ? back.normalized : Vector3.back;
+            Vector3 back = _targetAimComponent
+                ? -_targetAimComponent.AimDirection
+                : FlatMath.FlatDirection(target.position, transform.position, Vector3.back);
 
             foreach (float angle in ExitAngles)
             {
@@ -103,19 +102,17 @@ namespace Branded.Enemies
 
         void FaceTargetNow()
         {
-            Vector3 direction = _chaserComponent.TargetComponent.position - transform.position;
-            direction.y = 0f;
+            Vector3 direction = FlatMath.Flat(_chaserComponent.TargetComponent.position - transform.position);
             if (direction.sqrMagnitude <= 0.001f) return;
             transform.rotation = Quaternion.LookRotation(direction);
         }
 
         void TryHit()
         {
-            Vector3 offset = _chaserComponent.TargetComponent.position - transform.position;
-            offset.y = 0f;
-            if (offset.sqrMagnitude > _hitRadius * _hitRadius) return;
+            Vector3 targetPosition = _chaserComponent.TargetComponent.position;
+            if (FlatMath.FlatDistance(transform.position, targetPosition) > _hitRadius) return;
             var damageable = _chaserComponent.TargetComponent.GetComponentInParent<IDamageable>();
-            damageable?.TakeDamage(_damage, offset.sqrMagnitude > 0.001f ? offset.normalized : transform.forward);
+            damageable?.TakeDamage(_damage, FlatMath.FlatDirection(transform.position, targetPosition, transform.forward));
         }
 
         void SetExposed(bool exposed)
@@ -139,13 +136,6 @@ namespace Branded.Enemies
 
         public override void Interrupt() { }
 
-        void Finish()
-        {
-            IsAttacking = false;
-            _chaserComponent.Halted = false;
-            _surfaceTimer = Random.Range(_surfaceTime.x, _surfaceTime.y);
-        }
-
         void OnDisable()
         {
             if (!IsAttacking) return;
@@ -153,7 +143,7 @@ namespace Branded.Enemies
             SetDepth(0f);
             if (_exitMarker) _exitMarker.SetActive(false);
             IsInvulnerable = false;
-            IsAttacking = false;
+            FinishAttack(NextSurfaceTime());
         }
     }
 }

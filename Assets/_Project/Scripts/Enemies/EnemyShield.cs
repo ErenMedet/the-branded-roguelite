@@ -1,4 +1,5 @@
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 
 namespace Branded.Enemies
@@ -7,8 +8,6 @@ namespace Branded.Enemies
     // Hits from behind always get through.
     public class EnemyShield : MonoBehaviour, IDamageBlocker
     {
-        static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-
         [SerializeField] GameObject _shieldVisual;
         [SerializeField, Range(0f, 360f)] float _blockArc = 120f;
         [Tooltip("A single hit at least this strong breaks the shield and gets through.")]
@@ -20,15 +19,12 @@ namespace Branded.Enemies
 
         public bool IsBroken { get; private set; }
 
-        Renderer _shieldRendererComponent;
-        MaterialPropertyBlock _block;
-        float _flashUntil;
-        bool _flashing;
+        RendererFlash _flash;
 
         void Awake()
         {
-            if (_shieldVisual) _shieldRendererComponent = _shieldVisual.GetComponent<Renderer>();
-            _block = new MaterialPropertyBlock();
+            if (!_shieldVisual || !_shieldVisual.TryGetComponent(out Renderer shieldRenderer)) return;
+            _flash = new RendererFlash(new[] { shieldRenderer });
         }
 
         public bool Blocks(float amount, Vector3 hitDirection)
@@ -36,9 +32,8 @@ namespace Branded.Enemies
             if (IsBroken) return false;
 
             // hitDirection points from the attacker to this enemy, so a frontal hit comes in against our forward.
-            Vector3 incoming = -hitDirection;
-            incoming.y = 0f;
-            if (incoming.sqrMagnitude < 0.0001f || Vector3.Angle(transform.forward, incoming) > _blockArc * 0.5f) return false;
+            Vector3 incoming = FlatMath.Flat(-hitDirection);
+            if (incoming.sqrMagnitude < 0.0001f || !FlatMath.WithinArc(transform.forward, incoming, _blockArc)) return false;
 
             if (amount >= _breakDamage)
             {
@@ -46,7 +41,7 @@ namespace Branded.Enemies
                 return false;
             }
 
-            Flash();
+            _flash?.Flash(_flashColor, _flashDuration);
             return true;
         }
 
@@ -56,21 +51,6 @@ namespace Branded.Enemies
             if (_shieldVisual) _shieldVisual.SetActive(false);
         }
 
-        // Unscaled time so the flash still shows during hitstop.
-        void Flash()
-        {
-            if (!_shieldRendererComponent) return;
-            _flashUntil = Time.unscaledTime + _flashDuration;
-            _flashing = true;
-            _block.SetColor(BaseColorId, _flashColor);
-            _shieldRendererComponent.SetPropertyBlock(_block);
-        }
-
-        void Update()
-        {
-            if (!_flashing || Time.unscaledTime < _flashUntil) return;
-            _flashing = false;
-            _shieldRendererComponent.SetPropertyBlock(null);
-        }
+        void Update() => _flash?.Tick();
     }
 }

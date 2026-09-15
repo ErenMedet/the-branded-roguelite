@@ -1,5 +1,6 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,7 +9,6 @@ namespace Branded.Enemies
     // Stops, charges a shot for a moment (glow at the hand), then fires a projectile at where the player stands.
     public class EnemyRangedAttack : EnemyAttack
     {
-        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
         [SerializeField, FormerlySerializedAs("projectilePrefab")] Projectile _projectilePrefabComponent;
         [SerializeField, FormerlySerializedAs("muzzle")] Transform _muzzleComponent;
         [SerializeField, FormerlySerializedAs("telegraph")] GameObject _telegraph;
@@ -17,27 +17,23 @@ namespace Branded.Enemies
         [SerializeField, FormerlySerializedAs("cooldown")] float _cooldown = 2.2f;
         [SerializeField, FormerlySerializedAs("damage")] float _damage = 10f;
 
-        float _cooldownTimer;
-
-        void Awake()
+        protected override void Awake()
         {
-            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
+            base.Awake();
             if (_telegraph) _telegraph.SetActive(false);
-            _cooldownTimer = _cooldown * Random.Range(0.3f, 1f);
+            CooldownTimer = _cooldown * Random.Range(0.3f, 1f);
         }
 
         void Update()
         {
-            _cooldownTimer -= Time.deltaTime;
-            if (IsAttacking || _cooldownTimer > 0f || _chaserComponent.Halted || !_chaserComponent.TargetComponent) return;
-            if (_chaserComponent.DistanceToTarget > _range || !_chaserComponent.HasLineOfSight()) return;
+            TickCooldown();
+            if (!IsReady || _chaserComponent.DistanceToTarget > _range || !_chaserComponent.HasLineOfSight()) return;
             StartCoroutine(Shoot());
         }
 
         IEnumerator Shoot()
         {
-            IsAttacking = true;
-            _chaserComponent.Halted = true;
+            StartAttack();
             if (_telegraph) _telegraph.SetActive(true);
             for (float t = 0f; t < _windup; t += Time.deltaTime)
             {
@@ -46,14 +42,13 @@ namespace Branded.Enemies
             }
             if (_telegraph) _telegraph.SetActive(false);
 
-            Vector3 aim = _chaserComponent.TargetComponent.position - _muzzleComponent.position;
-            aim.y = 0f;
+            Vector3 aim = FlatMath.Flat(_chaserComponent.TargetComponent.position - _muzzleComponent.position);
             if (aim.sqrMagnitude > 0.01f)
             {
                 var projectile = Instantiate(_projectilePrefabComponent, _muzzleComponent.position, Quaternion.LookRotation(aim));
                 projectile.Launch(_damage);
             }
-            Finish();
+            FinishAttack(_cooldown);
         }
 
         public override void Interrupt()
@@ -61,14 +56,7 @@ namespace Branded.Enemies
             if (!IsAttacking) return;
             StopAllCoroutines();
             if (_telegraph) _telegraph.SetActive(false);
-            Finish();
-        }
-
-        void Finish()
-        {
-            IsAttacking = false;
-            _chaserComponent.Halted = false;
-            _cooldownTimer = _cooldown;
+            FinishAttack(_cooldown);
         }
 
         void OnDisable() => Interrupt();

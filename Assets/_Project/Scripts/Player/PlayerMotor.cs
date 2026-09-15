@@ -1,4 +1,5 @@
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -95,7 +96,7 @@ namespace Branded.Player
         // Forced motion from outside (cannon recoil): overrides walking like a dash, but grants no i-frames.
         public void Push(Vector3 direction, float distance, float duration)
         {
-            direction.y = 0f;
+            direction = FlatMath.Flat(direction);
             if (direction.sqrMagnitude < 0.0001f || duration <= 0f) return;
             _pushVelocity = direction.normalized * (distance / duration);
             _pushTimer = duration;

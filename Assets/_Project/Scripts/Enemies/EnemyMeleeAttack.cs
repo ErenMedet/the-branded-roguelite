@@ -1,5 +1,6 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,7 +9,6 @@ namespace Branded.Enemies
     // Simple telegraphed melee: stop, show the warning, then hit if the player is still in reach.
     public class EnemyMeleeAttack : EnemyAttack
     {
-        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
         [SerializeField, FormerlySerializedAs("telegraph")] GameObject _telegraph;
         [SerializeField, FormerlySerializedAs("damage")] float _damage = 10f;
         [SerializeField, FormerlySerializedAs("windup")] float _windup = 0.55f;
@@ -20,25 +20,22 @@ namespace Branded.Enemies
 
         public override bool CanBeInterrupted => !_superArmor;
 
-        float _cooldownTimer;
-
-        void Awake()
+        protected override void Awake()
         {
-            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
+            base.Awake();
             if (_telegraph) _telegraph.SetActive(false);
         }
 
         void Update()
         {
-            _cooldownTimer -= Time.deltaTime;
-            if (IsAttacking || _cooldownTimer > 0f || _chaserComponent.Halted || !_chaserComponent.InRange) return;
+            TickCooldown();
+            if (!IsReady || !_chaserComponent.InRange) return;
             StartCoroutine(Attack());
         }
 
         IEnumerator Attack()
         {
-            IsAttacking = true;
-            _chaserComponent.Halted = true;
+            StartAttack();
             if (_telegraph) _telegraph.SetActive(true);
 
             float t = 0f;
@@ -51,7 +48,7 @@ namespace Branded.Enemies
 
             if (_telegraph) _telegraph.SetActive(false);
             TryHitTarget();
-            Finish();
+            FinishAttack(_cooldown);
         }
 
         void TryHitTarget()
@@ -59,10 +56,9 @@ namespace Branded.Enemies
             Transform target = _chaserComponent.TargetComponent;
             if (!target) return;
 
-            Vector3 toTarget = target.position - transform.position;
-            toTarget.y = 0f;
+            Vector3 toTarget = FlatMath.Flat(target.position - transform.position);
             if (toTarget.sqrMagnitude > _hitRange * _hitRange) return;
-            if (Vector3.Angle(transform.forward, toTarget) > _hitArc * 0.5f) return;
+            if (!FlatMath.WithinArc(transform.forward, toTarget, _hitArc)) return;
 
             var damageable = target.GetComponentInParent<IDamageable>();
             damageable?.TakeDamage(_damage, toTarget.normalized);
@@ -74,14 +70,7 @@ namespace Branded.Enemies
             if (!IsAttacking) return;
             StopAllCoroutines();
             if (_telegraph) _telegraph.SetActive(false);
-            Finish();
-        }
-
-        void Finish()
-        {
-            IsAttacking = false;
-            _chaserComponent.Halted = false;
-            _cooldownTimer = _cooldown;
+            FinishAttack(_cooldown);
         }
 
         void OnDisable() => Interrupt();

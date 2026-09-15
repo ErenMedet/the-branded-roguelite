@@ -1,4 +1,5 @@
 using Branded.Combat;
+using Branded.UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,15 +19,14 @@ namespace Branded.Enemies
 
         Transform _cameraTransformComponent;
         Renderer[] _rendererComponents;
+        BarTrail _trail;
         bool _shown;
-        float _value = 1f;
-        float _trailValue = 1f;
-        float _trailTimer;
 
         void Awake()
         {
             if (!_healthComponent) _healthComponent = GetComponentInParent<HealthComponent>();
             _rendererComponents = GetComponentsInChildren<Renderer>(true);
+            _trail = new BarTrail(_trailDelay, _trailSpeed);
         }
 
         void OnEnable()
@@ -46,16 +46,16 @@ namespace Branded.Enemies
             if (Camera.main) _cameraTransformComponent = Camera.main.transform;
             SetShown(false);
             OnHealthChanged(_healthComponent.CurrentHealth, _healthComponent.MaxHealth);
-            _trailValue = _value;
-            SetBar(_trailComponent, _trailValue);
+            _trail.Snap();
+            SetBar(_trailComponent, _trail.Value);
         }
 
         void OnHealthChanged(float current, float max)
         {
-            _value = max > 0f ? current / max : 0f;
-            _trailTimer = _trailDelay;
-            SetBar(_fillComponent, _value);
-            if (!_shown && _value < 1f) SetShown(true);
+            float value = max > 0f ? current / max : 0f;
+            _trail.SetTarget(value);
+            SetBar(_fillComponent, value);
+            if (!_shown && value < 1f) SetShown(true);
         }
 
         void SetShown(bool shown)
@@ -72,11 +72,7 @@ namespace Branded.Enemies
 
             Vector3 anchor = _healthComponent.transform.position + Vector3.up * _height - _cameraTransformComponent.forward * _towardCamera;
             transform.SetPositionAndRotation(anchor, _cameraTransformComponent.rotation);
-
-            if (_trailValue <= _value) _trailValue = _value;
-            else if (_trailTimer > 0f) _trailTimer -= Time.deltaTime;
-            else _trailValue = Mathf.MoveTowards(_trailValue, _value, _trailSpeed * Time.deltaTime);
-            SetBar(_trailComponent, _trailValue);
+            SetBar(_trailComponent, _trail.Tick(Time.deltaTime));
         }
 
         static void SetBar(Transform bar, float value) => bar.localScale = new Vector3(Mathf.Clamp01(value), 1f, 1f);

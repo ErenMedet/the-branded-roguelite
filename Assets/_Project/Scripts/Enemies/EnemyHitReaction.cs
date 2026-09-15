@@ -1,5 +1,6 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -44,8 +45,7 @@ namespace Branded.Enemies
         IEnumerator Knockback(Vector3 direction)
         {
             _chaserComponent.Halted = true;
-            direction.y = 0f;
-            direction.Normalize();
+            direction = FlatMath.Flat(direction).normalized;
 
             float speed = _knockbackDistance / _knockbackDuration;
             float t = 0f;

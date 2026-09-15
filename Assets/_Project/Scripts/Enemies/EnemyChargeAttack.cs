@@ -1,5 +1,6 @@
 using System.Collections;
 using Branded.Combat;
+using Branded.Core;
 using Branded.Player;
 using UnityEngine;
 using UnityEngine.AI;
@@ -12,7 +13,6 @@ namespace Branded.Enemies
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyChargeAttack : EnemyAttack
     {
-        [SerializeField, FormerlySerializedAs("chaser")] EnemyChaser _chaserComponent;
         [SerializeField, FormerlySerializedAs("telegraph")] Transform _telegraphComponent; // ground stripe pivot; its Z scale becomes the charge length
         [SerializeField, FormerlySerializedAs("minRange")] float _minRange = 2.5f;
         [SerializeField, FormerlySerializedAs("maxRange")] float _maxRange = 8f;
@@ -35,21 +35,20 @@ namespace Branded.Enemies
         NavMeshAgent _navMeshAgentComponent;
         PlayerCombat _targetCombatComponent;
         PlayerAim _targetAimComponent;
-        float _cooldownTimer;
         bool _rushing;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _navMeshAgentComponent = GetComponent<NavMeshAgent>();
-            if (!_chaserComponent) _chaserComponent = GetComponent<EnemyChaser>();
             if (_telegraphComponent) _telegraphComponent.gameObject.SetActive(false);
-            _cooldownTimer = _cooldown * Random.Range(0.3f, 1f);
+            CooldownTimer = _cooldown * Random.Range(0.3f, 1f);
         }
 
         void Update()
         {
-            _cooldownTimer -= Time.deltaTime;
-            if (IsAttacking || _cooldownTimer > 0f || _chaserComponent.Halted || !_chaserComponent.TargetComponent) return;
+            TickCooldown();
+            if (!IsReady) return;
             float distance = _chaserComponent.DistanceToTarget;
             if (distance < _minRange || distance > _maxRange || !_chaserComponent.HasLineOfSight()) return;
             if (_onlyOnOpening && !TargetIsOpen()) return;
@@ -65,15 +64,13 @@ namespace Branded.Enemies
             if (_targetCombatComponent && _targetCombatComponent.Phase != ESwingPhase.None) return true;
             if (!_targetAimComponent) return true;
 
-            Vector3 fromTarget = transform.position - target.position;
-            fromTarget.y = 0f;
+            Vector3 fromTarget = FlatMath.Flat(transform.position - target.position);
             return Vector3.Angle(_targetAimComponent.AimDirection, fromTarget) > _openingAngle;
         }
 
         IEnumerator Charge()
         {
-            IsAttacking = true;
-            _chaserComponent.Halted = true;
+            StartAttack();
             float length = 0f;
 
             if (_telegraphComponent) _telegraphComponent.gameObject.SetActive(true);
@@ -103,13 +100,12 @@ namespace Branded.Enemies
             _rushing = false;
 
             yield return new WaitForSeconds(_recovery);
-            Finish();
+            FinishAttack(_cooldown);
         }
 
         bool TryHit(Vector3 direction)
         {
-            Vector3 offset = _chaserComponent.TargetComponent.position - transform.position;
-            offset.y = 0f;
+            Vector3 offset = FlatMath.Flat(_chaserComponent.TargetComponent.position - transform.position);
             if (offset.sqrMagnitude > _hitRadius * _hitRadius) return false;
             var damageable = _chaserComponent.TargetComponent.GetComponentInParent<IDamageable>();
             damageable?.TakeDamage(_damage, direction);
@@ -132,14 +128,7 @@ namespace Branded.Enemies
         {
             StopAllCoroutines();
             if (_telegraphComponent) _telegraphComponent.gameObject.SetActive(false);
-            Finish();
-        }
-
-        void Finish()
-        {
-            IsAttacking = false;
-            _chaserComponent.Halted = false;
-            _cooldownTimer = _cooldown;
+            FinishAttack(_cooldown);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Branded.Combat;
+using Branded.Core;
 using UnityEngine;
 
 namespace Branded.Player
@@ -34,9 +35,7 @@ namespace Branded.Player
 
         void OnImpacted(Vector3 point, IDamageable struck)
         {
-            Vector3 direction = transform.forward;
-            direction.y = 0f;
-            direction.Normalize();
+            Vector3 direction = FlatMath.Flat(transform.forward).normalized;
 
             _hitThisBlast.Clear();
             if (struck != null) _hitThisBlast.Add(struck);
@@ -44,13 +43,11 @@ namespace Branded.Player
             Collider[] hits = Physics.OverlapSphere(point, _coneLength, _targetLayers, QueryTriggerInteraction.Collide);
             foreach (var hit in hits)
             {
-                Vector3 toTarget = hit.transform.position - point;
-                toTarget.y = 0f;
-                if (toTarget.sqrMagnitude > 0.01f && Vector3.Angle(direction, toTarget) > _coneAngle * 0.5f) continue;
+                if (!FlatMath.WithinArc(direction, hit.transform.position - point, _coneAngle)) continue;
 
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisBlast.Add(target)) continue;
-                target.TakeDamage(_coneDamage, toTarget.sqrMagnitude > 0.01f ? toTarget.normalized : direction);
+                target.TakeDamage(_coneDamage, FlatMath.FlatDirection(point, hit.transform.position, direction));
             }
 
             if (!_blastPrefab) return;

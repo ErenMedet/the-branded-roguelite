@@ -102,8 +102,7 @@ namespace Branded.Loop
         Vector3 CampfirePosition()
         {
             Vector3 origin = _playerTransformComponent ? _playerTransformComponent.position : transform.position;
-            Vector3 toCenter = transform.position - origin;
-            toCenter.y = 0f;
+            Vector3 toCenter = FlatMath.Flat(transform.position - origin);
             Vector3 direction = toCenter.sqrMagnitude > 1f ? toCenter.normalized : Vector3.forward;
             Vector3 spot = origin + direction * _campfireDistance;
             return NavMesh.SamplePosition(spot, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : spot;

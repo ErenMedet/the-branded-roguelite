@@ -1,3 +1,4 @@
+using Branded.Core;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -31,16 +32,7 @@ namespace Branded.Enemies
         // Attack windups and knockback pause the chase through this.
         public bool Halted { get; set; }
 
-        public float DistanceToTarget
-        {
-            get
-            {
-                if (!TargetComponent) return float.MaxValue;
-                Vector3 offset = TargetComponent.position - transform.position;
-                offset.y = 0f;
-                return offset.magnitude;
-            }
-        }
+        public float DistanceToTarget => TargetComponent ? FlatMath.FlatDistance(transform.position, TargetComponent.position) : float.MaxValue;
 
         public bool InRange => DistanceToTarget <= _stopDistance + 0.15f;
 
@@ -109,22 +101,18 @@ namespace Branded.Enemies
             // No clear shot: close in until there is one.
             if (!HasLineOfSight()) return TargetComponent.position;
 
-            Vector3 away = transform.position - TargetComponent.position;
-            away.y = 0f;
-            if (away.sqrMagnitude < 0.01f) away = Vector3.forward;
-            Vector3 spot = TargetComponent.position + away.normalized * _keepDistance;
+            Vector3 away = FlatMath.FlatDirection(TargetComponent.position, transform.position, Vector3.forward);
+            Vector3 spot = TargetComponent.position + away * _keepDistance;
             return NavMesh.SamplePosition(spot, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : TargetComponent.position;
         }
 
         // A point a little ahead along the circle, so the agent keeps moving around the player.
         Vector3 OrbitPoint()
         {
-            Vector3 away = transform.position - TargetComponent.position;
-            away.y = 0f;
-            if (away.sqrMagnitude < 0.01f) away = Vector3.forward;
+            Vector3 away = FlatMath.FlatDirection(TargetComponent.position, transform.position, Vector3.forward);
 
             float step = _orbitSpeed * _repathInterval * 3f * _orbitSign;
-            Vector3 spot = TargetComponent.position + Quaternion.Euler(0f, step, 0f) * away.normalized * _orbitRadius;
+            Vector3 spot = TargetComponent.position + Quaternion.Euler(0f, step, 0f) * away * _orbitRadius;
             if (NavMesh.SamplePosition(spot, out NavMeshHit hit, 1.5f, NavMesh.AllAreas)) return hit.position;
 
             // Blocked by a wall: go around the other way.
@@ -144,8 +132,7 @@ namespace Branded.Enemies
         public void FaceTarget()
         {
             if (!TargetComponent) return;
-            Vector3 direction = TargetComponent.position - transform.position;
-            direction.y = 0f;
+            Vector3 direction = FlatMath.Flat(TargetComponent.position - transform.position);
             if (direction.sqrMagnitude < 0.001f) return;
             Quaternion look = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, look, _turnSpeed * Time.deltaTime);

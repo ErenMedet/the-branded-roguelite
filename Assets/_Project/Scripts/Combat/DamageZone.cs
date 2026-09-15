@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Branded.Core;
 using UnityEngine;
 
 namespace Branded.Combat
@@ -48,9 +49,7 @@ namespace Branded.Combat
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisTick.Add(target)) continue;
 
-                Vector3 away = hit.transform.position - transform.position;
-                away.y = 0f;
-                target.TakeDamage(_damage, away.sqrMagnitude > 0.01f ? away.normalized : Vector3.forward);
+                target.TakeDamage(_damage, FlatMath.FlatDirection(transform.position, hit.transform.position, Vector3.forward));
             }
         }
 
