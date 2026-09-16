@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace Branded.Player
 {
-    // On the swing's hit frame, scans an arc in front of the player with OverlapSphere (no trigger tunneling).
+    // Through the swing's active frames, scans an arc in front of the player with OverlapSphere (no trigger tunneling).
     // Reach, radius, arc, knockback and impact come from the swing being played, so each combo step hits differently.
     // A spin scans a full circle every frame of its active phase, so a dash spin hits along the whole path.
     public class SwordHitbox : MonoBehaviour
@@ -54,9 +54,11 @@ namespace Branded.Player
             _combatComponent.SwingActive -= OnSwingActive;
         }
 
+        // Scanning every active frame instead of only the hit frame stops a fast target from slipping
+        // between two scans; _hitThisSwing keeps a target from being hit twice by the same swing.
         void Update()
         {
-            if (!_combatComponent.IsSpin || _combatComponent.Phase != ESwingPhase.Active) return;
+            if (_combatComponent.Phase != ESwingPhase.Active) return;
             Scan();
         }
 

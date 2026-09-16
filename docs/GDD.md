@@ -11,7 +11,7 @@
 * **Hikaye Başlangıcı (Lore):** 
   * Karakter, "Tutulma" (The Eclipse) katliamından sağ kurtulmuş; tek kolunu ve tek gözünü kaybetmiştir.
   * Boynundaki **Kurban Mührü (Brand of Sacrifice)** laneti nedeniyle ölüler ve iblisler sürekli kanının kokusuna çekilmektedir.
-* **Ana Merkez (Hub):** Dağlardaki **Godot'nun Madeni**: eski bir madenin içindeki demirci ocağı. Maden ağzının yanında su çarklı küçük bir kulübe (dekoratif, içine girilmez), önünde ağaçlık, cephanelik, şelale ve Şahinler için dikilmiş Kılıçlar Tepesi bulunur. Şelalenin arkasından yürünerek girilen mağarada (tavandaki delikten ışık iner) iç şelalenin altında Casca durur; ocağın başında Godot ve kızı Erica, dere kenarında Rickert bekler. Hepsiyle E ile konuşulur (Hades tarzı portreli diyalog).
+* **Ana Merkez (Hub):** Dağlardaki **Godot'un Madeni**: eski bir madenin içindeki demirci ocağı. Maden ağzının yanında su çarklı küçük bir kulübe (dekoratif, içine girilmez), önünde ağaçlık, cephanelik, şelale ve Şahinler için dikilmiş Kılıçlar Tepesi bulunur. Şelalenin arkasından yürünerek girilen mağarada (tavandaki delikten ışık iner) iç şelalenin altında Casca durur; ocağın başında Godot ve kızı Erica, dere kenarında Rickert bekler. Hepsiyle E ile konuşulur (Hades tarzı portreli diyalog).
   * Perilerin (Puck) şifalı tozu ve antik mabet koruması sayesinde iblislerin giremediği yegane güvenli sığınaktır.
   * Karakter seferlerde yenildiğinde kan revan içinde madendeki ocağın başında uyanır.
 
@@ -24,9 +24,9 @@ Oyun, sürekli savaşmak yerine **"Gece Vahşeti"** ile **"Sabah Huzuru"** aras�
 ```mermaid
 flowchart TD
     %% HUB ALANI
-    subgraph HUB ["🏠 GODOT'NUN MADENİ (Kalıcı Güvenli Alan / Hub)"]
+    subgraph HUB ["🏠 Godot'un MADENİ (Kalıcı Güvenli Alan / Hub)"]
         WakeUp["✨ Uyanış: Tutulma Sonrası Başlangıç<br/>• Tek Kol & Tek Göz Kayıp<br/>• Boyunda Kanayan Kurban Mührü"]
-        Godot["🔨 Godot'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
+        Godot["🔨 Godot'un Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
         Puck["🧚 Puck & Şifalı Elf Tozu<br/>• Kalıcı Can Kapasitesi & Ölümden Dönme (Death Defiance)"]
         Depart["🚪 Dağ Patikasından İniş: Seferi Başlat"]
         
@@ -90,7 +90,7 @@ flowchart TD
     subgraph DEATH_SYSTEM ["💀 ÖLÜM VE GERİ DÖNÜŞ SİSTEMİ"]
         DeathEvent["⚰️ Karakter Yenildi (Can Sıfırlandı)"]
         DragBack["Karanlık Ruhlar Seni Çeker...<br/>Fakat Kurban Mührünün İntikam Ateşi Ölümüne İzin Vermez!"]
-        Respawn["🩸 Kan Revan İçinde Godot'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
+        Respawn["🩸 Kan Revan İçinde Godot'un Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
         
         DeathEvent --> DragBack --> Respawn
         Respawn --> Godot
@@ -281,4 +281,4 @@ public class DialogueData : ScriptableObject
 * **Aşama 2: Hasar ve İlk Düşman:** `IDamageable` entegrasyonu, basit takip eden NavMesh düşmanı, Hitstop ve vuruş hissi.
 * **Aşama 3: Gece/Sabah Döngüsü:** 4x4 zeminlerden oluşan tek bir oda, düşman dalgası, şafak söküşü ve kamp ateşi geçişi.
 * **Aşama 4: Diyalog ve UI:** 2D portreli diyalog kutusu, can barı ve geçici kılıç yağı seçimi.
-* **Aşama 5: Godot'nun Atölyesi:** Hub sahnesi (maden + kulübe + ağaçlık), kalıcı yükseltmeler ve ölüm döngüsü.
+* **Aşama 5: Godot'un Atölyesi:** Hub sahnesi (maden + kulübe + ağaçlık), kalıcı yükseltmeler ve ölüm döngüsü.

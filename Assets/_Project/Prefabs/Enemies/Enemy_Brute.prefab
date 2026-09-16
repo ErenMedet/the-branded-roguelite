@@ -479,6 +479,7 @@ MonoBehaviour:
   chaser: {fileID: 0}
   knockbackDistance: 0.4
   knockbackDuration: 0.12
+  _knockbackDecay: 1.8
   staggerDuration: 0.3
 --- !u!114 &5808692817495556550
 MonoBehaviour:

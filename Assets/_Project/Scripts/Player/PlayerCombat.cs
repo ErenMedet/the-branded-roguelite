@@ -17,7 +17,7 @@ namespace Branded.Player
         [Header("Combo chain")]
         [Tooltip("Played in order, the last one being the finisher.")]
         [SerializeField] SwingData[] _comboSwings;
-        [SerializeField, FormerlySerializedAs("inputBufferTime")] float _inputBufferTime = 0.2f;
+        [SerializeField, FormerlySerializedAs("inputBufferTime")] float _inputBufferTime = 0.28f;
         [Tooltip("How long after a swing ends the chain still continues.")]
         [SerializeField] float _comboResetTime = 0.4f;
 
@@ -120,6 +120,15 @@ namespace Branded.Player
                 return;
             }
 
+            // The tail of a recovery is cancelled into the next attack, so a chain never waits out an
+            // animation whose hit is already over. This is what makes the three swings read as one flow.
+            if (CanCancelRecovery())
+            {
+                EndSwing();
+                ConsumeAttackBuffer();
+                return;
+            }
+
             if (Phase != ESwingPhase.None) TickPhase(dt);
             if (Phase != ESwingPhase.None) return;
 
@@ -140,13 +149,19 @@ namespace Branded.Player
                 return;
             }
 
-            if (_inputComponent.IsAttackHeld) EnterCharge();
-            else StartComboSwing(0f);
+            ConsumeAttackBuffer();
         }
 
         void OnAttackPressed() => _bufferTimer = _inputBufferTime;
         void OnSpinPressed() => _spinBufferTimer = _inputBufferTime;
         void OnDashEnded() => _dashStrikeTimer = _dashStrikeWindow;
+
+        // A tap continues the chain; a press still held starts a charge instead.
+        void ConsumeAttackBuffer()
+        {
+            if (_inputComponent.IsAttackHeld) EnterCharge();
+            else StartComboSwing(0f);
+        }
 
         void TickComboReset(float dt)
         {
@@ -183,6 +198,14 @@ namespace Branded.Player
             }
 
             StartChargedStrike();
+        }
+
+        // True once the recovery has run past its cancel point with an attack still buffered.
+        bool CanCancelRecovery()
+        {
+            if (Phase != ESwingPhase.Recovery || IsSpin || CurrentSwing == null) return false;
+            if (_bufferTimer <= 0f || _motorComponent.IsDashing) return false;
+            return _phaseTimer >= CurrentSwing.RecoveryCancelTime;
         }
 
         bool CanLinkSpin()
@@ -250,7 +273,8 @@ namespace Branded.Player
             IsSpin = false;
             CurrentSwing = swing;
             AttackDamageMultiplier = swing.DamageMultiplier;
-            _aimComponent.SnapToAim();
+            // Turning is spread across the windup rather than snapped, so the body leads the blade.
+            _aimComponent.TurnToAim(Mathf.Max(0f, swing.Windup - creditedWindup));
             _aimComponent.RotationLocked = true;
             _motorComponent.SpeedMultiplier = swing.MoveSpeedMultiplier;
             EnterPhase(ESwingPhase.Windup, Mathf.Max(0f, swing.Windup - creditedWindup));
@@ -306,7 +330,7 @@ namespace Branded.Player
         {
             if (IsSpin || CurrentSwing == null || CurrentSwing.LungeDistance <= 0f) return;
             if (_motorComponent.IsDashing) return;
-            _motorComponent.Push(_aimComponent.AimDirection, CurrentSwing.LungeDistance, CurrentSwing.Active);
+            _motorComponent.Push(_aimComponent.AimDirection, CurrentSwing.LungeDistance, CurrentSwing.Active, CurrentSwing.LungeDecay);
         }
 
         void EnterPhase(ESwingPhase phase, float duration)

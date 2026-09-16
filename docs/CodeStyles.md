@@ -21,6 +21,7 @@ Applies to every C# file under `Assets/_Project/Scripts/`. Ignore `Assets/Tutori
 - ScriptableObject and `[Serializable]` data expose values as `[field: SerializeField] public T Name { get; private set; }`.
   Exception: save-file DTOs (`PlayerData`) keep plain public fields, because JsonUtility writes field names to disk.
 - When renaming a serialized field, add `[FormerlySerializedAs("oldName")]` so scenes, prefabs and assets keep their values.
+- A serialized field added to a type that prefabs already use is deserialized as `default(T)`, not as its C# initializer: the value in the prefab wins, and a missing key reads as 0. After adding one, set it on every prefab that uses the type before testing, or a new tuning knob silently arrives at zero.
 
 ## Events and input
 - Prefer `UnityAction` over `Action`, including for event types and callback parameters; always use the `event` keyword.
@@ -40,4 +41,9 @@ Applies to every C# file under `Assets/_Project/Scripts/`. Ignore `Assets/Tutori
 - Clear a stored `Coroutine` reference when that coroutine finishes.
 - Flat (ground-plane) directions, distances and arc checks go through `Branded.Core.FlatMath` instead of zeroing `y` by hand.
 - Enemy attacks derive from `EnemyAttack` and use its `IsReady`, `StartAttack` and `FinishAttack` helpers, so the chaser's `Halted` flag and cooldowns stay consistent.
+- Anything the player watches move (swing angles, committed turns, time scale after a hitstop) interpolates through `Branded.Core.Easing`, never a raw `Mathf.Lerp` on normalized time: a constant rate reads as robotic. Windups ease out into a held pose, strikes use `OutExpo` and carry past their end angle, recoveries settle back.
+- A burst that must cover a fixed distance (dash, swing lunge, knockback) drives its speed with `Easing.DecaySpeed` instead of `distance / duration`, so it leaves fast and bleeds off while still landing exactly where it was tuned to.
+- An attack's recovery ends in a cancel window (`SwingData.RecoveryCancelFraction`), so a buffered press starts the next swing instead of waiting the animation out. A chain with no cancel window eats inputs and feels stiff.
+- A rotation wider than half a turn is applied as a signed delta (`from * Quaternion.Euler(sweep * eased, ...)`), never slerped to an end pose: `Quaternion.Slerp` and `RotateTowards` always take the short way round, so a 200-degree swing silently reverses and travels the other 160.
+- A speed ceiling on an eased motion shortens how far it travels, never how fast it may go: clamping with `RotateTowards` or `MoveTowards` against a flat ceiling drags the whole motion at that one rate and throws the easing away. Compare the two curves at their opening speed and scale the target down until it fits.
 - Comments explain why, not what. Keep them short and in English.
