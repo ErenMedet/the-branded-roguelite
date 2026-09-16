@@ -1,4 +1,4 @@
 namespace Branded.Player
 {
-    public enum ESwingPhase { None, Windup, Active, Recovery }
+    public enum ESwingPhase { None, Charging, Windup, Active, Recovery }
 }

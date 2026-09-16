@@ -149,9 +149,13 @@ Karakterin modelleri değiştiğinde fizik veya kodların bozulmaması için kes
 
 ### Temel Beceriler ve Matematik:
 1. **Ejderha Katili (Dragonslayer - Büyük Kılıç):**
-   * *Hitstop:* Kılıç düşmana çarptığı anda oyun `0.07` saniye dondurulur.
+   * *Kombo (Sol Tık):* 3 vuruşluk zincir: sağdan sola hızlı savuruş, soldan sağa geri savuruş (×1.2 hasar), yukarıdan inen ağır bitiriş (×2 hasar, dar ama uzun menzil, güçlü itme, daha uzun hitstop ve sarsıntı). Zincir, vuruş bittikten sonra kısa süre içinde basılmazsa başa döner.
+   * *Atılma Vuruşu:* Dash biterken ya da hemen ardından sol tık, nişan yönüne atılan ×1.5 hasarlı saplama olur.
+   * *Şarjlı Vuruş:* Sol tık basılı tutulursa kılıç yüklenir (yüklenirken hareket yavaşlar), bırakınca geniş ve ağır bir vuruş çıkar: tutma süresine göre ×1.5'ten ×3 hasara kadar. Çok kısa tutmak normal kombo vuruşu verir.
+   * *Hitstop:* Kılıç düşmana çarptığı anda oyun `0.07` saniye dondurulur; ağır vuruşlarda bu süre uzar.
    * *Cinemachine Screen Shake:* Tok darbelerde kamera anlık sarsılır.
    * *360° Dönüş (Q):* Kılıç oyuncunun etrafında tam tur savrulur, her yöndeki düşmanlara normal savuruş hasarı verir. `2` saniye bekleme süresi vardır.
+   * *Bitiriş → Dönüş:* Kombo bitirişinin toparlanması sırasında ya da hemen ardından Q'ya basılırsa toparlanma kesilir; dönüş windup'sız başlar ve ×1.5 hasar verir. Bekleme süresi yine işler.
 2. **Dash (Atılma):**
    * `0.2` saniyelik dokunulmazlık penceresi (i-frame) ve hızlı yer değiştirme.
    * Atılırken Q'ya basılırsa atılma sürerken dönüş yapılır; yol boyunca çarpılan düşmanlar vurulur.

@@ -14,6 +14,8 @@ namespace Branded.Player
         public Vector2 PointerScreenPosition { get; private set; }
         public bool IsLocked { get; private set; }
         public bool IsFireHeld { get; private set; }
+        // Held long enough, an attack press charges the sword instead of swinging.
+        public bool IsAttackHeld { get; private set; }
 
         public event UnityAction DashPressed;
         public event UnityAction AttackPressed;
@@ -143,6 +145,7 @@ namespace Branded.Player
             _move.canceled += OnMove;
             _dash.performed += OnDash;
             _attack.performed += OnAttack;
+            _attack.canceled += OnAttackReleased;
             _spin.performed += OnSpin;
             _fire.performed += OnFire;
             _fire.canceled += OnFire;
@@ -152,12 +155,14 @@ namespace Branded.Player
             // A key held down while input was locked sends no new event, so pick it up once here.
             Move = Vector2.ClampMagnitude(_move.ReadValue<Vector2>(), 1f);
             IsFireHeld = _fire.IsPressed();
+            IsAttackHeld = _attack.IsPressed();
         }
 
         void UnregisterGameplay()
         {
             Move = Vector2.zero;
             IsFireHeld = false;
+            IsAttackHeld = false;
             if (!_gameplayRegistered) return;
             _gameplayRegistered = false;
 
@@ -165,6 +170,7 @@ namespace Branded.Player
             _move.canceled -= OnMove;
             _dash.performed -= OnDash;
             _attack.performed -= OnAttack;
+            _attack.canceled -= OnAttackReleased;
             _spin.performed -= OnSpin;
             _fire.performed -= OnFire;
             _fire.canceled -= OnFire;
@@ -175,7 +181,13 @@ namespace Branded.Player
         void OnMove(InputAction.CallbackContext context) => Move = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f);
         void OnPoint(InputAction.CallbackContext context) => PointerScreenPosition = context.ReadValue<Vector2>();
         void OnDash(InputAction.CallbackContext _) => DashPressed?.Invoke();
-        void OnAttack(InputAction.CallbackContext _) => AttackPressed?.Invoke();
+        void OnAttack(InputAction.CallbackContext _)
+        {
+            IsAttackHeld = true;
+            AttackPressed?.Invoke();
+        }
+
+        void OnAttackReleased(InputAction.CallbackContext _) => IsAttackHeld = false;
         void OnSpin(InputAction.CallbackContext _) => SpinPressed?.Invoke();
         void OnFire(InputAction.CallbackContext context) => IsFireHeld = context.performed;
         void OnCannon(InputAction.CallbackContext _) => CannonPressed?.Invoke();

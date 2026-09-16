@@ -13,7 +13,7 @@ namespace Branded.Combat
         public bool IsDead => CurrentHealth <= 0f;
 
         public event UnityAction<float, float> HealthChanged; // (current, max)
-        public event UnityAction<float, Vector3> Damaged;     // (amount, hitDirection)
+        public event UnityAction<float, Vector3, float> Damaged; // (amount, hitDirection, knockbackScale)
         public event UnityAction Died;
 
         IInvulnerabilitySource[] _invulnerabilitySources;
@@ -26,12 +26,12 @@ namespace Branded.Combat
             _damageBlockers = GetComponents<IDamageBlocker>();
         }
 
-        public void TakeDamage(float amount, Vector3 hitDirection)
+        public void TakeDamage(float amount, Vector3 hitDirection, float knockback = 1f)
         {
             if (!CanBeHurt(amount) || IsBlocked(amount, hitDirection)) return;
 
             CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
-            Damaged?.Invoke(amount, hitDirection);
+            Damaged?.Invoke(amount, hitDirection, knockback);
             HealthChanged?.Invoke(CurrentHealth, MaxHealth);
             if (IsDead) Died?.Invoke();
         }

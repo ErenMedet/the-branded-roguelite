@@ -52,7 +52,10 @@ MonoBehaviour:
   _combatComponent: {fileID: 484423055892635542}
   _swordPivotComponent: {fileID: 4976154844145677371}
   _restAngle: 110
-  _arcAngle: 160
+  _chargeAngle: 175
+  _chargeShakeAngle: 3
+  _overheadRaise: -100
+  _overheadEnd: 25
 --- !u!1 &872162455516465947
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,15 +545,92 @@ MonoBehaviour:
   _inputComponent: {fileID: 5823029401730866925}
   _motorComponent: {fileID: 6122619226220207628}
   _aimComponent: {fileID: 7333335479962087968}
-  _windup: 0.08
-  _active: 0.12
-  _recovery: 0.22
+  _comboSwings:
+  - <Windup>k__BackingField: 0.08
+    <Active>k__BackingField: 0.12
+    <Recovery>k__BackingField: 0.22
+    <DamageMultiplier>k__BackingField: 1
+    <Reach>k__BackingField: 1.3
+    <Radius>k__BackingField: 1.6
+    <ArcAngle>k__BackingField: 170
+    <LungeDistance>k__BackingField: 0.3
+    <Impact>k__BackingField: 1
+    <Knockback>k__BackingField: 1
+    <MoveSpeedMultiplier>k__BackingField: 0.25
+    <VisualFrom>k__BackingField: -80
+    <VisualTo>k__BackingField: 80
+    <Overhead>k__BackingField: 0
+  - <Windup>k__BackingField: 0.07
+    <Active>k__BackingField: 0.12
+    <Recovery>k__BackingField: 0.24
+    <DamageMultiplier>k__BackingField: 1.2
+    <Reach>k__BackingField: 1.3
+    <Radius>k__BackingField: 1.6
+    <ArcAngle>k__BackingField: 170
+    <LungeDistance>k__BackingField: 0.3
+    <Impact>k__BackingField: 1.1
+    <Knockback>k__BackingField: 1
+    <MoveSpeedMultiplier>k__BackingField: 0.25
+    <VisualFrom>k__BackingField: 80
+    <VisualTo>k__BackingField: -80
+    <Overhead>k__BackingField: 0
+  - <Windup>k__BackingField: 0.16
+    <Active>k__BackingField: 0.12
+    <Recovery>k__BackingField: 0.38
+    <DamageMultiplier>k__BackingField: 2
+    <Reach>k__BackingField: 2
+    <Radius>k__BackingField: 1.4
+    <ArcAngle>k__BackingField: 70
+    <LungeDistance>k__BackingField: 0.8
+    <Impact>k__BackingField: 1.8
+    <Knockback>k__BackingField: 2.5
+    <MoveSpeedMultiplier>k__BackingField: 0.1
+    <VisualFrom>k__BackingField: 0
+    <VisualTo>k__BackingField: 0
+    <Overhead>k__BackingField: 1
   _inputBufferTime: 0.2
+  _comboResetTime: 0.4
+  _dashStrike:
+    <Windup>k__BackingField: 0.03
+    <Active>k__BackingField: 0.14
+    <Recovery>k__BackingField: 0.25
+    <DamageMultiplier>k__BackingField: 1.5
+    <Reach>k__BackingField: 1.8
+    <Radius>k__BackingField: 1.3
+    <ArcAngle>k__BackingField: 80
+    <LungeDistance>k__BackingField: 2.5
+    <Impact>k__BackingField: 1.3
+    <Knockback>k__BackingField: 1.5
+    <MoveSpeedMultiplier>k__BackingField: 0
+    <VisualFrom>k__BackingField: 0
+    <VisualTo>k__BackingField: 0
+    <Overhead>k__BackingField: 0
+  _dashStrikeWindow: 0.25
+  _chargedStrike:
+    <Windup>k__BackingField: 0.05
+    <Active>k__BackingField: 0.14
+    <Recovery>k__BackingField: 0.4
+    <DamageMultiplier>k__BackingField: 3
+    <Reach>k__BackingField: 1.6
+    <Radius>k__BackingField: 2
+    <ArcAngle>k__BackingField: 200
+    <LungeDistance>k__BackingField: 1.2
+    <Impact>k__BackingField: 2.2
+    <Knockback>k__BackingField: 3
+    <MoveSpeedMultiplier>k__BackingField: 0.1
+    <VisualFrom>k__BackingField: -100
+    <VisualTo>k__BackingField: 100
+    <Overhead>k__BackingField: 0
+  _chargeMinTime: 0.25
+  _chargeFullTime: 0.9
+  _chargeMinDamageFraction: 0.5
+  _moveSpeedWhileCharging: 0.3
   _spinWindup: 0.05
   _spinActive: 0.28
   _spinRecovery: 0.18
   _spinCooldown: 2
-  _moveSpeedWhileSwinging: 0.25
+  _spinLinkWindow: 0.3
+  _linkedSpinDamageMultiplier: 1.5
   _moveSpeedWhileSpinning: 0.5
 --- !u!114 &3141909037542245246
 MonoBehaviour:
@@ -583,9 +663,6 @@ MonoBehaviour:
   _targetLayers:
     serializedVersion: 2
     m_Bits: 256
-  _reach: 1.3
-  _radius: 1.6
-  _arcAngle: 170
   _heightOffset: 1
   _spinRadius: 2.2
 --- !u!114 &4151961903416053604

@@ -31,7 +31,7 @@ namespace Branded.Enemies
         void OnEnable() => _healthComponent.Damaged += OnDamaged;
         void OnDisable() => _healthComponent.Damaged -= OnDamaged;
 
-        void OnDamaged(float amount, Vector3 hitDirection)
+        void OnDamaged(float amount, Vector3 hitDirection, float knockback)
         {
             if (_healthComponent.IsDead) return;
             foreach (var attack in _attackComponents)
@@ -39,15 +39,15 @@ namespace Branded.Enemies
 
             foreach (var attack in _attackComponents) attack.Interrupt();
             StopAllCoroutines();
-            StartCoroutine(Knockback(hitDirection));
+            StartCoroutine(Knockback(hitDirection, knockback));
         }
 
-        IEnumerator Knockback(Vector3 direction)
+        IEnumerator Knockback(Vector3 direction, float scale)
         {
             _chaserComponent.Halted = true;
             direction = FlatMath.Flat(direction).normalized;
 
-            float speed = _knockbackDistance / _knockbackDuration;
+            float speed = _knockbackDistance * Mathf.Max(0f, scale) / _knockbackDuration;
             float t = 0f;
             while (t < _knockbackDuration)
             {

@@ -1,0 +1,36 @@
+using System;
+using UnityEngine;
+
+namespace Branded.Player
+{
+    // One sword attack: timing, hit shape and feel. PlayerCombat holds the combo chain,
+    // the dash strike and the charged strike; SwordHitbox and SwordSwingVisual read the current one.
+    [Serializable]
+    public class SwingData
+    {
+        [field: SerializeField] public float Windup { get; private set; } = 0.08f;
+        [field: SerializeField] public float Active { get; private set; } = 0.12f;
+        [field: SerializeField] public float Recovery { get; private set; } = 0.22f;
+        [field: SerializeField] public float DamageMultiplier { get; private set; } = 1f;
+
+        [field: Header("Shape")]
+        [field: SerializeField] public float Reach { get; private set; } = 1.3f;
+        [field: SerializeField] public float Radius { get; private set; } = 1.6f;
+        [field: SerializeField, Range(0f, 360f)] public float ArcAngle { get; private set; } = 170f;
+
+        [field: Header("Feel")]
+        [Tooltip("Forward push along the aim when the hit frame starts.")]
+        [field: SerializeField] public float LungeDistance { get; private set; }
+        [Tooltip("Scales hitstop and camera shake on impact.")]
+        [field: SerializeField] public float Impact { get; private set; } = 1f;
+        [Tooltip("Scales how far the target is knocked back.")]
+        [field: SerializeField] public float Knockback { get; private set; } = 1f;
+        [field: SerializeField, Range(0f, 1f)] public float MoveSpeedMultiplier { get; private set; } = 0.25f;
+
+        [field: Header("Greybox visual")]
+        [field: SerializeField] public float VisualFrom { get; private set; } = -80f;
+        [field: SerializeField] public float VisualTo { get; private set; } = 80f;
+        [Tooltip("Swings down from overhead instead of sweeping sideways.")]
+        [field: SerializeField] public bool Overhead { get; private set; }
+    }
+}

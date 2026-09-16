@@ -24,11 +24,12 @@ namespace Branded.Player
         void OnEnable() => _hitboxComponent.HitLanded += OnHitLanded;
         void OnDisable() => _hitboxComponent.HitLanded -= OnHitLanded;
 
-        void OnHitLanded(int targetCount, Vector3 direction)
+        // impact comes from the swing: the heavy finisher freezes and shakes harder than a light chain hit.
+        void OnHitLanded(int targetCount, Vector3 direction, float impact)
         {
-            HitStop.Trigger(_hitStopDuration);
+            HitStop.Trigger(_hitStopDuration * impact);
             if (!_impulseComponent) return;
-            _impulseComponent.GenerateImpulseWithVelocity(direction * _shakeForce);
+            _impulseComponent.GenerateImpulseWithVelocity(direction * (_shakeForce * impact));
         }
     }
 }

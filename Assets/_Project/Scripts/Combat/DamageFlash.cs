@@ -23,7 +23,7 @@ namespace Branded.Combat
         void OnEnable() => _healthComponent.Damaged += OnDamaged;
         void OnDisable() => _healthComponent.Damaged -= OnDamaged;
 
-        void OnDamaged(float amount, Vector3 hitDirection) => _flash.Flash(_flashColor, _duration);
+        void OnDamaged(float amount, Vector3 hitDirection, float knockback) => _flash.Flash(_flashColor, _duration);
 
         void Update() => _flash.Tick();
     }

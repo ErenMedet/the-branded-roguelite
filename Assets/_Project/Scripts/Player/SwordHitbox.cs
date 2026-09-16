@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 namespace Branded.Player
 {
     // On the swing's hit frame, scans an arc in front of the player with OverlapSphere (no trigger tunneling).
+    // Reach, radius, arc, knockback and impact come from the swing being played, so each combo step hits differently.
     // A spin scans a full circle every frame of its active phase, so a dash spin hits along the whole path.
     public class SwordHitbox : MonoBehaviour
     {
@@ -19,9 +20,6 @@ namespace Branded.Player
         [SerializeField, FormerlySerializedAs("targetLayers")] LayerMask _targetLayers;
 
         [Header("Shape")]
-        [SerializeField, FormerlySerializedAs("reach")] float _reach = 1.3f;
-        [SerializeField, FormerlySerializedAs("radius")] float _radius = 1.6f;
-        [SerializeField, Range(0f, 360f), FormerlySerializedAs("arcAngle")] float _arcAngle = 170f;
         [SerializeField, FormerlySerializedAs("heightOffset")] float _heightOffset = 1f;
         [SerializeField] float _spinRadius = 2.2f;
 
@@ -30,8 +28,8 @@ namespace Branded.Player
         // Boons scale damage through this, never by touching _damage.
         public float DamageMultiplier { get; set; } = 1f;
 
-        // (targets hit, swing direction). Raised once per swing, so a spin's repeated scans don't stack hitstops.
-        public event UnityAction<int, Vector3> HitLanded;
+        // (targets hit, swing direction, impact). Raised once per swing, so a spin's repeated scans don't stack hitstops.
+        public event UnityAction<int, Vector3, float> HitLanded;
         // Once per target hit, for on-hit effects such as burn.
         public event UnityAction<IDamageable> TargetHit;
 
@@ -73,37 +71,49 @@ namespace Branded.Player
         void Scan()
         {
             bool spin = _combatComponent.IsSpin;
+            SwingData swing = _combatComponent.CurrentSwing;
+            if (!spin && swing == null) return;
+
             Vector3 direction = _aimComponent.AimDirection;
             Vector3 origin = transform.position + Vector3.up * _heightOffset;
-            Vector3 center = spin ? origin : origin + direction * _reach;
-            Collider[] hits = Physics.OverlapSphere(center, spin ? _spinRadius : _radius, _targetLayers, QueryTriggerInteraction.Collide);
+            Vector3 center = spin ? origin : origin + direction * swing.Reach;
+            Collider[] hits = Physics.OverlapSphere(center, spin ? _spinRadius : swing.Radius, _targetLayers, QueryTriggerInteraction.Collide);
+
+            float damage = _damage * BaseDamageMultiplier * DamageMultiplier * _combatComponent.AttackDamageMultiplier;
+            float knockback = spin ? 1f : swing.Knockback;
 
             int landed = 0;
             foreach (var hit in hits)
             {
                 if (hit.transform.IsChildOf(transform)) continue;
 
-                if (!spin && !FlatMath.WithinArc(direction, hit.transform.position - transform.position, _arcAngle)) continue;
+                if (!spin && !FlatMath.WithinArc(direction, hit.transform.position - transform.position, swing.ArcAngle)) continue;
 
                 var target = hit.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisSwing.Add(target)) continue;
 
-                target.TakeDamage(_damage * BaseDamageMultiplier * DamageMultiplier, FlatMath.FlatDirection(transform.position, hit.transform.position, direction));
+                target.TakeDamage(damage, FlatMath.FlatDirection(transform.position, hit.transform.position, direction), knockback);
                 TargetHit?.Invoke(target);
                 landed++;
             }
 
             if (landed == 0 || _landedThisSwing) return;
             _landedThisSwing = true;
-            HitLanded?.Invoke(landed, direction);
+            HitLanded?.Invoke(landed, direction, spin ? 1f : swing.Impact);
         }
 
         void OnDrawGizmosSelected()
         {
             Vector3 direction = _aimComponent ? _aimComponent.AimDirection : transform.forward;
             Vector3 origin = transform.position + Vector3.up * _heightOffset;
-            Gizmos.color = new Color(1f, 0.3f, 0.2f, 0.6f);
-            Gizmos.DrawWireSphere(origin + direction * _reach, _radius);
+
+            SwingData swing = _combatComponent ? _combatComponent.CurrentSwing : null;
+            if (swing != null)
+            {
+                Gizmos.color = new Color(1f, 0.3f, 0.2f, 0.6f);
+                Gizmos.DrawWireSphere(origin + direction * swing.Reach, swing.Radius);
+            }
+
             Gizmos.color = new Color(1f, 0.7f, 0.2f, 0.4f);
             Gizmos.DrawWireSphere(origin, _spinRadius);
         }
