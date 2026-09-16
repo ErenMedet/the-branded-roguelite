@@ -11,7 +11,8 @@ namespace Branded.Player
     public class PlayerInputReader : MonoBehaviour
     {
         public Vector2 Move { get; private set; }
-        public Vector2 PointerScreenPosition { get; private set; }
+        // Mouse delta for the third-person camera, read by PlayerCameraLook.
+        public Vector2 Look { get; private set; }
         public bool IsLocked { get; private set; }
         public bool IsFireHeld { get; private set; }
         // Held long enough, an attack press charges the sword instead of swinging.
@@ -24,7 +25,7 @@ namespace Branded.Player
         public event UnityAction InteractPressed;
 
         InputAction _move;
-        InputAction _point;
+        InputAction _look;
         InputAction _dash;
         InputAction _attack;
         InputAction _spin;
@@ -47,7 +48,7 @@ namespace Branded.Player
                 .With("Left", "<Keyboard>/leftArrow")
                 .With("Right", "<Keyboard>/rightArrow");
 
-            _point = new InputAction("Point", InputActionType.PassThrough, "<Pointer>/position");
+            _look = new InputAction("Look", InputActionType.Value, "<Mouse>/delta");
 
             _dash = new InputAction("Dash", InputActionType.Button, "<Keyboard>/space");
             _attack = new InputAction("Attack", InputActionType.Button, "<Mouse>/leftButton");
@@ -60,7 +61,7 @@ namespace Branded.Player
         void OnEnable()
         {
             _move.Enable();
-            _point.Enable();
+            _look.Enable();
             _dash.Enable();
             _attack.Enable();
             _spin.Enable();
@@ -68,7 +69,6 @@ namespace Branded.Player
             _cannon.Enable();
             _interact.Enable();
 
-            _point.performed += OnPoint;
             RegisterGameplay();
 
             GameEvents.CampStarted += OnCampStarted;
@@ -91,11 +91,10 @@ namespace Branded.Player
             GameEvents.DialogueStarted -= OnDialogueStarted;
             GameEvents.DialogueEnded -= OnDialogueEnded;
 
-            _point.performed -= OnPoint;
             UnregisterGameplay();
 
             _move.Disable();
-            _point.Disable();
+            _look.Disable();
             _dash.Disable();
             _attack.Disable();
             _spin.Disable();
@@ -107,7 +106,7 @@ namespace Branded.Player
         void OnDestroy()
         {
             _move.Dispose();
-            _point.Dispose();
+            _look.Dispose();
             _dash.Dispose();
             _attack.Dispose();
             _spin.Dispose();
@@ -141,8 +140,14 @@ namespace Branded.Player
             if (IsLocked || _gameplayRegistered) return;
             _gameplayRegistered = true;
 
+            // Gameplay owns the mouse, so the cursor is hidden until a UI takes input back.
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             _move.performed += OnMove;
             _move.canceled += OnMove;
+            _look.performed += OnLook;
+            _look.canceled += OnLook;
             _dash.performed += OnDash;
             _attack.performed += OnAttack;
             _attack.canceled += OnAttackReleased;
@@ -161,13 +166,20 @@ namespace Branded.Player
         void UnregisterGameplay()
         {
             Move = Vector2.zero;
+            Look = Vector2.zero;
             IsFireHeld = false;
             IsAttackHeld = false;
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             if (!_gameplayRegistered) return;
             _gameplayRegistered = false;
 
             _move.performed -= OnMove;
             _move.canceled -= OnMove;
+            _look.performed -= OnLook;
+            _look.canceled -= OnLook;
             _dash.performed -= OnDash;
             _attack.performed -= OnAttack;
             _attack.canceled -= OnAttackReleased;
@@ -179,7 +191,7 @@ namespace Branded.Player
         }
 
         void OnMove(InputAction.CallbackContext context) => Move = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f);
-        void OnPoint(InputAction.CallbackContext context) => PointerScreenPosition = context.ReadValue<Vector2>();
+        void OnLook(InputAction.CallbackContext context) => Look = context.ReadValue<Vector2>();
         void OnDash(InputAction.CallbackContext _) => DashPressed?.Invoke();
         void OnAttack(InputAction.CallbackContext _)
         {

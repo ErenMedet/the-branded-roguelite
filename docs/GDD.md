@@ -6,8 +6,8 @@
 
 ## 1. Proje Özeti ve Hikaye Temeli
 
-* **Oyun Türü:** 2.5D İzometrik Hack & Slash Roguelite (Hades döngüsü + Berserk atmosferi).
-* **Kamera Açısı:** Sabit 50° eğimli, 45° döndürülmüş izometrik perspektif.
+* **Oyun Türü:** Üçüncü Şahıs Hack & Slash Roguelite (Hades döngüsü + Berserk atmosferi).
+* **Kamera Açısı:** Witcher 3 tarzı yörüngesel üçüncü şahıs kamera; fare kamerayı karakterin etrafında döndürür, imleç kilitlidir. Yörüngenin merkezi karakterin başının üzerindedir ve kamera nereye dönerse dönsün karakter kadrajın ortasında, alt yarıda kalır. Nişan yönü kameranın baktığı yöndür: gövde serbestken yürüdüğü yöne döner, saldırı veya atış anında kamera yönüne kilitlenir. Retikül yalnızca tatar yayı nişanlanırken görünür. (Önceki sabit izometrik açı, ilerideki yoğun ağaçlık alanlarda görüşü kapattığı için terk edildi.)
 * **Hikaye Başlangıcı (Lore):** 
   * Karakter, "Tutulma" (The Eclipse) katliamından sağ kurtulmuş; tek kolunu ve tek gözünü kaybetmiştir.
   * Boynundaki **Kurban Mührü (Brand of Sacrifice)** laneti nedeniyle ölüler ve iblisler sürekli kanının kokusuna çekilmektedir.
