@@ -14,8 +14,8 @@ namespace Branded.Player
         [SerializeField] PlayerAim _aimComponent;
         [SerializeField] PlayerMotor _motorComponent;
         [SerializeField] PlayerCombat _combatComponent;
+        [SerializeField] PlayerGrip _gripComponent;
         [SerializeField] Transform _muzzleComponent;
-        [SerializeField] GameObject _crossbowVisual;
         [SerializeField] Projectile _boltPrefabComponent;
 
         [Header("Firing")]
@@ -43,6 +43,7 @@ namespace Branded.Player
             if (!_aimComponent) _aimComponent = GetComponent<PlayerAim>();
             if (!_motorComponent) _motorComponent = GetComponent<PlayerMotor>();
             if (!_combatComponent) _combatComponent = GetComponent<PlayerCombat>();
+            if (!_gripComponent) _gripComponent = GetComponent<PlayerGrip>();
             BoltsLeft = _magazineSize;
         }
 
@@ -60,8 +61,37 @@ namespace Branded.Player
             }
 
             if (IsBroken || !_inputComponent.IsFireHeld || _fireTimer > 0f) return;
+            // The left hand is still on the sword until the draw finishes, so there is nothing to fire with.
+            if (_gripComponent && !_gripComponent.IsCrossbowReady) return;
             if (_motorComponent.IsDashing || _combatComponent.Phase != ESwingPhase.None) return;
             Fire();
+        }
+
+        // What the next bolt would meet, for the reticle to report. The prefab's own radius, mask and
+        // range are used, so what the crosshair promises cannot drift from what is actually fired.
+        public EAimState PredictAim()
+        {
+            Vector3 origin = _muzzleComponent.position;
+            Vector3 direction = _aimComponent.DirectionFrom(origin);
+            float range = _boltPrefabComponent.Range;
+
+            RaycastHit[] hits = Physics.SphereCastAll(origin, _boltPrefabComponent.Radius, direction, range,
+                _boltPrefabComponent.HitLayers, QueryTriggerInteraction.Ignore);
+
+            // The shooter's own colliders are skipped, as the bolt skips them in flight, and so is a cast
+            // that starts already overlapping, which reports a useless hit at zero distance.
+            float nearest = range;
+            Collider struck = null;
+            foreach (var hit in hits)
+            {
+                if (hit.distance <= 0f || hit.distance >= nearest) continue;
+                if (hit.collider.transform.IsChildOf(transform)) continue;
+                nearest = hit.distance;
+                struck = hit.collider;
+            }
+
+            if (!struck) return EAimState.Clear;
+            return struck.GetComponentInParent<IDamageable>() != null ? EAimState.Target : EAimState.Blocked;
         }
 
         void Fire()
@@ -90,7 +120,7 @@ namespace Branded.Player
             IsBroken = true;
             // A reload finishing while broken would overwrite the HUD's broken state; the repair refills anyway.
             _reloadTimer = 0f;
-            if (_crossbowVisual) _crossbowVisual.SetActive(false);
+            // PlayerGrip owns the visual: a broken arm fails WantsCrossbow, so the stow hides it.
             Broke?.Invoke();
         }
 
@@ -98,7 +128,6 @@ namespace Branded.Player
         {
             IsBroken = false;
             _reloadTimer = 0f;
-            if (_crossbowVisual) _crossbowVisual.SetActive(true);
             Refill();
         }
     }

@@ -16,6 +16,11 @@ namespace Branded.Combat
         // (impact point, what was hit). Also raised with null when the lifetime runs out, so shells can burst at max range.
         public event UnityAction<Vector3, IDamageable> Impacted;
 
+        // Read off the prefab so a reticle can predict exactly where this shot would stop.
+        public float Radius => _radius;
+        public float Range => _speed * _lifetime;
+        public LayerMask HitLayers => _hitLayers;
+
         float _damage;
         float _timer;
         Transform _ownerComponent;

@@ -22,10 +22,8 @@ namespace Branded.Player
         [SerializeField] float _turnSharpness = 16f;
 
         [Header("Aim ray")]
-        [Tooltip("What the camera's centre ray can lock onto.")]
-        [SerializeField] LayerMask _aimMask = ~0;
-        [Tooltip("How far past the player the aim ray starts, so the body is never the aim target.")]
-        [SerializeField] float _aimStartOffset = 1f;
+        [Tooltip("Height above the player the shots fly at. Match the muzzle, or the crosshair lies about range.")]
+        [SerializeField] float _aimHeight = 1.2f;
         [SerializeField] float _maxAimDistance = 60f;
 
         public Vector3 AimPoint { get; private set; }
@@ -127,13 +125,20 @@ namespace Branded.Player
             Transform cameraTransform = _cameraComponent.transform;
             AimDirection = FlatMath.FlatDirection(transform.position, transform.position + cameraTransform.forward, AimDirection);
 
-            // The ray starts past the player so the body itself never counts as the thing being aimed at.
+            // The aim point is taken in the plane the shots fly in, not off the ground the camera happens
+            // to see through the crosshair: with the camera angled down, that ground point sits metres
+            // past where the bolt actually passes, so the reticle would promise a range nothing keeps.
+            Vector3 lineHeight = new Vector3(0f, transform.position.y + _aimHeight, 0f);
+            var weaponLine = new Plane(Vector3.up, lineHeight);
             Ray ray = _cameraComponent.ViewportPointToRay(ViewportCentre);
-            Vector3 origin = ray.GetPoint(FlatMath.FlatDistance(cameraTransform.position, transform.position) + _aimStartOffset);
+            if (weaponLine.Raycast(ray, out float distance) && distance <= _maxAimDistance)
+            {
+                AimPoint = ray.GetPoint(distance);
+                return;
+            }
 
-            AimPoint = Physics.Raycast(origin, ray.direction, out RaycastHit hit, _maxAimDistance, _aimMask, QueryTriggerInteraction.Ignore)
-                ? hit.point
-                : origin + ray.direction * _maxAimDistance;
+            // Looking along the plane or away from it leaves nothing to cross, so the aim runs straight out.
+            AimPoint = new Vector3(transform.position.x, lineHeight.y, transform.position.z) + AimDirection * _maxAimDistance;
         }
     }
 }
