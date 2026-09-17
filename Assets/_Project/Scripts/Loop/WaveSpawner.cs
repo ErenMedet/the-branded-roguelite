@@ -25,6 +25,10 @@ namespace Branded.Loop
         [SerializeField] int _maxAliveRamp = 4;
         [SerializeField] int _maxAliveCap = 40;
 
+        [Header("Economy")]
+        // Ash is bought with the threat a pack costs, so no enemy is a better farm than the danger it brings.
+        [SerializeField] float _ashPerThreat = 1f;
+
         [Header("Pacing within a night")]
         [SerializeField, Range(0f, 1f)] float _openingShare = 0.6f; // the target starts at this share of the night's threat and reaches it by dawn
         [SerializeField, Range(0f, 1f)] float _swellAmount = 0.25f;
@@ -131,16 +135,17 @@ namespace Branded.Loop
             Vector3 point = PickSpawnPoint();
             int members = group.Count * (1 + (group.Escort ? group.EscortCount : 0));
             float threatEach = group.Threat / members;
+            var purse = new AshPurse(Mathf.RoundToInt(group.Threat * _ashPerThreat), members);
 
             for (int n = 0; n < group.Count; n++)
             {
-                var leader = Spawn(group.Prefab, point, threatEach);
-                if (leader && group.Escort) SpawnEscorts(leader, group, threatEach);
+                var leader = Spawn(group.Prefab, point, threatEach, purse.Take());
+                if (leader && group.Escort) SpawnEscorts(leader, group, threatEach, purse);
                 yield return new WaitForSeconds(_spawnInterval);
             }
         }
 
-        GameObject Spawn(GameObject prefab, Vector3 around, float threat)
+        GameObject Spawn(GameObject prefab, Vector3 around, float threat, int ashes)
         {
             if (!prefab) return null;
 
@@ -148,20 +153,26 @@ namespace Branded.Loop
             if (NavMesh.SamplePosition(point, out NavMeshHit hit, 3f, NavMesh.AllAreas)) point = hit.position;
 
             var enemy = Instantiate(prefab, point, Quaternion.identity);
+            if (enemy.TryGetComponent(out EnemyAshReward reward)) reward.SetAshes(ashes);
             Track(enemy, threat);
             return enemy;
         }
 
         // Escorts arrive with their leader even past the alive cap, so a group never shows up split.
-        void SpawnEscorts(GameObject leader, SpawnGroup group, float threat)
+        void SpawnEscorts(GameObject leader, SpawnGroup group, float threat, AshPurse purse)
         {
             leader.TryGetComponent(out EnemyCultist cultist);
             // The cultist is destroyed along with its event, so this never needs removing.
-            if (cultist) cultist.EscortRevived += revived => Track(revived, threat);
+            // A revived escort pays nothing: the pack already bought its ash, and reviving never runs out.
+            if (cultist) cultist.EscortRevived += revived =>
+            {
+                if (revived.TryGetComponent(out EnemyAshReward reward)) reward.SetAshes(0);
+                Track(revived, threat);
+            };
 
             for (int i = 0; i < group.EscortCount; i++)
             {
-                var escort = Spawn(group.Escort, leader.transform.position, threat);
+                var escort = Spawn(group.Escort, leader.transform.position, threat, purse.Take());
                 if (cultist && escort && escort.TryGetComponent(out HealthComponent health)) cultist.Bind(health, group.Escort);
             }
         }
@@ -191,6 +202,30 @@ namespace Branded.Loop
                 if (!_playerTransformComponent || Vector3.Distance(point.position, _playerTransformComponent.position) >= _minPlayerDistance) return point.position;
             }
             return _spawnPointComponents[start].position;
+        }
+
+        // Hands a pack's purse out one member at a time. Rounding up what is left keeps the whole purse paid:
+        // a purse smaller than the pack gives its first members 1 and the rest nothing, instead of every
+        // member flooring to 0 and a cheap swarm paying nothing at all.
+        class AshPurse
+        {
+            int _left;
+            int _members;
+
+            public AshPurse(int ashes, int members)
+            {
+                _left = Mathf.Max(0, ashes);
+                _members = Mathf.Max(0, members);
+            }
+
+            public int Take()
+            {
+                if (_members <= 0) return 0;
+                int share = (_left + _members - 1) / _members;
+                _left -= share;
+                _members--;
+                return share;
+            }
         }
     }
 }

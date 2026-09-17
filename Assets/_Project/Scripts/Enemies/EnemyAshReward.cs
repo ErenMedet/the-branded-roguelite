@@ -17,6 +17,10 @@ namespace Branded.Enemies
             if (!_healthComponent) _healthComponent = GetComponent<HealthComponent>();
         }
 
+        // The spawner pays a pack's whole purse out of its threat, so the serialized value is only
+        // a fallback for enemies placed by hand in a scene.
+        public void SetAshes(int ashes) => _ashes = ashes;
+
         void OnEnable() => _healthComponent.Died += OnDied;
         void OnDisable() => _healthComponent.Died -= OnDied;
 

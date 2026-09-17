@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6088a88359200f44b538b5c97347641, type: 3}
   m_Name: Upgrade_Dragonslayer
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Meta.UpgradeData
-  id: godo_dragonslayer
-  upgradeName: Ejderha Katili
-  description: "Her seviye k\u0131l\u0131c\u0131n taban hasar\u0131n\u0131 %10 art\u0131r\u0131r."
-  stat: 0
-  valuePerLevel: 0.1
-  costs: 1400000028000000460000006e000000a0000000i
+  <Id>k__BackingField: godo_dragonslayer
+  <UpgradeName>k__BackingField: Ejderha Katili
+  <Description>k__BackingField: "Her seviye k\u0131l\u0131c\u0131n taban hasar\u0131n\u0131 %10 art\u0131r\u0131r."
+  <Stat>k__BackingField: 0
+  <ValuePerLevel>k__BackingField: 0.1
+  <Costs>k__BackingField: 9600000040010000bc02000078050000f00a0000i

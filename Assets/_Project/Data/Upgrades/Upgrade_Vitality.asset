@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6088a88359200f44b538b5c97347641, type: 3}
   m_Name: Upgrade_Vitality
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Meta.UpgradeData
-  id: puck_vitality
-  upgradeName: "Kal\u0131c\u0131 Can Kapasitesi"
-  description: "Her seviye azami can\u0131 kal\u0131c\u0131 olarak 20 art\u0131r\u0131r."
-  stat: 1
-  valuePerLevel: 20
-  costs: 0f0000001e000000320000005000000078000000i
+  <Id>k__BackingField: puck_vitality
+  <UpgradeName>k__BackingField: "Kal\u0131c\u0131 Can Kapasitesi"
+  <Description>k__BackingField: "Her seviye azami can\u0131 kal\u0131c\u0131 olarak 20 art\u0131r\u0131r."
+  <Stat>k__BackingField: 1
+  <ValuePerLevel>k__BackingField: 20
+  <Costs>k__BackingField: 780000000401000030020000b004000060090000i

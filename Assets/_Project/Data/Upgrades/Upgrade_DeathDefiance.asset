@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6088a88359200f44b538b5c97347641, type: 3}
   m_Name: Upgrade_DeathDefiance
   m_EditorClassIdentifier: Assembly-CSharp::Branded.Meta.UpgradeData
-  id: puck_death_defiance
-  upgradeName: "\xD6l\xFCmden D\xF6nme"
-  description: "Her seviye, seferde bir kez \xF6l\xFCmden can\u0131n\u0131n yar\u0131s\u0131yla d\xF6nd\xFCr\xFCr."
-  stat: 2
-  valuePerLevel: 1
-  costs: 3c00000078000000c8000000i
+  <Id>k__BackingField: puck_death_defiance
+  <UpgradeName>k__BackingField: "\xD6l\xFCmden D\xF6nme"
+  <Description>k__BackingField: "Her seviye, seferde bir kez \xF6l\xFCmden can\u0131n\u0131n yar\u0131s\u0131yla d\xF6nd\xFCr\xFCr."
+  <Stat>k__BackingField: 2
+  <ValuePerLevel>k__BackingField: 1
+  <Costs>k__BackingField: c8000000c2010000e8030000i

@@ -1627,6 +1627,7 @@ MonoBehaviour:
   _maxAliveBase: 12
   _maxAliveRamp: 4
   _maxAliveCap: 40
+  _ashPerThreat: 1.7
   _openingShare: 0.6
   _swellAmount: 0.25
   _swellPeriod: 20
