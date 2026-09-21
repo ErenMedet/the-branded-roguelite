@@ -1,63 +1,63 @@
 # The Branded (Mühürlü)
 
-**Üçüncü şahıs hack & slash roguelite**: Hades'in döngüsü, Berserk'ün "Tutulma Sonrası" atmosferi.
+**Third-person hack & slash roguelite**: the run loop of Hades in the post-Eclipse mood of Berserk.
 
-Tutulma katliamından tek kolu ve tek gözüyle sağ çıkan bir savaşçıyız. Boynundaki **Kurban Mührü** her gece ölüleri ve iblisleri kanının kokusuna çeker. Geceler vahşi yakın dövüşle, sabahlar kamp ateşi başında nefes alarak geçer.
+You play a warrior who walked out of the Eclipse massacre with one arm and one eye. The **Brand of Sacrifice** on his neck bleeds every night and pulls the dead and the demons toward the smell of his blood. Nights are spent in savage melee; mornings are spent breathing by a campfire.
 
-> Unity 6 (URP) ile geliştiriliyor. Şu an **greybox** aşamasında: modeller kapsül ve küp, portreler yer tutucu.
+> Built with Unity 6 (URP). Currently at the **greybox** stage: the models are capsules and cubes, the portraits are placeholders.
 
 ---
 
-## Oyun Döngüsü
+## Game Loop
 
-Oyun, **Gece Vahşeti** ile **Sabah Huzuru** arasındaki zıtlık üzerine kurulu.
+The game is built on the contrast between **Night Savagery** and **Morning Calm**.
 
 ```mermaid
 flowchart TD
-    subgraph HUB ["🏠 GODOT'NUN MADENİ (Kalıcı Güvenli Alan / Hub)"]
-        WakeUp["✨ Uyanış: Tutulma Sonrası Başlangıç<br/>• Tek Kol & Tek Göz Kayıp<br/>• Boyunda Kanayan Kurban Mührü"]
-        Godot["🔨 Godot'nun Demirci Ocağı (Meta-Progression)<br/>• Ejderha Katili (Dragonslayer) Taban Hasar Artışı<br/>• Protez Kol Modifikasyonu: Top Gülesi & Seri Tatar Yayı"]
-        Puck["🧚 Puck & Şifalı Elf Tozu<br/>• Kalıcı Can Kapasitesi & Ölümden Dönme (Death Defiance)"]
-        Depart["🚪 Dağ Patikasından İniş: Seferi Başlat"]
+    subgraph HUB ["🏠 GODOT'S MINE (Permanent Safe Area / Hub)"]
+        WakeUp["✨ Awakening: After the Eclipse<br/>• One Arm & One Eye Lost<br/>• The Brand of Sacrifice Bleeding"]
+        Godot["🔨 Godot's Forge (Meta-Progression)<br/>• Dragonslayer Base Damage<br/>• Prosthetic Arm Mods: Cannon & Repeater Crossbow"]
+        Puck["🧚 Puck & Healing Elf Dust<br/>• Permanent Health Capacity & Death Defiance"]
+        Depart["🚪 Down the Mountain Path: Start the Run"]
         WakeUp --> Godot
         WakeUp --> Puck
         Godot --> Depart
         Puck --> Depart
     end
 
-    subgraph RUN ["⚔️ SEFER (RUN) DÖNGÜSÜ: BÖLGE 1 - LANETLİ TOPRAKLAR"]
-        subgraph NIGHT1 ["🌑 1. GECE: SİS VE HUZURSUZ RUHLAR"]
-            N1_Start["🩸 Mühür Kanar & Sis Çöker<br/>(Görüş sadece meşale alanına daralır, nabız sesi yükselir)"]
-            N1_Combat["⚔️ Vahşi Yakın Dövüş<br/>• Topraktan Çıkan İskeletler & Gölge Ruhları<br/>• Dragonslayer Ağır Vuruşları, Hitstop & Ekran Titremesi"]
-            N1_Survive["☀️ Şafak Söker<br/>(Kalan iblisler çığlık atarak buharlaşır)"]
+    subgraph RUN ["⚔️ RUN LOOP: BIOME 1 - THE CURSED LANDS"]
+        subgraph NIGHT1 ["🌑 NIGHT 1: FOG AND RESTLESS SPIRITS"]
+            N1_Start["🩸 The Brand Bleeds & Fog Falls<br/>(Vision narrows to the torch, a heartbeat rises)"]
+            N1_Combat["⚔️ Savage Melee<br/>• Skeletons Clawing Out of the Ground & Shade Spirits<br/>• Heavy Dragonslayer Swings, Hitstop & Screen Shake"]
+            N1_Survive["☀️ Dawn Breaks<br/>(The remaining demons evaporate screaming)"]
             N1_Start --> N1_Combat --> N1_Survive
         end
 
-        subgraph DAWN1 ["🌅 1. SABAH: HUZURLU KAMP VE DİNLENME"]
-            D1_Camp["🔥 Kamp Ateşi Kurulur<br/>(Kuş sesleri, huzurlu akustik müzik, nefes alma anı)"]
-            D1_Dialogue["💬 2D Portre Diyaloğu (Hades Tarzı UI)<br/>(Rickert / Gezgin Paralı Asker ile Sohbet)"]
-            D1_Boon["🎁 Geçici Sefer Güçlenmesi Seçimi<br/>• Kılıca Alev Yağı (Yanma Hasarı)<br/>• Hızlı Atılma Tılsımı<br/>• Şifalı Bandaj (+Can)"]
+        subgraph DAWN1 ["🌅 MORNING 1: A QUIET CAMP"]
+            D1_Camp["🔥 The Campfire Is Lit<br/>(Birdsong, calm acoustic music, a moment to breathe)"]
+            D1_Dialogue["💬 2D Portrait Dialogue (Hades-style UI)<br/>(A talk with Rickert / a wandering mercenary)"]
+            D1_Boon["🎁 Pick a Temporary Run Boon<br/>• Flame Oil on the Sword (Burn Damage)<br/>• Swift Dash Charm<br/>• Healing Bandage (+Health)"]
             D1_Camp --> D1_Dialogue --> D1_Boon
         end
 
-        subgraph NIGHT2 ["🌑 2. GECE: İBLİS TAZILARI VE ZIRHLI SÜRÜLER"]
-            N2_Start["🩸 Mühür Şiddetle Zonklamaya Başlar<br/>(Ekran kenarları kızarır, kırmızı sis)"]
-            N2_Combat["⚔️ Yüksek Tansiyonlu Çarpışma<br/>• Hızlı İblis Tazıları & Zırhlı Ölü Şövalyeler<br/>• Sol Kol Mekaniği: Seri Tatar Yayı & Yakın Mesafe Top Atışı"]
-            N2_Survive["☀️ Şafak Söker"]
+        subgraph NIGHT2 ["🌑 NIGHT 2: DEMON HOUNDS AND ARMOURED PACKS"]
+            N2_Start["🩸 The Brand Throbs Violently<br/>(Screen edges redden, red fog)"]
+            N2_Combat["⚔️ High-Tension Fighting<br/>• Fast Demon Hounds & Armoured Dead Knights<br/>• Left Arm: Repeater Crossbow & Point-Blank Cannon"]
+            N2_Survive["☀️ Dawn Breaks"]
             N2_Start --> N2_Combat --> N2_Survive
         end
 
-        subgraph DAWN2 ["🌅 2. SABAH: YIKIK MABET & KAFATASI ŞÖVALYESİ"]
-            D2_Shrine["🗿 Antik Mabet Harabeleri"]
-            D2_Skull["💬 Kafatası Şövalyesi (Skull Knight) Belirir<br/>(2D Portre, Felsefi Kehanet Diyaloğu)"]
-            D2_Relic["⚡ Antik Kalıntı Lütfu Seçimi<br/>(Havari Savaşı Öncesi Büyük Geçici Güçlendirme)"]
+        subgraph DAWN2 ["🌅 MORNING 2: RUINED SHRINE & THE SKULL KNIGHT"]
+            D2_Shrine["🗿 Ruins of an Ancient Shrine"]
+            D2_Skull["💬 The Skull Knight Appears<br/>(2D Portrait, a Prophetic Dialogue)"]
+            D2_Relic["⚡ Pick an Ancient Relic Boon<br/>(A Large Temporary Buff Before the Apostle)"]
             D2_Shrine --> D2_Skull --> D2_Relic
         end
 
-        subgraph BOSS_NIGHT ["🔥 3. GECE: BÖLGE PATRONU - BÜYÜK HAVARİ (APOSTLE)"]
-            Boss_Spawn["👁️ Gökyüzü Kan Rengine Döner<br/>(Devasa İblis Havari Sahneye İner)"]
-            Boss_Fight["⚔️ Çok Aşamalı Vahşi Patron Savaşı<br/>• Alan Etkili Darbelerden Dash ile Kaçış<br/>• Öfke Modu (Berserk Rage): Yüksek Hasar & Can Eksilmesi"]
-            Boss_Victory["🏆 Havari Katledildi!<br/>(Büyük İblis Kalbi & Nadir Kara Maden Kazanılır)"]
+        subgraph BOSS_NIGHT ["🔥 NIGHT 3: BIOME BOSS - THE GREAT APOSTLE"]
+            Boss_Spawn["👁️ The Sky Turns Blood Red<br/>(A Colossal Demon Apostle Lands)"]
+            Boss_Fight["⚔️ A Multi-Phase Boss Fight<br/>• Dash Out of Area Attacks<br/>• Berserk Rage: High Damage & Draining Health"]
+            Boss_Victory["🏆 The Apostle Is Slain!<br/>(A Great Demon Heart & Rare Black Ore)"]
             Boss_Spawn --> Boss_Fight --> Boss_Victory
         end
 
@@ -68,103 +68,111 @@ flowchart TD
         D2_Relic --> Boss_Spawn
     end
 
-    subgraph DEATH_SYSTEM ["💀 ÖLÜM VE GERİ DÖNÜŞ SİSTEMİ"]
-        DeathEvent["⚰️ Karakter Yenildi (Can Sıfırlandı)"]
-        DragBack["Karanlık Ruhlar Seni Çeker...<br/>Fakat Kurban Mührünün İntikam Ateşi Ölümüne İzin Vermez!"]
-        Respawn["🩸 Kan Revan İçinde Godot'nun Ocağında Uyanış<br/>(Geçici yağlar sıfırlanır, İblis Külleri korunur)"]
+    subgraph DEATH_SYSTEM ["💀 DEATH AND RETURN"]
+        DeathEvent["⚰️ Defeated (Health Reached Zero)"]
+        DragBack["Dark spirits drag you down...<br/>But the Brand's hunger for vengeance will not let you die!"]
+        Respawn["🩸 Waking Up Bloodied at Godot's Forge<br/>(Temporary oils reset, Demon Ash is kept)"]
         DeathEvent --> DragBack --> Respawn
         Respawn --> Godot
     end
 
-    N1_Combat -.->|Ölüm| DeathEvent
-    N2_Combat -.->|Ölüm| DeathEvent
-    Boss_Fight -.->|Ölüm| DeathEvent
+    N1_Combat -.->|Death| DeathEvent
+    N2_Combat -.->|Death| DeathEvent
+    Boss_Fight -.->|Death| DeathEvent
 
-    Boss_Victory --> NextBiome["🌟 BÜYÜK ŞAFAK: 2. BÖLGEYE GEÇİŞ<br/>(Veya Madene Ganimetle Muzaffer Dönüş)"]
+    Boss_Victory --> NextBiome["🌟 GREAT DAWN: ON TO BIOME 2<br/>(Or Return to the Mine With the Spoils)"]
     NextBiome -.-> Godot
 ```
 
-Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Dokümanı (GDD)](docs/GDD.md)**
+For the full design, map, combat and architecture detail: **[Design Document (GDD)](docs/GDD.md)**
 
 ---
 
-## Yol Haritası
+## Roadmap
 
-| Aşama | İçerik | Durum |
+| Stage | Contents | Status |
 |---|---|---|
-| 1. Greybox Temelleri | WASD hareket, fareye dönme, dash, input buffer ile kılıç savurma | ✅ |
-| 2. Hasar ve İlk Düşman | `IDamageable`, NavMesh düşman, hitstop ve vuruş hissi | ✅ |
-| 3. Gece/Sabah Döngüsü | Düşman dalgaları, şafak söküşü, kamp ateşi | ✅ |
-| 4. Diyalog ve UI | 2D portreli diyalog, can barı, geçici kılıç yağı seçimi | ✅ |
-| 5. Godot'nun Atölyesi | Hub sahnesi (maden + kulübe + ağaçlık), kalıcı yükseltmeler, ölüm döngüsü | ✅ |
-| 6. Dövüş Derinliği | Kombo zinciri + iptal penceresi, şarjlı ağır vuruş, dönerek savurma, dash vuruşu | ✅ |
-| 7. Kamera Geçişi | Sabit izometrikten Witcher 3 tarzı yörüngesel üçüncü şahıs kameraya geçiş | ✅ |
-| 8. Karakter Modeli | Guts modeli, rig ve animasyonlar (greybox kapsüllerin yerine) | ⏳ |
+| 1. Greybox Foundations | WASD movement, turning, dash, sword swing with input buffering | ✅ |
+| 2. Damage and the First Enemy | `IDamageable`, a NavMesh enemy, hitstop and hit feel | ✅ |
+| 3. Night/Morning Cycle | Enemy waves, daybreak, campfire | ✅ |
+| 4. Dialogue and UI | 2D portrait dialogue, health bar, temporary sword-oil pick | ✅ |
+| 5. Godot's Workshop | Hub scene (mine + cottage + grove), permanent upgrades, death loop | ✅ |
+| 6. Combat Depth | Combo chain with cancel windows, charged strike, spin attack, dash strike | ✅ |
+| 7. Camera Change | From a fixed isometric angle to a Witcher 3-style orbital third-person camera | ✅ |
+| 8. Character Model | A rigged, animated character to replace the greybox capsules | ⏳ |
 
-## Şu An Oyunda Neler Var
+## What Is in the Game Right Now
 
-- **Dövüş:** Input buffer'lı kılıç kombosu (OverlapSphere taraması); her savuruşun toparlanma anında iptal penceresi var, böylece zincir kesintisiz akar. Basılı tutunca şarjlı ağır vuruş, `Q` ile dönerek savurma (komboya bağlanırsa hasarı 1.5 katına çıkar), dash'ten hemen sonra atılırsa özel dash vuruşu. i-frame'li dash, hitstop ve kamera sarsıntısı.
-- **Düşmanlar:** Oyuncunun etrafını saran NavMesh sürüsü; tank, koşucu, uzaktan ateş eden ve yer altından çıkan tipler; yapışıp yavaşlatan gölge ruhları, açık kollayan tazılar, önden kalkanlı şövalyeler, geniş sopalı troll, eskortlarını dirilten tarikatçı ve ölünce hasar alanı bırakan et yığını. Can barları ilk vuruşa kadar gizli.
-- **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
-- **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
-- **HUD:** Hasarı soluk bir izle gösteren can barı ve İblis Külü sayacı.
-- **Godot'nun Madeni:** Oyun eski madenin içindeki ocağın başında başlar; yanında Godot'nun su çarklı kulübesi, etrafta ağaçlık, cephanelik, şelale ve Kılıçlar Tepesi var. Godot'nun ocağında *Ejderha Katili* (taban hasar), Puck'ta *Kalıcı Can Kapasitesi* ve *Ölümden Dönme* İblis Külleriyle alınır; güneydeki dağ patikasından sefere çıkılır.
-- **Ölüm döngüsü:** Ölünce karanlık ruhlar yazısı, ardından Godot'nun ocağında uyanış. Geçici yağlar sıfırlanır, küller ve yükseltmeler kalır (`save.json`).
+- **Combat:** A sword combo with input buffering (scanned with `Physics.OverlapSphere`). Every swing's recovery ends in a cancel window, so the chain flows without stalling. Holding the attack button charges a heavy strike, `Q` throws a spin attack (1.5× damage when linked out of a combo), and attacking right after a dash gives a dedicated dash strike. Dash has i-frames; hits produce hitstop and camera shake.
+- **Enemies:** A NavMesh swarm that surrounds the player — tank, charger, ranged and burrowing types; shade spirits that latch on and slow you, hounds that wait for an opening, knights who block from the front, a troll with a wide club, a cultist who revives his escort, and a flesh pile that leaves a damaging pool when it dies. Health bars stay hidden until the first hit.
+- **Night/Morning:** Waves of enemies, demons evaporating at daybreak, the transition into morning light and the campfire.
+- **Camp:** Hades-style portrait dialogue, then a choice of three boon cards (Flame Oil, Swift Dash Charm, Healing Bandage).
+- **HUD:** A health bar that shows damage as a fading trail, and a Demon Ash counter.
+- **Godot's Mine:** The game opens at the forge inside the old mine, next to Godot's water-wheel cottage, with a grove, an armoury, a waterfall and the Hill of Swords around it. *Dragonslayer* (base damage) is bought at Godot's forge, *Permanent Health Capacity* and *Death Defiance* from Puck, all with Demon Ash; the run starts down the mountain path to the south.
+- **Death loop:** On death, the dark-spirits text, then waking at Godot's forge. Temporary oils reset; ash and upgrades persist (`save.json`).
 
-## Kontroller
+## Controls
 
-| Tuş | Eylem |
+| Key | Action |
 |---|---|
-| `W A S D` / Ok tuşları | Hareket |
-| Fare | Kamerayı karakterin etrafında döndürür; imleç kilitlidir ve nişan kameranın baktığı yöndür |
-| Sol tık | Kılıç saldırısı (kombo) |
-| Sol tık (basılı) | Şarjlı ağır vuruş |
-| `Q` | Dönerek savurma; kombonun içinden bağlanırsa daha çok hasar verir |
-| Sağ tık (basılı) | Sol koldan seri tatar yayı (şarjör + reload) |
-| Orta tuş | Kol topu: kamp başına bir atış, yayı kırar, geri savurur |
-| `Space` | Atılma (dash); hemen ardından sol tık özel dash vuruşu yapar |
-| `E` | Etkileşim (kamp ateşi, Godot, Puck, dağ patikası) |
-| `Esc` / `E` | Yükseltme panelini kapat |
-| `E` / `Space` / Sol tık | Diyaloğu ilerlet |
+| `W A S D` / Arrow keys | Move |
+| Mouse | Orbits the camera around the character; the cursor is locked and you aim where the camera looks |
+| Left click | Sword attack (combo) |
+| Left click (hold) | Charged heavy strike |
+| `Q` | Spin attack; links out of a combo for extra damage |
+| Right click (hold) | Repeater crossbow on the left arm (magazine + reload) |
+| Middle click | Arm cannon: one shot per camp, breaks the crossbow, knocks you back |
+| `Space` | Dash; a left click straight after it becomes a dash strike |
+| `E` | Interact (campfire, Godot, Puck, mountain path) |
+| `Esc` / `E` | Close the upgrade panel |
+| `E` / `Space` / Left click | Advance dialogue |
 
-## Teknik Altyapı
+## Technical Stack
 
-- **Motor:** Unity `6000.6.0f1`, Universal Render Pipeline `17.6.0`
-- **Girdi:** Input System `1.20.0` (action'lar kod içinde kuruluyor, `.inputactions` dosyası yok)
-- **Kamera:** Cinemachine `6.6.0` — Witcher 3 tarzı yörüngesel üçüncü şahıs kamera; yörüngenin merkezi karakterin başının üzerinde, karakter kadrajın alt yarısında kalır
-- **Yapay zekâ:** NavMesh
-- **Karakter:** `CharacterController` (Rigidbody yok)
-- **Arayüz:** uGUI + TextMeshPro
-- **Veri:** Geceler, güçlenmeler, yükseltmeler ve diyaloglar `ScriptableObject` olarak tutulur; kalıcı ilerleme JSON kaydında
+- **Engine:** Unity `6000.6.0f1`, Universal Render Pipeline `17.6.0`
+- **Input:** Input System `1.20.0` (actions are built in code; there is no `.inputactions` asset)
+- **Camera:** Cinemachine `6.6.0` — a Witcher 3-style orbital third-person camera; the orbit centres above the character's head, and the character stays in the lower half of the frame
+- **Character:** `CharacterController` (no Rigidbody)
+- **AI:** NavMesh
+- **UI:** uGUI + TextMeshPro
+- **Data:** Nights, boons, upgrades and dialogue are `ScriptableObject` assets; permanent progress is saved as JSON
 
-## Proje Yapısı
+> The in-game text (dialogue, HUD labels) is in Turkish. The code, comments and documentation are in English.
+
+## Project Structure
 
 ```
 Assets/_Project/
-├── Art/           Portraits/ (diyalog portreleri), UI/ (arayüz görselleri)
-├── Data/          ScriptableObject verileri (Boons, Dialogue, Nights, Upgrades)
+├── Art/           Portraits/ (dialogue portraits), UI/ (interface art)
+├── Data/          ScriptableObject data (Boons, Dialogue, Nights, Upgrades)
 ├── Materials/
-├── Prefabs/       Oyuncu, düşmanlar, dünya objeleri, UI
+├── Prefabs/       Player, enemies, world objects, UI
 ├── Scenes/        Hub_GodotForge.unity, Greybox_Asama1.unity
 └── Scripts/
-    ├── Core/      GameEvents (sistemler arası olay kanalı), FlatMath, Easing
-    ├── Player/    Hareket, dash, girdi, kamera, nişan, kılıç, tatar yayı, ölüm
-    ├── Combat/    IDamageable, HealthComponent, hitbox, Projectile
-    ├── Enemies/   Düşman yapay zekâsı ve tipleri
-    ├── Loop/      Gece/sabah döngüsü, dalgalar, kamp ateşi
-    ├── Dialogue/  Diyalog verisi ve yöneticisi
-    ├── Boons/     Güçlenme verisi ve etkileri
-    ├── Meta/      Kalıcı ilerleme, kayıt, yükseltmeler, sahne geçişi
-    ├── Interaction/ Etkileşilebilir objeler ve oyuncu tarafı
-    ├── Hub/       Yükseltme istasyonları, hub çıkışı
-    ├── UI/        Can barı, güçlenme kartları, yükseltme paneli, ekran geçişleri
-    └── DevTools/  Test amaçlı yardımcılar
+    ├── Core/      GameEvents (the cross-system event channel), FlatMath, Easing
+    ├── Player/    Movement, dash, input, camera, aim, sword, crossbow, death
+    ├── Combat/    IDamageable, HealthComponent, hitboxes, Projectile
+    ├── Enemies/   Enemy AI and types
+    ├── Loop/      Night/morning cycle, waves, campfire
+    ├── Dialogue/  Dialogue data and manager
+    ├── Boons/     Boon data and effects
+    ├── Meta/      Permanent progress, saving, upgrades, scene transitions
+    ├── Interaction/ Interactable objects and the player side
+    ├── Hub/       Upgrade stations, hub exit
+    ├── UI/        Health bar, boon cards, upgrade panel, screen fades
+    └── DevTools/  Test helpers
 ```
 
-Kod kuralları: **[docs/CodeStyles.md](docs/CodeStyles.md)**
+Code conventions: **[docs/CodeStyles.md](docs/CodeStyles.md)**
 
-## Çalıştırma
+## Running It
 
-1. Repoyu klonla ve Unity Hub'dan **Unity 6000.6.0f1** ile aç.
-2. `Assets/_Project/Scenes/Hub_GodotForge.unity` sahnesini aç (sefer sahnesi `Greybox_Asama1.unity` doğrudan da açılabilir).
-3. Play'e bas.
+1. Clone the repository and open it from Unity Hub with **Unity 6000.6.0f1**.
+2. Open `Assets/_Project/Scenes/Hub_GodotForge.unity` (the run scene, `Greybox_Asama1.unity`, can also be opened directly).
+3. Press Play.
+
+The repository uses **Git LFS** for binary assets (`.png`, `.ttf`, `.fbx` and similar). Run `git lfs install` before cloning, or those files arrive as text pointers.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). Berserk is created by Kentaro Miura; this is a non-commercial fan project for learning purposes and is not affiliated with the rights holders.

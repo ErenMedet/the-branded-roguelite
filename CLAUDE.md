@@ -1,6 +1,6 @@
 # The Branded (Mühürlü)
 
-2.5D isometric action roguelite: Hades' run loop in Berserk's post-Eclipse mood. Unity 6000.6.0f1, URP, C#.
+Third-person hack & slash roguelite: Hades' run loop in Berserk's post-Eclipse mood. Unity 6000.6.0f1, URP, C#.
 `docs/GDD.md` is the source of truth for gameplay. Don't add design ideas nobody asked for; fill technical gaps only.
 
 ## Project context
