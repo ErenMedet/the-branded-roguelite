@@ -1,6 +1,6 @@
 # The Branded (Mühürlü)
 
-**2.5D izometrik aksiyon roguelite**: Hades'in döngüsü, Berserk'ün "Tutulma Sonrası" atmosferi.
+**Üçüncü şahıs hack & slash roguelite**: Hades'in döngüsü, Berserk'ün "Tutulma Sonrası" atmosferi.
 
 Tutulma katliamından tek kolu ve tek gözüyle sağ çıkan bir savaşçıyız. Boynundaki **Kurban Mührü** her gece ölüleri ve iblisleri kanının kokusuna çeker. Geceler vahşi yakın dövüşle, sabahlar kamp ateşi başında nefes alarak geçer.
 
@@ -97,10 +97,13 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | 3. Gece/Sabah Döngüsü | Düşman dalgaları, şafak söküşü, kamp ateşi | ✅ |
 | 4. Diyalog ve UI | 2D portreli diyalog, can barı, geçici kılıç yağı seçimi | ✅ |
 | 5. Godot'nun Atölyesi | Hub sahnesi (maden + kulübe + ağaçlık), kalıcı yükseltmeler, ölüm döngüsü | ✅ |
+| 6. Dövüş Derinliği | Kombo zinciri + iptal penceresi, şarjlı ağır vuruş, dönerek savurma, dash vuruşu | ✅ |
+| 7. Kamera Geçişi | Sabit izometrikten Witcher 3 tarzı yörüngesel üçüncü şahıs kameraya geçiş | ✅ |
+| 8. Karakter Modeli | Guts modeli, rig ve animasyonlar (greybox kapsüllerin yerine) | ⏳ |
 
 ## Şu An Oyunda Neler Var
 
-- **Dövüş:** Input buffer'lı kılıç savurma (OverlapSphere taraması), i-frame'li dash, hitstop ve kamera sarsıntısı.
+- **Dövüş:** Input buffer'lı kılıç kombosu (OverlapSphere taraması); her savuruşun toparlanma anında iptal penceresi var, böylece zincir kesintisiz akar. Basılı tutunca şarjlı ağır vuruş, `Q` ile dönerek savurma (komboya bağlanırsa hasarı 1.5 katına çıkar), dash'ten hemen sonra atılırsa özel dash vuruşu. i-frame'li dash, hitstop ve kamera sarsıntısı.
 - **Düşmanlar:** Oyuncunun etrafını saran NavMesh sürüsü; tank, koşucu, uzaktan ateş eden ve yer altından çıkan tipler; yapışıp yavaşlatan gölge ruhları, açık kollayan tazılar, önden kalkanlı şövalyeler, geniş sopalı troll, eskortlarını dirilten tarikatçı ve ölünce hasar alanı bırakan et yığını. Can barları ilk vuruşa kadar gizli.
 - **Gece/Sabah:** Dalga dalga gelen düşmanlar, şafakta buharlaşan iblisler, sabah ışığına geçiş ve kamp ateşi.
 - **Kamp:** Hades tarzı portreli diyalog, ardından 3 kartlık güçlenme seçimi (Alev Yağı, Hızlı Atılma Tılsımı, Şifalı Bandaj).
@@ -113,21 +116,24 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 | Tuş | Eylem |
 |---|---|
 | `W A S D` / Ok tuşları | Hareket |
-| Fare | Nişan / bakış yönü |
-| Sol tık | Kılıç saldırısı |
+| Fare | Kamerayı karakterin etrafında döndürür; imleç kilitlidir ve nişan kameranın baktığı yöndür |
+| Sol tık | Kılıç saldırısı (kombo) |
+| Sol tık (basılı) | Şarjlı ağır vuruş |
+| `Q` | Dönerek savurma; kombonun içinden bağlanırsa daha çok hasar verir |
 | Sağ tık (basılı) | Sol koldan seri tatar yayı (şarjör + reload) |
 | Orta tuş | Kol topu: kamp başına bir atış, yayı kırar, geri savurur |
-| `Space` | Atılma (dash) |
+| `Space` | Atılma (dash); hemen ardından sol tık özel dash vuruşu yapar |
 | `E` | Etkileşim (kamp ateşi, Godot, Puck, dağ patikası) |
 | `Esc` / `E` | Yükseltme panelini kapat |
 | `E` / `Space` / Sol tık | Diyaloğu ilerlet |
 
 ## Teknik Altyapı
 
-- **Motor:** Unity `6000.6.0f1`, Universal Render Pipeline
-- **Girdi:** Input System
-- **Kamera:** Cinemachine (sabit izometrik açı)
+- **Motor:** Unity `6000.6.0f1`, Universal Render Pipeline `17.6.0`
+- **Girdi:** Input System `1.20.0` (action'lar kod içinde kuruluyor, `.inputactions` dosyası yok)
+- **Kamera:** Cinemachine `6.6.0` — Witcher 3 tarzı yörüngesel üçüncü şahıs kamera; yörüngenin merkezi karakterin başının üzerinde, karakter kadrajın alt yarısında kalır
 - **Yapay zekâ:** NavMesh
+- **Karakter:** `CharacterController` (Rigidbody yok)
 - **Arayüz:** uGUI + TextMeshPro
 - **Veri:** Geceler, güçlenmeler, yükseltmeler ve diyaloglar `ScriptableObject` olarak tutulur; kalıcı ilerleme JSON kaydında
 
@@ -135,14 +141,14 @@ Tüm tasarım, harita, dövüş ve mimari detayları için: **[Tasarım Doküman
 
 ```
 Assets/_Project/
-├── Art/           Portreler ve görseller
+├── Art/           Portraits/ (diyalog portreleri), UI/ (arayüz görselleri)
 ├── Data/          ScriptableObject verileri (Boons, Dialogue, Nights, Upgrades)
 ├── Materials/
 ├── Prefabs/       Oyuncu, düşmanlar, dünya objeleri, UI
 ├── Scenes/        Hub_GodotForge.unity, Greybox_Asama1.unity
 └── Scripts/
-    ├── Core/      GameEvents (sistemler arası olay kanalı)
-    ├── Player/    Hareket, dash, girdi, kılıç, ölüm
+    ├── Core/      GameEvents (sistemler arası olay kanalı), FlatMath, Easing
+    ├── Player/    Hareket, dash, girdi, kamera, nişan, kılıç, tatar yayı, ölüm
     ├── Combat/    IDamageable, HealthComponent, hitbox, Projectile
     ├── Enemies/   Düşman yapay zekâsı ve tipleri
     ├── Loop/      Gece/sabah döngüsü, dalgalar, kamp ateşi
