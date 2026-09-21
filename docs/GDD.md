@@ -1,4 +1,4 @@
-# PROJECT: THE BRANDED (MÜHÜRLÜ)
+# PROJECT: THE BRANDED 
 ## Third-Person Hack & Slash Roguelite — Master Technical & Design Document (GDD)
 *Inspired by Berserk's "post-Eclipse" arc · A Unity URP production guide*
 
