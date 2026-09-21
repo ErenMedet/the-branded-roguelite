@@ -1,5 +1,7 @@
 # The Branded
 
+**English** · [Türkçe](README.tr.md)
+
 **Third-person hack & slash roguelite**: the run loop of Hades in the post-Eclipse mood of Berserk.
 
 You play a warrior who walked out of the Eclipse massacre with one arm and one eye. The **Brand of Sacrifice** on his neck bleeds every night and pulls the dead and the demons toward the smell of his blood. Nights are spent in savage melee; mornings are spent breathing by a campfire.
