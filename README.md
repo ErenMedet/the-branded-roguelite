@@ -1,4 +1,4 @@
-# The Branded (Mühürlü)
+# The Branded 
 
 **Third-person hack & slash roguelite**: the run loop of Hades in the post-Eclipse mood of Berserk.
 
