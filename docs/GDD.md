@@ -293,4 +293,6 @@ public class DialogueData : ScriptableObject
 * **Stage 5 — Godot's Workshop:** the hub scene (mine + cottage + grove), permanent upgrades and the death loop. ✅
 * **Stage 6 — Combat Depth:** the combo chain with cancel windows, the charged strike, the spin attack and the dash strike. ✅
 * **Stage 7 — Camera Change:** moving from the fixed isometric angle to the orbital third-person camera, with aim following the camera. ✅
-* **Stage 8 — Character Model:** a rigged, animated character to replace the greybox capsules. ⏳
+* **Stage 8 — Character Model:** a rigged, animated character to replace the greybox capsules. ❌ **Not done — development stopped here.** See the status note in the [README](../README.md).
+
+> Everything from stage 8 onward in this document — the boss fight, biome 2, the room pool, Berserk Rage, the audio manager — is design that was never built. The document is left intact as the plan it was, not as a description of what ships.

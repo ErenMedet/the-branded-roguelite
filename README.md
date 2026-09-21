@@ -4,7 +4,12 @@
 
 You play a warrior who walked out of the Eclipse massacre with one arm and one eye. The **Brand of Sacrifice** on his neck bleeds every night and pulls the dead and the demons toward the smell of his blood. Nights are spent in savage melee; mornings are spent breathing by a campfire.
 
-> Built with Unity 6 (URP). Currently at the **greybox** stage: the models are capsules and cubes, the portraits are placeholders.
+> [!IMPORTANT]
+> **Status: discontinued.** Development stopped before the game was finished, and this repository is kept as a record rather than as an active project.
+>
+> Two things ended it. The first was the distance between what the design document asks for and what I knew how to build while writing it. The second was assets: the game never got past **greybox** capsules because I could not get a usable rigged character. The model I settled on turned out to be a rip made of roughly 480 disconnected mesh fragments, with every finger a free-floating island unattached to the palm — auto-riggers walk the connected surface to find finger chains, so they silently fall back to a hand with no finger bones. Without hands that can hold anything and without attack animations, the character work stalled, and the project stalled with it.
+>
+> What is here does run. The night/morning loop, the combat, the enemy variety, the hub and the meta-progression all work and are playable. Everything you see is a capsule, a cube or a placeholder portrait.
 
 ---
 
@@ -99,7 +104,7 @@ For the full design, map, combat and architecture detail: **[Design Document (GD
 | 5. Godot's Workshop | Hub scene (mine + cottage + grove), permanent upgrades, death loop | ✅ |
 | 6. Combat Depth | Combo chain with cancel windows, charged strike, spin attack, dash strike | ✅ |
 | 7. Camera Change | From a fixed isometric angle to a Witcher 3-style orbital third-person camera | ✅ |
-| 8. Character Model | A rigged, animated character to replace the greybox capsules | ⏳ |
+| 8. Character Model | A rigged, animated character to replace the greybox capsules | ❌ Not done — this is where the project stopped |
 
 ## What Is in the Game Right Now
 
